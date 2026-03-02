@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import type { Industry } from "@/data/industries";
 import { industrySubcategories } from "@/data/industrySubcategories";
+import industryContent from "@/data/industry-content.json";
 
 /* ─── Animation helper ─── */
 function FadeIn({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
@@ -32,9 +33,29 @@ export default function IndustryClient({ industry, related, slug }: Props) {
   const [activeCategory, setActiveCategory] = useState(0);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
+  // Get content for this industry from JSON
+  const industryData = industryContent.industries.find(item => item.slug === slug);
+  
   // Get subcategories for this industry
   const subcategories = industrySubcategories[industry.name] || [];
   const activeSubcategory = subcategories[activeCategory];
+
+  // Use content from JSON if available, otherwise fallback to industry data
+  const heroData = industryData?.hero || {
+    h1: industry.title,
+    description: industry.desc
+  };
+
+  const whyChooseUsData = industryData?.whyChooseUs || {
+    title: `Why Choose ${industry.title}`,
+    description: `Discover the advantages of partnering with us for your ${industry.title.toLowerCase()} business.`,
+    points: industry.benefits.map((benefit, i) => ({
+      title: `Benefit ${i + 1}`,
+      description: benefit
+    }))
+  };
+
+  const faqsData = industryData?.faqs || [];
 
   return (
     <div className="min-h-screen bg-[#FAFAFA]">
@@ -65,13 +86,13 @@ export default function IndustryClient({ industry, related, slug }: Props) {
 
               <FadeIn delay={0.15}>
                 <h1 className="text-4xl md:text-5xl lg:text-[56px] font-extrabold leading-[1.1] mb-5 text-[#0F1111]">
-                  {industry.title}
+                  {heroData.h1}
                 </h1>
               </FadeIn>
 
               <FadeIn delay={0.2}>
                 <p className="text-lg text-[#565959] leading-relaxed mb-8 max-w-[540px]">
-                  {industry.desc}
+                  {heroData.description}
                 </p>
               </FadeIn>
 
@@ -314,20 +335,20 @@ export default function IndustryClient({ industry, related, slug }: Props) {
         </section>
       )}
 
-      {/* ═══ BENEFITS ═══ */}
-      <section id="benefits" className="py-16 px-6 scroll-mt-8">
+      {/* ═══ WHY CHOOSE US ═══ */}
+      <section id="why-choose-us" className="py-16 px-6 scroll-mt-8">
         <div className="max-w-[1200px] mx-auto">
           <FadeIn>
             <h2 className="text-3xl md:text-4xl font-extrabold text-center text-[#0F1111] mb-2">
-              Why Choose {industry.title}
+              {whyChooseUsData.title}
             </h2>
             <p className="text-center text-[#565959] text-[15px] max-w-[550px] mx-auto mb-10">
-              Discover the advantages of partnering with us for your {industry.title.toLowerCase()} business.
+              {whyChooseUsData.description}
             </p>
           </FadeIn>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {industry.benefits.map((benefit, i) => (
+            {whyChooseUsData.points.map((point, i) => (
               <FadeIn key={i} delay={i * 0.05}>
                 <div className="bg-white border border-[#e7e7e7] rounded-xl p-6 hover:border-[#111111] hover:shadow-lg transition-all duration-200">
                   <div className="w-12 h-12 bg-[#111111] rounded-lg flex items-center justify-center mb-4">
@@ -335,14 +356,73 @@ export default function IndustryClient({ industry, related, slug }: Props) {
                       <polyline points="20 6 9 17 4 12" />
                     </svg>
                   </div>
-                  <h3 className="text-lg font-semibold text-[#0F1111] mb-2">Benefit {i + 1}</h3>
-                  <p className="text-sm text-[#565959] leading-relaxed">{benefit}</p>
+                  <h3 className="text-lg font-semibold text-[#0F1111] mb-2">{point.title}</h3>
+                  <p className="text-sm text-[#565959] leading-relaxed">{point.description}</p>
                 </div>
               </FadeIn>
             ))}
           </div>
         </div>
       </section>
+
+      {/* ═══ FAQ ═══ */}
+      {faqsData.length > 0 && (
+        <section className="py-16 px-6 bg-[#FAFAFA]">
+          <div className="max-w-[800px] mx-auto">
+            <FadeIn>
+              <h2 className="text-3xl md:text-4xl font-extrabold text-center text-[#0F1111] mb-2">
+                Frequently Asked Questions
+              </h2>
+              <p className="text-center text-[#565959] text-[15px] max-w-[550px] mx-auto mb-10">
+                Everything you need to know about buying leads for {industry.title.toLowerCase()}.
+              </p>
+            </FadeIn>
+
+            <div className="space-y-4">
+              {faqsData.map((faq, i) => (
+                <FadeIn key={i} delay={i * 0.05}>
+                  <div className="bg-white border border-[#e7e7e7] rounded-xl overflow-hidden">
+                    <button
+                      onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                      className="w-full px-6 py-4 text-left flex items-center justify-between gap-4 hover:bg-[#FAFAFA] transition-colors"
+                    >
+                      <span className="text-sm font-semibold text-[#0F1111]">{faq.question}</span>
+                      <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className={`text-[#565959] transition-transform duration-200 ${openFaq === i ? "rotate-180" : ""}`}
+                      >
+                        <polyline points="6 9 12 15 18 9" />
+                      </svg>
+                    </button>
+                    <AnimatePresence>
+                      {openFaq === i && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: "auto", opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.2 }}
+                          className="overflow-hidden"
+                        >
+                          <div className="px-6 pb-4">
+                            <p className="text-sm text-[#565959] leading-relaxed">{faq.answer}</p>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                </FadeIn>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ═══ LONG DESCRIPTION ═══ */}
       <section className="py-16 px-6 bg-white">

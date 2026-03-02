@@ -215,10 +215,10 @@ export default function IndustryClient({ industry, related, slug }: Props) {
           <div className="max-w-[1200px] mx-auto">
             <FadeIn>
               <h2 className="text-3xl md:text-4xl font-extrabold text-center text-[#0F1111] mb-2">
-                All Product Categories
+                Get Buyer Leads by Category
               </h2>
               <p className="text-center text-[#565959] text-[15px] max-w-[550px] mx-auto mb-10">
-                Explore our comprehensive range of {industry.title.toLowerCase()} products across {subcategories.length} specialized categories.
+                Find verified buyer leads for {industry.title.toLowerCase()} products across {subcategories.length} specialized categories.
               </p>
             </FadeIn>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -262,10 +262,10 @@ export default function IndustryClient({ industry, related, slug }: Props) {
           <div className="max-w-[1200px] mx-auto">
             <FadeIn>
               <h2 className="text-3xl md:text-4xl font-extrabold text-center text-[#0F1111] mb-2">
-                Browse Product Categories
+                Buyer Leads for {activeSubcategory.name}
               </h2>
               <p className="text-center text-[#565959] text-[15px] max-w-[550px] mx-auto mb-10">
-                Click on a category to see detailed product listings and start selling.
+                Click on a category to see detailed buyer leads and connect with potential customers.
               </p>
             </FadeIn>
 
@@ -312,8 +312,8 @@ export default function IndustryClient({ industry, related, slug }: Props) {
                   <div className="flex-1 p-8">
                     <h3 className="text-2xl font-extrabold text-[#0F1111] mb-4">{activeSubcategory.name}</h3>
                     <p className="text-[#565959] leading-relaxed mb-6">
-                      Explore our wide range of {activeSubcategory.name.toLowerCase()} products for {industry.title.toLowerCase()} industry. 
-                      Connect with verified buyers and expand your business globally.
+                      Access exclusive buyer leads for {activeSubcategory.name.toLowerCase()} in the {industry.title.toLowerCase()} industry. 
+                      Connect with verified buyers looking for quality products and grow your business.
                     </p>
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -322,7 +322,7 @@ export default function IndustryClient({ industry, related, slug }: Props) {
                           <div className="w-2 h-2 bg-[#111111] rounded-full mt-2 shrink-0"></div>
                           <div>
                             <h4 className="text-sm font-semibold text-[#0F1111] mb-1">{item}</h4>
-                            <p className="text-xs text-[#565959] leading-relaxed">Premium quality {item.toLowerCase()} for international trade</p>
+                            <p className="text-xs text-[#565959] leading-relaxed">Active buyer leads for {item.toLowerCase()} in international markets</p>
                           </div>
                         </div>
                       ))}
@@ -374,7 +374,7 @@ export default function IndustryClient({ industry, related, slug }: Props) {
                 Frequently Asked Questions
               </h2>
               <p className="text-center text-[#565959] text-[15px] max-w-[550px] mx-auto mb-10">
-                Everything you need to know about buying leads for {industry.title.toLowerCase()}.
+                Everything you need to know about getting buyer leads for {industry.title.toLowerCase()}.
               </p>
             </FadeIn>
 

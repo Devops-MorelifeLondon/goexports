@@ -4,9 +4,9 @@ import { useState, useEffect } from "react";
 import GetInTouchForm from "./GetInTouchForm";
 
 const lines = [
-  { prefix: "Sell ", keyword: "Global" },
-  { prefix: "Export ", keyword: "Worldwide" },
-  { prefix: "Expand ", keyword: "International" },
+  { prefix: "Get ", keyword: "Buyer Leads" },
+  { prefix: "Find ", keyword: "Verified Buyers" },
+  { prefix: "Connect ", keyword: "Globally" },
 ];
 
 export default function HeroSection() {
@@ -113,7 +113,7 @@ export default function HeroSection() {
           
           <div className="flex-[1.2] text-center lg:text-left">
             <div className="inline-block bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-3 py-0.5 text-[12px] font-semibold text-white mb-3">
-              Global Selling
+              Buyer Lead Generation
             </div>
 
             <h1 className="text-[32px] lg:text-[44px] font-extrabold leading-[1.1] tracking-tight mb-3 text-white">
@@ -127,7 +127,7 @@ export default function HeroSection() {
             </p>
 
             <p className="text-base lg:text-lg leading-snug text-white/80 max-w-[520px] mb-6 mx-auto lg:mx-0">
-              Get access to millions of customers around the world. Accelerate your international sales.
+              Get access to verified buyer leads from around the world. Accelerate your international sales.
             </p>
 
             <div>

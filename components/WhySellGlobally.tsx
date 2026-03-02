@@ -28,10 +28,10 @@ export default function WhySellGlobally() {
               Explore Industries
             </p>
             <h2 className="text-4xl md:text-[52px] font-extrabold text-gray-900 leading-[1.1] mb-4">
-              55+ Industries.<br />Unlimited Opportunities.
+              55+ Industries.<br />Unlimited Buyer Leads.
             </h2>
             <p className="text-gray-600 text-[15px] max-w-[520px] mx-auto leading-relaxed">
-              Connect with verified importers, distributors, and wholesalers across 190+ countries.
+              Get verified buyer leads from importers, distributors, and wholesalers across 190+ countries.
             </p>
           </div>
         </FadeIn>
@@ -170,7 +170,7 @@ export default function WhySellGlobally() {
               <h3 className="text-2xl font-extrabold text-gray-900 mb-2">Can&apos;t find your industry?</h3>
               <p className="text-[14px] text-gray-600 mb-6 max-w-[400px] mx-auto">We cover 55+ industries and are always expanding. Tell us your category.</p>
               <a href="#" className="inline-flex items-center gap-2 px-8 py-3 bg-red-600 text-white font-bold text-sm rounded-lg no-underline hover:bg-red-700 transition-all shadow-md shadow-red-900/20">
-                Request Custom Leads
+                Request Custom Industry
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>
               </a>
             </div>

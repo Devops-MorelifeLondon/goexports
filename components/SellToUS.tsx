@@ -85,10 +85,10 @@ export default function SellToUS() {
               Pricing Plans
             </span>
             <h2 className="text-4xl md:text-5xl font-extrabold text-[#0F1111] mb-3">
-              Invest in Your Growth
+              Get Buyer Leads Plans
             </h2>
             <p className="text-[#565959] text-base max-w-[520px] mx-auto leading-relaxed">
-              Choose the right plan to grow your export business with verified international buyer leads.
+              Choose the right plan to access verified international buyer leads for your business.
             </p>
           </div>
         </FadeIn>

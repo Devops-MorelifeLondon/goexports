@@ -2,7 +2,19 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FadeIn } from "./MotionWrappers";
+
+function FadeIn({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.5, delay }}
+    >
+      {children}
+    </motion.div>
+  );
+}
 
 type Country = { name: string; code: string };
 
@@ -79,19 +91,24 @@ const locationData: Record<string, Country[]> = {
   ],
 };
 
-const continents = Object.keys(locationData);
+// Build "All Countries" sorted alphabetically
+const allCountries: Country[] = Object.values(locationData)
+  .flat()
+  .sort((a, b) => a.name.localeCompare(b.name));
+
+const continents = ["All Countries", ...Object.keys(locationData)];
 
 export default function Locations() {
   const [activeTab, setActiveTab] = useState(0);
   const activeContinent = continents[activeTab];
-  const countries = locationData[activeContinent];
+  const countries = activeTab === 0 ? allCountries : locationData[activeContinent];
 
   return (
-    <section className="bg-[#0A0A0A] text-white py-16 px-6">
+    <section className="bg-white text-[#0F1111] py-16 px-6">
       <div className="max-w-[1200px] mx-auto">
         <FadeIn>
           <h2 className="text-4xl font-extrabold text-center mb-2 tracking-wide">LOCATIONS</h2>
-          <p className="text-center text-white/50 text-[15px] max-w-[480px] mx-auto mb-9">
+          <p className="text-center text-[#565959] text-[15px] max-w-[480px] mx-auto mb-9">
             We connect sellers with buyers across the globe.
           </p>
         </FadeIn>
@@ -100,14 +117,14 @@ export default function Locations() {
           <div className="flex gap-2.5 justify-center mb-8 flex-wrap">
             {continents.map((c, i) => (
               <motion.button
-                key={i}
+                key={c}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setActiveTab(i)}
                 className={`px-7 py-3 rounded-lg text-sm font-bold cursor-pointer whitespace-nowrap transition-all duration-200
                   ${activeTab === i
-                    ? "bg-white border border-white text-black shadow-lg shadow-white/20"
-                    : "bg-transparent border border-white/15 text-white/60 hover:border-white hover:text-white"
+                    ? "bg-[#111111] border border-[#111111] text-white shadow-lg shadow-black/20"
+                    : "bg-transparent border border-[#e7e7e7] text-[#565959] hover:border-[#111111] hover:text-[#0F1111]"
                   }`}
               >
                 {c}
@@ -117,7 +134,7 @@ export default function Locations() {
         </FadeIn>
 
         <FadeIn delay={0.3}>
-          <div className="bg-white/[0.04] border border-white/10 rounded-[14px] p-7 md:p-8">
+          <div className="bg-[#FAFAFA] border border-[#e7e7e7] rounded-[14px] p-7 md:p-8">
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeTab}
@@ -126,17 +143,22 @@ export default function Locations() {
                 exit={{ opacity: 0, y: -15 }}
                 transition={{ duration: 0.3 }}
               >
-                <div className="bg-white/10 border-l-4 border-l-white py-3.5 px-5 rounded-r-lg mb-6 text-xl font-bold text-white">
-                  {activeContinent}
+                <div className="bg-[#111111] text-white border-l-4 border-l-[#111111] py-3.5 px-5 rounded-lg mb-6 text-xl font-bold flex items-center justify-between">
+                  <span>{activeContinent}</span>
+                  <span className="text-sm font-normal text-white/60">
+                    {countries.length} {countries.length === 1 ? "country" : "countries"}
+                  </span>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-x-6 gap-y-1">
+                <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-x-6 gap-y-1 ${activeTab === 0 ? "max-h-[400px] overflow-y-auto pr-2" : ""}`}
+                  style={activeTab === 0 ? { scrollbarWidth: "thin", scrollbarColor: "#d1d5db transparent" } : undefined}
+                >
                   {countries.map((country, i) => (
                     <motion.div
-                      key={country.code}
+                      key={country.code + (activeTab === 0 ? "-all" : "")}
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
-                      transition={{ delay: Math.min(i * 0.015, 0.6), duration: 0.3 }}
-                      className="flex items-center gap-2.5 py-1.5 text-sm text-white/80 whitespace-nowrap overflow-hidden text-ellipsis"
+                      transition={{ delay: Math.min(i * 0.008, 0.5), duration: 0.3 }}
+                      className="flex items-center gap-2.5 py-1.5 text-sm text-[#0F1111] whitespace-nowrap overflow-hidden text-ellipsis"
                     >
                       <img
                         src={`https://flagcdn.com/20x15/${country.code}.png`}

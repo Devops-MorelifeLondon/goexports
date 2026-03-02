@@ -1,0 +1,490 @@
+{
+  "industries": [
+    {
+      "slug": "drugs-and-medicines",
+      "name": "Drugs & Medicines",
+      "hero": {
+        "h1": "Connect with Global Pharmaceutical Buyers",
+        "description": "Access verified buyers for pharmaceutical products, OTC medicines, nutraceuticals, and healthcare supplements. Expand your pharma business to 190+ countries with quality buyer leads."
+      },
+      "whyChooseUs": {
+        "title": "Why Choose GoExports for Pharmaceutical Buyer Leads?",
+        "description": "We are the trusted partner for pharmaceutical companies seeking qualified buyer connections worldwide. Our specialized approach ensures you get the most valuable leads for your business growth.",
+        "points": [
+          {
+            "title": "Verified Pharmaceutical Buyers",
+            "description": "Every buyer undergoes rigorous verification including drug license validation, GMP certification checks, and import permit verification. We ensure you connect only with legitimate pharmaceutical traders and healthcare institutions."
+          },
+          {
+            "title": "Regulatory Compliance Experts",
+            "description": "Our team understands complex pharmaceutical regulations across 190+ countries. We provide guidance on FDA approvals, CE marking, WHO-GMP requirements, and ensure all leads comply with target market regulations."
+          },
+          {
+            "title": "High-Value Lead Generation",
+            "description": "We specialize in high-value pharmaceutical leads including hospital procurement contracts, government tenders, and bulk distribution agreements. Our average lead value exceeds $50,000 with serious buying intent."
+          },
+          {
+            "title": "Specialized Pharma Categories",
+            "description": "From generic drugs to APIs, from nutraceuticals to medical devices - we categorize leads by specific pharmaceutical products. This ensures you receive leads matching your exact manufacturing capabilities and product portfolio."
+          },
+          {
+            "title": "Cold Chain Logistics Support",
+            "description": "We understand temperature-sensitive pharmaceutical products require special handling. Our leads include buyers with proper cold chain infrastructure and we coordinate specialized logistics for your products."
+          },
+          {
+            "title": "Market Intelligence Integration",
+            "description": "Each lead comes with valuable market insights including pricing trends, demand patterns, regulatory updates, and competitive landscape analysis for your target pharmaceutical markets."
+          },
+          {
+            "title": "Dedicated Pharma Account Managers",
+            "description": "You get a dedicated account manager who understands the pharmaceutical industry. They help you optimize lead quality, negotiate with buyers, and navigate complex pharmaceutical trade requirements."
+          },
+          {
+            "title": "Performance-Based Pricing",
+            "description": "We offer flexible pricing models including pay-per-lead, subscription plans, and performance-based pricing. You only pay for qualified leads that match your specific pharmaceutical product requirements."
+          },
+          {
+            "title": "Global Network Coverage",
+            "description": "Our buyer network spans across emerging markets, developed economies, and pharmaceutical hubs worldwide. We connect you with buyers in high-growth markets like Southeast Asia, Africa, and Latin America."
+          },
+          {
+            "title": "Secure Payment Protection",
+            "description": "We facilitate secure transactions through escrow services, letter of credit arrangements, and trade financing options. Your pharmaceutical exports are protected with comprehensive payment security measures."
+          }
+        ]
+      },
+      "faqs": [
+        {
+          "question": "How do you verify pharmaceutical buyers on your platform?",
+          "answer": "We conduct thorough verification including business registration checks, drug license validation, import permit verification, and trade reference screening. All buyers must provide valid pharmaceutical trade licenses and undergo compliance screening before accessing seller leads."
+        },
+        {
+          "question": "What types of pharmaceutical buyer leads can I expect?",
+          "answer": "You'll receive leads from hospitals, pharmacy chains, medical distributors, importers, government procurement agencies, and wholesale pharmaceutical companies. Our leads include contact details, purchase requirements, and buying capacity information."
+        },
+        {
+          "question": "How quickly can I start receiving qualified buyer leads?",
+          "answer": "Once your seller profile is verified (typically 2-3 business days), you'll start receiving relevant buyer leads immediately. We match leads based on your product categories, geographic preferences, and business capabilities."
+        },
+        {
+          "question": "Do you provide buyer leads for regulated markets like the US and EU?",
+          "answer": "Yes, we specialize in connecting sellers with buyers in regulated markets. Our leads include FDA-registered importers, EU-authorized distributors, and buyers with proper GMP certifications and regulatory compliance documentation."
+        },
+        {
+          "question": "What information is included in each buyer lead?",
+          "answer": "Each lead includes buyer company details, contact person information, product requirements, estimated order quantities, preferred payment terms, shipping destination, and compliance requirements. We also provide buyer's trading history and verification status."
+        },
+        {
+          "question": "How do you ensure the quality and authenticity of buyer leads?",
+          "answer": "We use AI-powered verification, manual screening, trade reference checks, and compliance validation. Each lead is scored based on buyer's financial capacity, trading history, and regulatory compliance. We maintain a 95% lead accuracy rate."
+        },
+        {
+          "question": "Can I target specific pharmaceutical product categories for buyer leads?",
+          "answer": "Absolutely. You can specify your product categories such as generic drugs, APIs, nutraceuticals, medical devices, or Ayurvedic medicines. We'll send you leads matching your exact product specifications and manufacturing capabilities."
+        },
+        {
+          "question": "What support do you provide for international pharmaceutical trade?",
+          "answer": "We provide regulatory compliance guidance, documentation support, customs clearance assistance, payment protection services, and logistics coordination. Our team helps you navigate complex international pharmaceutical trade requirements."
+        },
+        {
+          "question": "How are buyer leads priced and what's the ROI?",
+          "answer": "Our lead pricing is competitive with industry standards, starting from $15-50 per qualified lead based on market and order value. Sellers typically see 5-10x ROI within the first 3 months through successful conversions."
+        },
+        {
+          "question": "Do you offer exclusive buyer leads or are they shared?",
+          "answer": "We offer both exclusive and shared lead options. Exclusive leads are sold to only one seller and command premium pricing, while shared leads are distributed to 2-3 qualified sellers at lower costs. You can choose based on your budget and competition strategy."
+        }
+      ],
+      "metadata": {
+        "title": "Pharmaceutical Buyer Leads - Connect with Global Drug Importers | GoExports",
+        "description": "Access verified pharmaceutical buyer leads from hospitals, pharmacies, and distributors worldwide. Quality leads for drugs, medicines, APIs, and healthcare products. Start expanding your pharma business globally.",
+        "keywords": "pharmaceutical buyer leads, drug importers, medicine distributors, pharmaceutical trade, pharmacy buyers, hospital procurement, API buyers, nutraceutical leads, medical device buyers",
+        "robots": "index, follow"
+      },
+      "jsonld": {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebPage",
+            "@id": "https://goexports.com/drugs-and-medicines",
+            "url": "https://goexports.com/drugs-and-medicines",
+            "name": "Pharmaceutical Buyer Leads - GoExports",
+            "description": "Connect with verified pharmaceutical buyers worldwide. Quality leads for drugs, medicines, APIs, and healthcare products.",
+            "isPartOf": {
+              "@type": "WebSite",
+              "@id": "https://goexports.com/#website"
+            },
+            "about": {
+              "@type": "Thing",
+              "name": "Pharmaceutical Trade"
+            }
+          },
+          {
+            "@type": "ProfessionalService",
+            "name": "GoExports Pharmaceutical Buyer Leads",
+            "description": "Verified buyer leads for pharmaceutical products, medicines, and healthcare supplies",
+            "url": "https://goexports.com/drugs-and-medicines",
+            "serviceType": "B2B Lead Generation",
+            "provider": {
+              "@type": "Organization",
+              "name": "GoExports",
+              "url": "https://goexports.com"
+            },
+            "areaServed": "Worldwide",
+            "hasOfferCatalog": {
+              "@type": "OfferCatalog",
+              "name": "Pharmaceutical Buyer Lead Services",
+              "itemListElement": [
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Hospital Buyer Leads",
+                    "description": "Verified leads from hospital procurement departments"
+                  }
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Pharmacy Chain Leads",
+                    "description": "Leads from pharmaceutical retail chains and distributors"
+                  }
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "API Buyer Leads",
+                    "description": "Leads for Active Pharmaceutical Ingredient buyers"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "@type": "FAQPage",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "How do you verify pharmaceutical buyers on your platform?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "We conduct thorough verification including business registration checks, drug license validation, import permit verification, and trade reference screening. All buyers must provide valid pharmaceutical trade licenses and undergo compliance screening before accessing seller leads."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "What types of pharmaceutical buyer leads can I expect?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "You'll receive leads from hospitals, pharmacy chains, medical distributors, importers, government procurement agencies, and wholesale pharmaceutical companies. Our leads include contact details, purchase requirements, and buying capacity information."
+                }
+              }
+            ]
+          },
+          {
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://goexports.com"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Drugs & Medicines",
+                "item": "https://goexports.com/drugs-and-medicines"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "slug": "medical-and-pharma",
+      "name": "Medical & Pharma",
+      "hero": {
+        "h1": "Premium Medical Device & Equipment Buyer Leads",
+        "description": "Connect with verified buyers for medical devices, diagnostic equipment, surgical instruments, and hospital supplies. Quality leads from healthcare institutions worldwide."
+      },
+      "whyChooseUs": {
+        "title": "Why Choose GoExports for Medical Equipment Buyer Leads?",
+        "description": "We specialize in connecting medical device manufacturers with qualified healthcare buyers globally. Our expertise in the medical equipment sector ensures you get high-value leads that convert.",
+        "points": [
+          {
+            "title": "Healthcare Facility Verification",
+            "description": "Every buyer is thoroughly verified including hospital accreditation, medical facility licenses, and healthcare provider credentials. We ensure you connect only with legitimate medical institutions and healthcare providers."
+          },
+          {
+            "title": "Medical Device Compliance Experts",
+            "description": "Our team understands medical device regulations including FDA 510(k), CE marking, ISO 13485, and country-specific medical device approvals. We ensure all leads meet regulatory requirements for your target markets."
+          },
+          {
+            "title": "High-Value Medical Equipment Leads",
+            "description": "We specialize in high-value medical equipment leads including diagnostic machines, surgical equipment, hospital infrastructure projects, and medical imaging systems. Our average lead value exceeds $100,000."
+          },
+          {
+            "title": "Specialized Medical Categories",
+            "description": "From diagnostic equipment to surgical instruments, from hospital furniture to medical devices - we categorize leads by specific medical equipment types. This ensures perfect matching with your product portfolio."
+          },
+          {
+            "title": "Hospital Tender Opportunities",
+            "description": "We provide exclusive access to hospital tenders, government healthcare procurement, and public health sector contracts. Our leads include detailed tender requirements and submission guidelines."
+          },
+          {
+            "title": "Medical Equipment Installation Support",
+            "description": "We coordinate medical equipment installation, training, and after-sales service support. Our leads include buyers who require comprehensive installation and technical support services."
+          },
+          {
+            "title": "Healthcare Market Intelligence",
+            "description": "Each lead comes with healthcare market insights including hospital budgets, equipment replacement cycles, regulatory changes, and competitive analysis for medical device markets."
+          },
+          {
+            "title": "Dedicated Medical Equipment Specialists",
+            "description": "You get a dedicated account manager who understands the medical equipment industry. They help you navigate healthcare procurement processes and build relationships with medical institutions."
+          },
+          {
+            "title": "Global Healthcare Network",
+            "description": "Our buyer network includes hospitals, diagnostic centers, medical distributors, and healthcare providers across 190+ countries. We connect you with buyers in both developed and emerging healthcare markets."
+          },
+          {
+            "title": "Medical Equipment Financing Support",
+            "description": "We facilitate medical equipment financing, leasing options, and payment terms suitable for healthcare budgets. Our leads include buyers with pre-approved financing for equipment purchases."
+          }
+        ]
+      },
+      "faqs": [
+        {
+          "question": "What types of medical equipment buyers do you work with?",
+          "answer": "We connect you with hospitals, diagnostic centers, medical distributors, healthcare facilities, government health agencies, and medical equipment importers. Our buyers range from small clinics to large hospital networks seeking quality medical devices and equipment."
+        },
+        {
+          "question": "How are your medical buyer leads verified and qualified?",
+          "answer": "All leads undergo rigorous verification including medical license validation, facility accreditation checks, financial capacity assessment, and import compliance screening. We verify buyer's medical equipment procurement history and ensure they meet regulatory requirements."
+        },
+        {
+          "question": "Can I get buyer leads for specific medical device categories?",
+          "answer": "Yes, we provide targeted leads for specific categories including diagnostic equipment, surgical instruments, hospital furniture, medical imaging devices, laboratory equipment, and specialized medical devices. You can specify your exact product categories and receive matching leads."
+        },
+        {
+          "question": "Do you provide leads for medical equipment tenders and government contracts?",
+          "answer": "Absolutely. We specialize in government procurement leads, hospital tenders, and public health sector contracts. Our leads include tender details, submission requirements, qualification criteria, and contact information for procurement officers."
+        },
+        {
+          "question": "How quickly can I start receiving medical equipment buyer leads?",
+          "answer": "Once your medical device business is verified (typically 3-5 business days including product certification review), you'll start receiving relevant leads immediately. We match leads based on your product types, target markets, and certification status."
+        },
+        {
+          "question": "What information is included in each medical equipment buyer lead?",
+          "answer": "Each lead includes facility details, procurement contact information, equipment specifications required, budget range, delivery timeline, certification requirements, and installation needs. We also provide buyer's purchasing history and payment terms."
+        },
+        {
+          "question": "Do you support international medical equipment trade with compliance requirements?",
+          "answer": "Yes, we provide comprehensive support for international medical trade including FDA/CE marking guidance, import documentation, customs clearance assistance, and regulatory compliance. Our team ensures smooth cross-border medical equipment transactions."
+        },
+        {
+          "question": "How do you ensure the quality of medical buyer leads?",
+          "answer": "We maintain strict quality standards through multi-step verification, trade reference checks, facility accreditation validation, and financial capacity assessment. Our leads have a 92% conversion rate and we guarantee lead accuracy or provide replacements."
+        },
+        {
+          "question": "Can I get exclusive leads for high-value medical equipment?",
+          "answer": "Yes, we offer exclusive lead options for high-value equipment purchases. Exclusive leads are sold to only one qualified seller and include detailed buyer requirements, budget information, and decision-maker contacts. Premium pricing applies."
+        },
+        {
+          "question": "What support do you provide for medical equipment demonstrations and trials?",
+          "answer": "We facilitate equipment demonstrations, trial arrangements, and product evaluations. Our team coordinates with buyers for on-site demos, virtual presentations, and clinical trials. We also manage logistics for equipment shipping and installation."
+        }
+      ],
+      "metadata": {
+        "title": "Medical Equipment Buyer Leads - Hospital & Diagnostic Device Importers | GoExports",
+        "description": "Access verified medical equipment buyer leads from hospitals, diagnostic centers, and healthcare distributors. Quality leads for medical devices, surgical instruments, and hospital supplies.",
+        "keywords": "medical equipment buyer leads, hospital procurement, diagnostic equipment buyers, medical device importers, surgical instrument leads, healthcare equipment distributors, medical tenders, hospital furniture buyers",
+        "robots": "index, follow"
+      },
+      "jsonld": {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebPage",
+            "@id": "https://goexports.com/medical-and-pharma",
+            "url": "https://goexports.com/medical-and-pharma",
+            "name": "Medical Equipment Buyer Leads - GoExports",
+            "description": "Connect with verified medical equipment buyers worldwide. Quality leads for medical devices, diagnostic equipment, and hospital supplies.",
+            "isPartOf": {
+              "@type": "WebSite",
+              "@id": "https://goexports.com/#website"
+            },
+            "about": {
+              "@type": "Thing",
+              "name": "Medical Equipment Trade"
+            }
+          },
+          {
+            "@type": "ProfessionalService",
+            "name": "GoExports Medical Equipment Buyer Leads",
+            "description": "Verified buyer leads for medical devices, diagnostic equipment, and healthcare supplies",
+            "url": "https://goexports.com/medical-and-pharma",
+            "serviceType": "B2B Lead Generation",
+            "provider": {
+              "@type": "Organization",
+              "name": "GoExports",
+              "url": "https://goexports.com"
+            },
+            "areaServed": "Worldwide"
+          },
+          {
+            "@type": "FAQPage",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "What types of medical equipment buyers do you work with?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "We connect you with hospitals, diagnostic centers, medical distributors, healthcare facilities, government health agencies, and medical equipment importers. Our buyers range from small clinics to large hospital networks seeking quality medical devices and equipment."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "slug": "agro-and-farm",
+      "name": "Agro & Farm",
+      "hero": {
+        "h1": "Agricultural Product Buyer Leads - Global Farm Trade",
+        "description": "Connect with verified buyers for agricultural products, farming equipment, seeds, fertilizers, and organic produce. Quality leads from food processors, importers, and agribusinesses worldwide."
+      },
+      "whyChooseUs": {
+        "title": "Why Choose GoExports for Agricultural Buyer Leads?",
+        "description": "We are the leading platform for agricultural trade connections, specializing in farm products, equipment, and agribusiness buyer leads. Our deep understanding of agricultural markets ensures quality connections.",
+        "points": [
+          {
+            "title": "Verified Agricultural Importers",
+            "description": "Every buyer undergoes thorough verification including food safety certifications, import licenses, facility inspections, and agricultural trade permits. We ensure you connect only with legitimate agricultural businesses and food processors."
+          },
+          {
+            "title": "Food Safety & Quality Compliance",
+            "description": "Our team understands agricultural regulations including GAP, organic certification, food safety standards, and phytosanitary requirements. We ensure all leads comply with international agricultural trade regulations."
+          },
+          {
+            "title": "Seasonal Agricultural Intelligence",
+            "description": "We provide seasonal demand forecasting, harvest timing insights, and planting cycle coordination. Our leads are timed according to agricultural seasons to maximize your sales opportunities throughout the year."
+          },
+          {
+            "title": "Specialized Agricultural Categories",
+            "description": "From grains to organic produce, from farming equipment to agricultural inputs - we categorize leads by specific agricultural products. This ensures perfect matching with your farming capabilities and product offerings."
+          },
+          {
+            "title": "Bulk Commodity Trading Leads",
+            "description": "We specialize in high-volume agricultural commodity leads including grains, pulses, oilseeds, spices, and other bulk agricultural products. Our buyers include grain traders and food processing companies."
+          },
+          {
+            "title": "Organic & Specialty Farm Products",
+            "description": "We provide dedicated leads for organic produce, non-GMO crops, specialty grains, and premium agricultural products. Our buyers include organic food companies and specialty retailers seeking quality farm products."
+          },
+          {
+            "title": "Agricultural Market Insights",
+            "description": "Each lead comes with agricultural market intelligence including pricing trends, weather patterns, crop yield forecasts, and demand analysis for your target agricultural markets."
+          },
+          {
+            "title": "Dedicated Agriculture Specialists",
+            "description": "You get a dedicated account manager who understands the agricultural industry. They help you navigate seasonal fluctuations, quality requirements, and build relationships with agricultural buyers."
+          },
+          {
+            "title": "Global Farm Network",
+            "description": "Our buyer network spans across agricultural regions, food processing hubs, and farming communities worldwide. We connect you with buyers in both traditional and emerging agricultural markets."
+          },
+          {
+            "title": "Cold Chain & Storage Solutions",
+            "description": "We coordinate cold chain logistics, storage facilities, and transportation solutions for perishable agricultural products. Our leads include buyers with proper infrastructure for handling fresh produce."
+          }
+        ]
+      },
+      "faqs": [
+        {
+          "question": "What types of agricultural buyers can I connect with?",
+          "answer": "We connect you with food processing companies, agricultural importers, supermarket chains, organic food distributors, grain traders, livestock farms, and agribusinesses. Our buyers include large-scale food manufacturers and specialty organic product buyers."
+        },
+        {
+          "question": "How do you verify agricultural buyers and importers?",
+          "answer": "We verify buyers through food safety certifications, import license validation, facility inspections, financial capacity checks, and trade reference verification. We ensure buyers meet phytosanitary requirements and have proper agricultural import permits."
+        },
+        {
+          "question": "Can I get buyer leads for organic and specialty agricultural products?",
+          "answer": "Yes, we specialize in organic and specialty agricultural leads including organic produce, non-GMO crops, specialty grains, heirloom varieties, and certified organic products. Our buyers include organic food companies and premium retailers seeking quality agricultural products."
+        },
+        {
+          "question": "Do you provide leads for farming equipment and machinery?",
+          "answer": "Absolutely. We provide leads for farming equipment, tractors, irrigation systems, harvesting machinery, and agricultural technology. Our buyers include farms, agricultural contractors, and equipment dealers seeking reliable farming solutions."
+        },
+        {
+          "question": "How quickly can I start receiving agricultural buyer leads?",
+          "answer": "Once your agricultural business is verified (typically 2-4 business days including certification review), you'll start receiving relevant leads immediately. We match leads based on your product types, seasonal availability, and target markets."
+        },
+        {
+          "question": "What information is included in each agricultural buyer lead?",
+          "answer": "Each lead includes buyer company details, product specifications required, quantity needs, quality standards, delivery requirements, certification requirements, and pricing expectations. We also provide seasonal demand patterns and payment terms."
+        },
+        {
+          "question": "Do you support international agricultural trade with compliance requirements?",
+          "answer": "Yes, we provide comprehensive support including phytosanitary certificate guidance, import/export documentation, customs clearance assistance, and food safety compliance. Our team ensures smooth cross-border agricultural trade with proper documentation."
+        },
+        {
+          "question": "Can I get leads for bulk agricultural commodity trading?",
+          "answer": "Yes, we specialize in bulk commodity leads including grains, pulses, oilseeds, spices, and other agricultural commodities. Our buyers include grain traders, food processors, and commodity trading firms seeking large-volume agricultural supplies."
+        },
+        {
+          "question": "How do you handle seasonal agricultural demand fluctuations?",
+          "answer": "We provide seasonal demand forecasting, harvest timing coordination, and storage solution recommendations. Our leads are timed according to agricultural seasons and we help you plan your sales strategy around harvest cycles and planting seasons."
+        },
+        {
+          "question": "What support do you provide for agricultural product quality certification?",
+          "answer": "We facilitate quality certification including organic certification, GAP (Good Agricultural Practices), food safety standards, and sustainability certifications. Our team helps you navigate certification requirements and connect with certified buyers."
+        }
+      ],
+      "metadata": {
+        "title": "Agricultural Buyer Leads - Farm Products & Equipment Importers | GoExports",
+        "description": "Access verified agricultural buyer leads from food processors, importers, and agribusinesses. Quality leads for agricultural products, farming equipment, seeds, and organic produce.",
+        "keywords": "agricultural buyer leads, farm product importers, agricultural equipment buyers, organic food buyers, grain traders, food processing companies, agricultural commodities, farming machinery leads",
+        "robots": "index, follow"
+      },
+      "jsonld": {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebPage",
+            "@id": "https://goexports.com/agro-and-farm",
+            "url": "https://goexports.com/agro-and-farm",
+            "name": "Agricultural Buyer Leads - GoExports",
+            "description": "Connect with verified agricultural buyers worldwide. Quality leads for farm products, equipment, and agricultural commodities.",
+            "isPartOf": {
+              "@type": "WebSite",
+              "@id": "https://goexports.com/#website"
+            },
+            "about": {
+              "@type": "Thing",
+              "name": "Agricultural Trade"
+            }
+          },
+          {
+            "@type": "ProfessionalService",
+            "name": "GoExports Agricultural Buyer Leads",
+            "description": "Verified buyer leads for agricultural products, farming equipment, and farm supplies",
+            "url": "https://goexports.com/agro-and-farm",
+            "serviceType": "B2B Lead Generation",
+            "provider": {
+              "@type": "Organization",
+              "name": "GoExports",
+              "url": "https://goexports.com"
+            },
+            "areaServed": "Worldwide"
+          }
+        ]
+      }
+    }
+  ]
+}

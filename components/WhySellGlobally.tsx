@@ -76,7 +76,7 @@ export default function WhySellGlobally() {
 
                   {/* ── LEFT: Image with CTA overlay ── */}
                   <Link
-                    href={`/industry/${ind.slug}`}
+                    href={`/${ind.slug}`}
                     className="w-[320px] md:w-[360px] shrink-0 relative self-stretch block overflow-hidden group no-underline"
                   >
                     {/* Full image — the hero */}
@@ -117,13 +117,13 @@ export default function WhySellGlobally() {
                             {/* Header */}
                             <div className="flex items-center justify-between mb-3">
                               <Link
-                                href={`/industry/${ind.slug}`}
+                                href={`/${ind.slug}`}
                                 className="text-[15px] font-bold text-gray-800 no-underline hover:text-red-600 transition-colors leading-snug flex-1 mr-2"
                               >
                                 {sub.name}
                               </Link>
                               <Link
-                                href={`/industry/${ind.slug}`}
+                                href={`/${ind.slug}`}
                                 className="w-7 h-7 rounded-full border border-gray-300 flex items-center justify-center shrink-0 no-underline group-hover/cell:border-red-600 group-hover/cell:bg-red-600 transition-all duration-200"
                               >
                                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400 group-hover/cell:text-white transition-colors"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>
@@ -135,7 +135,7 @@ export default function WhySellGlobally() {
                               {sub.items.map((item, k) => (
                                 <Link
                                   key={k}
-                                  href={`/industry/${ind.slug}`}
+                                  href={`/${ind.slug}`}
                                   className="text-[14px] text-gray-600 no-underline hover:text-red-600 transition-colors leading-relaxed"
                                 >
                                   {item}

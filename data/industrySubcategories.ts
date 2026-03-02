@@ -8,7 +8,7 @@ const u = (id: string) => `https://images.unsplash.com/photo-${id}?w=300&h=200&f
 
 export const industrySubcategories: Record<string, SubCategory[]> = {
   /* 1 */ "Drugs & Medicines": [
-    { name: "Medicines Tonics & Drugs", items: ["Allopathic Medicine", "Ointment", "Pharmaceutical Syrups", "Pharmaceutical Tablets"], image: u("1584308666744-24d5c474f2ae") },
+    { name: "Medicines Tonics & Drugs", items: ["Allopathic Medicine", "Ointment", "Pharmaceutical Syrups", "Pharmaceutical Tablets"], image: "/images/industries/drugs-medicines.jpg" },
     { name: "Nutraceuticals & Supplements", items: ["Whey Protein Powder", "Multivitamin Supplements", "Tulsi Drops", "Calcium Tablets"], image: u("1556228578-0d85b1a4d571") },
     { name: "Anti Infective Drugs", items: ["Antibacterial Drugs", "Penicillin Injections", "Antifungal Medicine", "Antiviral Tablets"], image: u("1587854692152-cbe660dbde88") },
     { name: "Cardiovascular Drugs", items: ["Cardiac Drugs", "Blood Pressure Medicine", "Cholesterol Tablets", "Anticoagulants"], image: u("1559757175-5700dde675bc") },
@@ -77,7 +77,7 @@ export const industrySubcategories: Record<string, SubCategory[]> = {
     { name: "Paper Packaging", items: ["Paper Bags", "Gift Wraps", "Tissue Paper", "Kraft Paper"], image: u("1586075010923-2dd4570fb338") },
     { name: "Food Packaging", items: ["Food Containers", "Foil Wraps", "Cling Film", "Vacuum Bags"], image: u("1607166452427-7e4477c2cc4f") },
     { name: "Labels & Tapes", items: ["Barcode Labels", "Packing Tape", "Printed Labels", "Security Seals"], image: u("1607166452427-7e4477c2cc4f") },
-    { name: "Pharma Packaging", items: ["Blister Packs", "Strip Packs", "Ampoule Trays", "Vial Boxes"], image: u("1584308666744-24d5c474f2ae") },
+    { name: "Pharma Packaging", items: ["Blister Packs", "Strip Packs", "Ampoule Trays", "Vial Boxes"], image: "/images/industries/drugs-medicines.jpg" },
   ],
   /* 10 */ "Chemicals & Fertilizers": [
     { name: "Industrial Chemicals", items: ["Caustic Soda", "Sulphuric Acid", "Hydrochloric Acid", "Sodium Chloride"], image: u("1532187863486-abf9dbad1b69") },

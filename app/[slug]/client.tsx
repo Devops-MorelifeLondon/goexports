@@ -64,7 +64,7 @@ export default function IndustryClient({ industry, related, slug }: Props) {
         {/* Background pattern */}
         <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, #111 1px, transparent 0)", backgroundSize: "40px 40px" }} />
 
-        <div className="relative max-w-[1200px] mx-auto px-6 py-20 md:py-28">
+        <div className="relative max-w-300 mx-auto px-6 py-8">
           <FadeIn>
             <nav aria-label="Breadcrumb" className="mb-8">
               <ol className="flex items-center gap-2 text-sm text-[#999]">
@@ -75,17 +75,12 @@ export default function IndustryClient({ industry, related, slug }: Props) {
             </nav>
           </FadeIn>
 
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-10">
+          <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-10">
             <div className="flex-1 max-w-[650px]">
-              <FadeIn delay={0.1}>
-                <div className="inline-flex items-center gap-2 bg-[#F5F5F5] border border-[#e7e7e7] rounded-full px-4 py-1.5 text-sm text-[#565959] mb-6">
-                  <span className="text-lg">{industry.icon}</span>
-                  {industry.title}
-                </div>
-              </FadeIn>
+              
 
               <FadeIn delay={0.15}>
-                <h1 className="text-4xl md:text-5xl lg:text-[56px] font-extrabold leading-[1.1] mb-5 text-[#0F1111]">
+                <h1 className="text-4xl md:text-2xl lg:text-4xl font-extrabold leading-[1.1] mb-5 text-[#0F1111]">
                   {heroData.h1}
                 </h1>
               </FadeIn>

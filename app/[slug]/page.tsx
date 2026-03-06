@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getIndustryBySlug, getAllIndustrySlugs, industries } from "@/data/industries";
 import IndustryClient from "./client";
+import metadata from '@/data/industry-content.json'
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://goexports.com";
 
@@ -14,6 +15,8 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const industry = getIndustryBySlug(slug);
+  const metaIndustry = metadata.industries.find((item: any) => item.slug === slug)?.faqs;
+  
 
   if (!industry) {
     return { title: "Industry Not Found" };
@@ -76,13 +79,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 }
 
 // ─── JSON-LD Structured Data ───
-function generateJsonLd(slug: string) {
+function generateJsonLd(slug: string, metaIndustry: any[] | null) {
   const industry = getIndustryBySlug(slug);
   if (!industry) return null;
 
   const url = `${BASE_URL}/${slug}`;
 
-  // Breadcrumb Schema
   const breadcrumb = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -102,46 +104,29 @@ function generateJsonLd(slug: string) {
     ],
   };
 
-  // Organization Schema
   const organization = {
     "@context": "https://schema.org",
     "@type": "Organization",
     name: "GoExports",
     url: BASE_URL,
     logo: `${BASE_URL}/logo.png`,
-    description: "Global B2B trade platform connecting sellers with verified international buyers across 190+ countries.",
-    contactPoint: {
-      "@type": "ContactPoint",
-      contactType: "sales",
-      availableLanguage: ["English", "Hindi"],
-    },
+    description:
+      "Global B2B trade platform connecting sellers with verified international buyers across 190+ countries.",
   };
 
-  // WebPage Schema
   const webpage = {
     "@context": "https://schema.org",
     "@type": "WebPage",
     name: `${industry.title} - Export & Sell Globally`,
     description: industry.desc,
     url,
-    isPartOf: {
-      "@type": "WebSite",
-      name: "GoExports",
-      url: BASE_URL,
-    },
-    about: {
-      "@type": "Thing",
-      name: industry.title,
-      description: industry.longDesc,
-    },
   };
 
-  // Professional Service Schema for Buyer Leads
   const professionalService = {
     "@context": "https://schema.org",
     "@type": "ProfessionalService",
     name: `${industry.title} Buyer Leads - GoExports`,
-    description: `Verified buyer leads for ${industry.title.toLowerCase()} products and services. Connect with qualified international buyers.`,
+    description: `Verified buyer leads for ${industry.title.toLowerCase()} products.`,
     url,
     serviceType: "B2B Lead Generation",
     provider: {
@@ -150,26 +135,39 @@ function generateJsonLd(slug: string) {
       url: BASE_URL,
     },
     areaServed: "Worldwide",
-    hasOfferCatalog: {
-      "@type": "OfferCatalog",
-      name: `${industry.title} Buyer Lead Services`,
-      description: `Comprehensive buyer lead generation services for ${industry.title.toLowerCase()} industry`,
-    },
   };
 
-  return { breadcrumb, organization, webpage, professionalService };
+  // FAQ SCHEMA
+  const faq =
+    metaIndustry && metaIndustry.length
+      ? {
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: metaIndustry.map((faq: any) => ({
+            "@type": "Question",
+            name: faq.question,
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: faq.answer,
+            },
+          })),
+        }
+      : null;
+
+  return { breadcrumb, organization, webpage, professionalService, faq };
 }
 
 // ─── Page Component (Server) ───
 export default async function IndustryPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const industry = getIndustryBySlug(slug);
+  const metaIndustry = metadata.industries.find((item: any) => item.slug === slug)?.faqs;
 
   if (!industry) {
     notFound();
   }
 
-  const jsonLd = generateJsonLd(slug);
+  const jsonLd = generateJsonLd(slug, metaIndustry || null);
   const relatedIndustries = [1, 2, 3].map(
     (offset) =>
       industries[
@@ -198,6 +196,10 @@ export default async function IndustryPage({ params }: { params: Promise<{ slug:
           <script
             type="application/ld+json"
             dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd.professionalService) }}
+          />
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd.faq) }}
           />
         </>
       )}

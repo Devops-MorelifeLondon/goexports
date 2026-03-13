@@ -3,7 +3,7 @@
 import { FadeIn, StaggerContainer, StaggerItem } from "./MotionWrappers";
 // Adjust these imports to match the actual file paths where you saved the data
 import { industries } from "@/data/industries";
-import { industrySubcategories } from "@/data/industrySubcategories";
+import { industrySubcategories } from "@/data/newcate";
 
 // Function to convert name to slug
 function toSlug(name: string): string {
@@ -109,7 +109,8 @@ export default function Footer() {
                 </h3>
                 <div className="w-10 h-0.5 bg-white/40 rounded mb-4" />
                 <ul className="space-y-2">
-                  {column.items.map((item, j) => (
+                  {column.items.slice(0,4).map((item, j) => (
+                    <>
                     <li key={j}>
                       <a
                         href={`/${column.slug}`}
@@ -119,6 +120,18 @@ export default function Footer() {
                         {item}
                       </a>
                     </li>
+
+                      <li>
+                        <a
+                          href={`/${column.slug}`}
+                          className="text-white/60 text-[13px] no-underline hover:text-white transition-colors duration-200 flex items-center gap-1.5"
+                        >
+                          <span className="text-white/30 text-xs">›</span>
+                          100+ More...
+                        </a>
+                      </li>
+                      </>
+                   
                   ))}
                 </ul>
               </div>

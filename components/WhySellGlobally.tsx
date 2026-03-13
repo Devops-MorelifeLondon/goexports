@@ -5,7 +5,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { FadeIn } from "./MotionWrappers";
 import { industries } from "@/data/industries";
-import { industrySubcategories } from "@/data/industrySubcategories";
+import { industrySubcategories } from "@/data/newcate";
 
 export default function WhySellGlobally() {
   const [search, setSearch] = useState("");
@@ -81,7 +81,7 @@ export default function WhySellGlobally() {
                   >
                     {/* Full image — the hero */}
                     <img
-                      src={subcats[0]?.image}
+                      src={ind.image}
                       alt={ind.name}
                       className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                       loading="lazy"

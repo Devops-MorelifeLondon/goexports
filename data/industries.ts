@@ -8,6 +8,7 @@ export type Industry = {
   longDesc: string;
   benefits: string[];
   stats: { label: string; value: string }[];
+  image: string;
 };
 
 function toSlug(name: string): string {
@@ -20,445 +21,1765 @@ function toSlug(name: string): string {
 
 const rawIndustries: Omit<Industry, "slug">[] = [
   {
-    name: "Drugs & Medicines", icon: "💊", title: "Drugs & Medicines",
-    desc: "Connect with global buyers for pharmaceutical products, OTC medicines, nutraceuticals, and healthcare supplements. Reach hospitals, pharmacies, and end consumers worldwide.",
-    highlights: ["Global pharma market projected to exceed $1.5T", "Rising demand for generic medicines internationally", "Compliance-ready logistics for regulated products"],
-    longDesc: "The pharmaceutical industry is one of the fastest-growing sectors globally. By listing your drugs and medicines on our platform, you gain access to a vast network of hospitals, pharmacies, clinics, and individual buyers seeking quality healthcare products. Whether you specialize in generic medications, branded drugs, nutraceuticals, or Ayurvedic formulations, our marketplace provides the visibility and logistics support you need to scale internationally. We handle compliance documentation, cold-chain logistics for temperature-sensitive products, and provide dedicated support for regulatory requirements across different markets.",
-    benefits: ["Access to verified hospital and pharmacy buyer networks", "Compliance support for international drug regulations", "Temperature-controlled logistics for sensitive products", "Dedicated pharmaceutical category management team", "Bulk order facilitation for institutional buyers"],
-    stats: [{ label: "Global Market Size", value: "$1.5T+" }, { label: "Annual Growth", value: "6.1%" }, { label: "Active Buyers", value: "50,000+" }],
+    "name": "Health Products,Drug and Medicine",
+    "icon": "\ud83d\udc8a",
+    "title": "Health Products, Drug and Medicine",
+    "desc": "Supply pharmaceutical and healthcare products globally.",
+    "highlights": [
+      "Pharma market expanding",
+      "Global healthcare demand",
+      "Strong B2B trade"
+    ],
+    "longDesc": "Businesses in the pharmaceutical and healthcare sector supply medicines, supplements, and healthcare products to hospitals, pharmacies, and consumers worldwide.",
+    "benefits": [
+      "Hospital buyers",
+      "Global demand",
+      "Healthcare distribution"
+    ],
+    "stats": [
+      {
+        "label": "Growth",
+        "value": "6%"
+      },
+      {
+        "label": "Buyers",
+        "value": "50K+"
+      },
+      {
+        "label": "Countries",
+        "value": "190+"
+      }
+    ],
+    "image": "https://impactcare.co.in/wp-content/uploads/2024/10/What-is-Medicine-to-Medicine.webp"
   },
   {
-    name: "Medical & Pharma", icon: "🏥", title: "Medical & Pharma",
-    desc: "Supply medical devices, diagnostic equipment, surgical instruments, and pharma raw materials to healthcare institutions and distributors across the globe.",
-    highlights: ["Medical devices market growing at 5.4% CAGR", "Increasing demand for telemedicine & portable devices", "B2B bulk order opportunities with hospitals"],
-    longDesc: "The medical and pharmaceutical equipment sector is experiencing unprecedented growth driven by healthcare modernization worldwide. Our platform connects manufacturers and suppliers of medical devices, diagnostic equipment, surgical instruments, and pharmaceutical raw materials with healthcare institutions, distributors, and government procurement agencies. From MRI machines to disposable gloves, from API ingredients to finished dosage forms — we provide the marketplace infrastructure to help you reach buyers in over 190 countries.",
-    benefits: ["Direct connections with hospital procurement teams", "Government tender and bulk order notifications", "Quality certification showcase for your products", "Logistics support for oversized medical equipment", "After-sales service coordination across markets"],
-    stats: [{ label: "Global Market Size", value: "$500B+" }, { label: "Annual Growth", value: "5.4%" }, { label: "Active Buyers", value: "35,000+" }],
+    "name": "Hospital and Diagnosis Instrument",
+    "icon": "\ud83c\udfe5",
+    "title": "Hospital and Diagnosis Instrument",
+    "desc": "Sell diagnostic machines and hospital equipment.",
+    "highlights": [
+      "Medical device demand",
+      "Hospital modernization",
+      "Growing diagnostics market"
+    ],
+    "longDesc": "Medical equipment manufacturers provide hospital tools, testing machines, and diagnostic instruments used by healthcare professionals.",
+    "benefits": [
+      "Hospital procurement",
+      "Medical distributors",
+      "Global healthcare buyers"
+    ],
+    "stats": [
+      {
+        "label": "Growth",
+        "value": "5%"
+      },
+      {
+        "label": "Buyers",
+        "value": "30K+"
+      },
+      {
+        "label": "Countries",
+        "value": "160+"
+      }
+    ],
+    "image": "https://images.unsplash.com/photo-1605176173609-a0067079b419?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0MDQ1Njh8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzMzOTMyNDF8&ixlib=rb-4.1.0&q=80&w=1080"
   },
   {
-    name: "Agro & Farm", icon: "🌾", title: "Agro & Farm",
-    desc: "Reach global buyers for agricultural products, farming equipment, seeds, fertilizers, and organic produce. Connect with customers seeking quality farm-to-table products worldwide.",
-    highlights: ["Organic & natural product demand growing 12% yearly", "Direct access to health-conscious consumers globally", "Streamlined logistics for perishable goods"],
-    longDesc: "Agriculture remains the backbone of the global economy, and our platform bridges the gap between farmers, agri-businesses, and international buyers. Whether you're selling organic produce, farming equipment, seeds, fertilizers, or processed agricultural goods, our marketplace gives you access to buyers across continents. We provide specialized logistics for perishable goods, connect you with health-conscious consumers in premium markets, and help you navigate phytosanitary regulations for seamless cross-border trade.",
-    benefits: ["Specialized cold-chain and perishable goods logistics", "Organic certification verification and showcase", "Direct farm-to-buyer connections eliminating middlemen", "Seasonal demand forecasting and inventory planning", "Phytosanitary compliance support for exports"],
-    stats: [{ label: "Global Market Size", value: "$3.5T+" }, { label: "Annual Growth", value: "9.1%" }, { label: "Active Buyers", value: "80,000+" }],
+    "name": "Food & Beverages",
+    "icon": "\ud83c\udf54",
+    "title": "Food & Beverages",
+    "desc": "Trade packaged food and beverages worldwide.",
+    "highlights": [
+      "Massive demand",
+      "Retail distribution",
+      "Export potential"
+    ],
+    "longDesc": "Food and beverage manufacturers supply packaged foods, drinks, and ingredients to retailers and distributors globally.",
+    "benefits": [
+      "Retail buyers",
+      "Bulk orders",
+      "Global distribution"
+    ],
+    "stats": [
+      {
+        "label": "Market",
+        "value": "$7T+"
+      },
+      {
+        "label": "Growth",
+        "value": "5%"
+      },
+      {
+        "label": "Buyers",
+        "value": "200K+"
+      }
+    ],
+    "image": "https://images.unsplash.com/photo-1600332138831-4e0ce6628f3e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0MDQ1Njh8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzMzOTMyNDN8&ixlib=rb-4.1.0&q=80&w=1080"
   },
   {
-    name: "Plant & Machinery", icon: "⚙️", title: "Plant & Machinery",
-    desc: "Sell industrial machinery, manufacturing equipment, CNC machines, and plant automation systems to factories and enterprises looking to upgrade their production capabilities.",
-    highlights: ["Industrial automation market worth $200B+", "High-value B2B transactions with long-term contracts", "Growing demand from emerging manufacturing hubs"],
-    longDesc: "The plant and machinery sector represents some of the highest-value B2B transactions in global trade. Our platform connects machinery manufacturers with factories, production facilities, and industrial enterprises seeking to upgrade or expand their operations. From CNC machines and injection molding equipment to complete production line setups, we facilitate high-value transactions with secure payment processing, installation support coordination, and after-sales service management across international borders.",
-    benefits: ["Secure escrow payments for high-value machinery orders", "Installation and commissioning coordination globally", "Spare parts and maintenance contract facilitation", "Video demonstrations and virtual machine inspections", "Trade financing options for large equipment purchases"],
-    stats: [{ label: "Global Market Size", value: "$200B+" }, { label: "Annual Growth", value: "7.3%" }, { label: "Active Buyers", value: "25,000+" }],
+    "name": "Industrial Plants & Machinery",
+    "icon": "\u2699\ufe0f",
+    "title": "Industrial Plants & Machinery",
+    "desc": "Sell manufacturing and industrial machinery.",
+    "highlights": [
+      "Automation growth",
+      "Factory upgrades",
+      "High-value equipment"
+    ],
+    "longDesc": "Industrial machinery suppliers provide production equipment, automation machines, and manufacturing plants to industries worldwide.",
+    "benefits": [
+      "Large B2B deals",
+      "Factory buyers",
+      "Industrial exports"
+    ],
+    "stats": [
+      {
+        "label": "Market",
+        "value": "$200B+"
+      },
+      {
+        "label": "Growth",
+        "value": "7%"
+      },
+      {
+        "label": "Buyers",
+        "value": "20K+"
+      }
+    ],
+    "image": "https://internationalprocessplants.com/wp-content/uploads/2024/11/Process-Plant-as-Industrial-Plant.jpg"
   },
   {
-    name: "Industrial Supplies", icon: "🏭", title: "Industrial Supplies",
-    desc: "List industrial consumables, safety equipment, MRO supplies, and warehouse essentials for businesses across manufacturing, construction, and logistics sectors.",
-    highlights: ["MRO supplies market valued at $615B globally", "High repeat purchase rates for consumable items", "Amazon Business streamlines bulk procurement"],
-    longDesc: "Industrial supplies form the operational backbone of every manufacturing, construction, and logistics business. Our marketplace serves as a one-stop procurement hub for MRO supplies, safety equipment, industrial consumables, warehouse essentials, and operational materials. With high repeat purchase rates and bulk ordering capabilities, this category offers sellers consistent revenue streams and long-term buyer relationships.",
-    benefits: ["Automated reorder systems for recurring purchases", "Bulk pricing tools for competitive B2B offerings", "Safety compliance certifications showcase", "Quick delivery network for urgent MRO needs", "Integration with enterprise procurement systems"],
-    stats: [{ label: "Global Market Size", value: "$615B+" }, { label: "Annual Growth", value: "5.8%" }, { label: "Active Buyers", value: "60,000+" }],
+    "name": "Industrial Supplies",
+    "icon": "\ud83c\udfed",
+    "title": "Industrial Supplies",
+    "desc": "Provide tools, safety gear, and industrial consumables.",
+    "highlights": [
+      "Strong B2B demand",
+      "Recurring purchases",
+      "Manufacturing growth"
+    ],
+    "longDesc": "Industrial supplies include tools, safety gear, and consumables required for factories and warehouses.",
+    "benefits": [
+      "Recurring orders",
+      "Industrial clients",
+      "Bulk purchasing"
+    ],
+    "stats": [
+      {
+        "label": "Market",
+        "value": "$600B+"
+      },
+      {
+        "label": "Growth",
+        "value": "5%"
+      },
+      {
+        "label": "Buyers",
+        "value": "60K+"
+      }
+    ],
+    "image": "https://images.unsplash.com/photo-1771189465810-c57a3ad68eae?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0MDQ1Njh8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzMzOTMyNDV8&ixlib=rb-4.1.0&q=80&w=1080"
   },
   {
-    name: "Builders Hardware", icon: "🔩", title: "Builders Hardware",
-    desc: "Sell construction hardware, fasteners, locks, hinges, plumbing fittings, and building materials to contractors, builders, and DIY enthusiasts around the world.",
-    highlights: ["Construction industry growing at 7% annually", "Strong demand for quality fittings & fixtures", "B2B opportunities with large construction firms"],
-    longDesc: "The builders hardware segment serves the ever-expanding global construction industry. Our platform connects manufacturers of fasteners, locks, hinges, plumbing fittings, electrical fixtures, and construction materials with contractors, builders, architects, and DIY enthusiasts worldwide. With the construction industry growing at 7% annually, this is one of the most dynamic and opportunity-rich categories for sellers.",
-    benefits: ["Direct access to contractor and builder networks", "Project-based bulk order management tools", "Quality testing and certification showcase", "Construction project timeline-based delivery scheduling", "Technical specification catalogs for professional buyers"],
-    stats: [{ label: "Global Market Size", value: "$120B+" }, { label: "Annual Growth", value: "7.0%" }, { label: "Active Buyers", value: "45,000+" }],
+    "name": "Building & Construction",
+    "icon": "\ud83c\udfd7\ufe0f",
+    "title": "Building & Construction",
+    "desc": "Supply construction materials and equipment.",
+    "highlights": [
+      "Infrastructure boom",
+      "Construction demand",
+      "Project-based supply"
+    ],
+    "longDesc": "Construction companies require materials, tools, and building equipment for residential and commercial projects.",
+    "benefits": [
+      "Contractor buyers",
+      "Project orders",
+      "Large supply chains"
+    ],
+    "stats": [
+      {
+        "label": "Market",
+        "value": "$10T+"
+      },
+      {
+        "label": "Growth",
+        "value": "7%"
+      },
+      {
+        "label": "Buyers",
+        "value": "80K+"
+      }
+    ],
+    "image": "https://images.unsplash.com/photo-1723107638733-16ef49e5d4de?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0MDQ1Njh8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzMzOTMyNDZ8&ixlib=rb-4.1.0&q=80&w=1080"
   },
   {
-    name: "Apparel & Garments", icon: "👔", title: "Apparel & Garments",
-    desc: "Showcase your clothing line, textiles, and fashion accessories to millions of style-conscious shoppers. From traditional wear to modern fashion, expand your apparel brand internationally.",
-    highlights: ["Fashion is a top-selling e-commerce category", "Access to virtual try-on and size recommendation tools", "Seasonal demand across different hemispheres"],
-    longDesc: "The apparel and garments industry is one of the largest consumer categories in global e-commerce. Our platform helps clothing brands, textile manufacturers, and fashion entrepreneurs reach millions of style-conscious buyers worldwide. From casual wear and formal attire to traditional garments and activewear, we provide the tools, visibility, and logistics support to help you build an international fashion brand.",
-    benefits: ["Virtual try-on and size recommendation integration", "Seasonal collection launch tools and campaigns", "Returns management optimized for fashion items", "Brand storefront customization for premium positioning", "Trend analytics to guide your product strategy"],
-    stats: [{ label: "Global Market Size", value: "$1.7T+" }, { label: "Annual Growth", value: "8.5%" }, { label: "Active Buyers", value: "200,000+" }],
+    "name": "Apparel & Garments",
+    "icon": "\ud83d\udc55",
+    "title": "Apparel & Garments",
+    "desc": "Sell clothing and fashion apparel globally.",
+    "highlights": [
+      "Fashion industry growth",
+      "Ecommerce demand",
+      "Seasonal trends"
+    ],
+    "longDesc": "Apparel businesses manufacture and distribute clothing products including fashion garments and uniforms worldwide.",
+    "benefits": [
+      "Fashion retailers",
+      "Global buyers",
+      "Online marketplaces"
+    ],
+    "stats": [
+      {
+        "label": "Market",
+        "value": "$1.7T+"
+      },
+      {
+        "label": "Growth",
+        "value": "8%"
+      },
+      {
+        "label": "Buyers",
+        "value": "200K+"
+      }
+    ],
+    "image": "https://images.unsplash.com/photo-1632773004171-02bc1c4a726a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0MDQ1Njh8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzMzOTMyNDd8&ixlib=rb-4.1.0&q=80&w=1080"
   },
   {
-    name: "Electronic Goods", icon: "📱", title: "Electronic Goods",
-    desc: "Sell consumer electronics, smart devices, audio equipment, and home appliances to tech-savvy buyers globally. Leverage the ever-growing demand for innovative electronic products.",
-    highlights: ["Consumer electronics market exceeds $1T globally", "High demand for smart home & IoT devices", "Fast-moving category with strong repeat buyers"],
-    longDesc: "Consumer electronics is a trillion-dollar global market with insatiable demand for the latest gadgets and devices. Our platform provides the ideal launchpad for electronics brands and distributors to reach tech-savvy consumers and businesses worldwide. From smartphones and laptops to smart home devices and audio equipment, we offer the infrastructure for fast, reliable global sales.",
-    benefits: ["Warranty management and after-sales service tools", "Product comparison and specification display features", "Fast fulfillment network for electronics", "Customer review and rating system for trust building", "Launch support for new product introductions"],
-    stats: [{ label: "Global Market Size", value: "$1T+" }, { label: "Annual Growth", value: "6.8%" }, { label: "Active Buyers", value: "150,000+" }],
+    "name": "Consumer Electronics",
+    "icon": "\ud83d\udcf1",
+    "title": "Consumer Electronics",
+    "desc": "Sell gadgets and electronic devices.",
+    "highlights": [
+      "Tech demand rising",
+      "Smart devices",
+      "High sales volume"
+    ],
+    "longDesc": "Consumer electronics include smartphones, laptops, and smart home products sold to global consumers.",
+    "benefits": [
+      "Tech retailers",
+      "Online sales",
+      "Global distribution"
+    ],
+    "stats": [
+      {
+        "label": "Market",
+        "value": "$1T+"
+      },
+      {
+        "label": "Growth",
+        "value": "6%"
+      },
+      {
+        "label": "Buyers",
+        "value": "150K+"
+      }
+    ],
+    "image": "https://images.unsplash.com/photo-1760901627502-4969155b3330?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0MDQ1Njh8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzMzOTMyNDh8&ixlib=rb-4.1.0&q=80&w=1080"
   },
   {
-    name: "Packaging Material", icon: "📦", title: "Packaging Material",
-    desc: "Supply packaging solutions including corrugated boxes, bubble wrap, shrink film, labels, and eco-friendly packaging to businesses and e-commerce sellers worldwide.",
-    highlights: ["E-commerce boom driving packaging demand up 15%", "Sustainable packaging is the fastest-growing segment", "Bulk B2B orders from warehouses & fulfillment centers"],
-    longDesc: "The packaging industry is experiencing explosive growth driven by the global e-commerce boom. Our platform connects packaging manufacturers with businesses, e-commerce sellers, warehouses, and fulfillment centers seeking quality packaging solutions. From corrugated boxes and bubble wrap to sustainable packaging alternatives and custom-printed materials, we help sellers tap into this high-demand, high-repeat-purchase category.",
-    benefits: ["Bulk order management for B2B packaging needs", "Custom packaging design and printing services", "Sustainable packaging certification showcase", "Automated reorder systems for regular buyers", "Sample order facilitation for new customers"],
-    stats: [{ label: "Global Market Size", value: "$400B+" }, { label: "Annual Growth", value: "5.5%" }, { label: "Active Buyers", value: "70,000+" }],
+    "name": "Packaging Machines & Goods",
+    "icon": "\ud83d\udce6",
+    "title": "Packaging Machines & Goods",
+    "desc": "Provide packaging materials and machines.",
+    "highlights": [
+      "Ecommerce growth",
+      "Packaging demand",
+      "Bulk supply"
+    ],
+    "longDesc": "Packaging suppliers provide boxes, machines, labels, and packaging materials for manufacturing and logistics industries.",
+    "benefits": [
+      "Ecommerce companies",
+      "Manufacturers",
+      "Warehouses"
+    ],
+    "stats": [
+      {
+        "label": "Market",
+        "value": "$400B+"
+      },
+      {
+        "label": "Growth",
+        "value": "5%"
+      },
+      {
+        "label": "Buyers",
+        "value": "70K+"
+      }
+    ],
+    "image": "https://images.unsplash.com/photo-1668890977311-f9d1cbac9cb5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0MDQ1Njh8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzMzOTMyNDl8&ixlib=rb-4.1.0&q=80&w=1080"
   },
   {
-    name: "Chemicals & Fertilizers", icon: "🧪", title: "Chemicals & Fertilizers",
-    desc: "Export industrial chemicals, agrochemicals, fertilizers, and specialty compounds to agricultural and manufacturing sectors across international markets.",
-    highlights: ["Global fertilizer market worth $200B+", "Specialty chemicals growing at 6% CAGR", "Increasing demand for eco-friendly formulations"],
-    longDesc: "The chemicals and fertilizers industry is fundamental to both agriculture and manufacturing worldwide. Our platform enables chemical manufacturers and distributors to reach international buyers across multiple sectors. With proper handling documentation, safety data sheets, and regulatory compliance support, we make it seamless for sellers to trade industrial chemicals, agrochemicals, specialty compounds, and fertilizers globally.",
-    benefits: ["SDS and compliance documentation management", "Hazmat shipping coordination and support", "Quality certification and lab report showcase", "Regulatory compliance guidance for target markets", "Bulk and container-load order facilitation"],
-    stats: [{ label: "Global Market Size", value: "$200B+" }, { label: "Annual Growth", value: "6.0%" }, { label: "Active Buyers", value: "30,000+" }],
+    "name": "Chemicals, Dyes & Solvents",
+    "icon": "\ud83e\uddea",
+    "title": "Chemicals, Dyes & Solvents",
+    "desc": "Supply industrial chemicals and compounds.",
+    "highlights": [
+      "Industrial chemical demand",
+      "Manufacturing use",
+      "Global trade"
+    ],
+    "longDesc": "Chemical manufacturers provide raw materials used across agriculture, pharmaceuticals, textiles, and manufacturing.",
+    "benefits": [
+      "Industrial buyers",
+      "Large volume orders",
+      "Export demand"
+    ],
+    "stats": [
+      {
+        "label": "Market",
+        "value": "$200B+"
+      },
+      {
+        "label": "Growth",
+        "value": "6%"
+      },
+      {
+        "label": "Buyers",
+        "value": "30K+"
+      }
+    ],
+    "image": "https://images.unsplash.com/photo-1657395353209-63ed5212bfd4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0MDQ1Njh8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzMzOTMyNTB8&ixlib=rb-4.1.0&q=80&w=1080"
   },
   {
-    name: "Mechanical Components", icon: "🔧", title: "Mechanical Components",
-    desc: "List bearings, gears, shafts, couplings, and precision-engineered mechanical parts for OEMs, maintenance teams, and manufacturing units worldwide.",
-    highlights: ["Precision parts market expanding rapidly", "High repeat orders from industrial maintenance", "Growing demand from automation & robotics sectors"],
-    longDesc: "Mechanical components are the essential building blocks of every machine and manufacturing process. Our platform connects precision parts manufacturers with OEMs, maintenance teams, and industrial buyers worldwide. From bearings and gears to custom-machined components, we provide the marketplace infrastructure for high-precision B2B transactions with detailed technical specifications and quality assurance.",
-    benefits: ["Technical drawing and CAD file sharing capabilities", "Precision tolerance specification tools", "OEM partnership facilitation", "Quality inspection report integration", "Just-in-time delivery coordination for production lines"],
-    stats: [{ label: "Global Market Size", value: "$350B+" }, { label: "Annual Growth", value: "5.2%" }, { label: "Active Buyers", value: "40,000+" }],
+    "name": "Mechanical Parts & Spares",
+    "icon": "\ud83d\udd27",
+    "title": "Mechanical Parts & Spares",
+    "desc": "Sell mechanical components and spare parts.",
+    "highlights": [
+      "Manufacturing demand",
+      "Machine maintenance",
+      "High repeat orders"
+    ],
+    "longDesc": "Mechanical parts suppliers provide spare components used in machinery and manufacturing industries.",
+    "benefits": [
+      "Industrial maintenance",
+      "OEM partnerships",
+      "B2B supply"
+    ],
+    "stats": [
+      {
+        "label": "Market",
+        "value": "$350B+"
+      },
+      {
+        "label": "Growth",
+        "value": "5%"
+      },
+      {
+        "label": "Buyers",
+        "value": "40K+"
+      }
+    ],
+    "image": "https://images.unsplash.com/photo-1640556795357-71d4078d6228?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0MDQ1Njh8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzMzOTMyNTF8&ixlib=rb-4.1.0&q=80&w=1080"
   },
   {
-    name: "Scientific Instruments", icon: "🔬", title: "Scientific Instruments",
-    desc: "Sell laboratory equipment, measurement tools, testing devices, and research instruments to universities, R&D labs, and quality control departments globally.",
-    highlights: ["Lab equipment market growing at 7.2% CAGR", "Steady demand from academic & research institutions", "High-margin niche with specialized buyers"],
-    longDesc: "Scientific instruments serve the critical needs of research institutions, universities, hospitals, and quality control laboratories worldwide. Our platform provides a specialized marketplace for laboratory equipment manufacturers to reach these high-value, niche buyers. With detailed product specifications, calibration certificates, and institutional procurement support, we help sellers establish long-term relationships with academic and research buyers.",
-    benefits: ["Institutional procurement and tender support", "Calibration certificate and warranty management", "Technical specification comparison tools", "Demo and trial arrangement facilitation", "Academic pricing and volume discount tools"],
-    stats: [{ label: "Global Market Size", value: "$75B+" }, { label: "Annual Growth", value: "7.2%" }, { label: "Active Buyers", value: "20,000+" }],
+    "name": "Lab Instruments & Supplies",
+    "icon": "\ud83d\udd2c",
+    "title": "Lab Instruments & Supplies",
+    "desc": "Provide laboratory testing equipment.",
+    "highlights": [
+      "Research demand",
+      "Scientific testing",
+      "Academic buyers"
+    ],
+    "longDesc": "Laboratory instruments are used in research labs, universities, hospitals, and testing facilities.",
+    "benefits": [
+      "Institutional buyers",
+      "Research labs",
+      "Government tenders"
+    ],
+    "stats": [
+      {
+        "label": "Market",
+        "value": "$75B+"
+      },
+      {
+        "label": "Growth",
+        "value": "7%"
+      },
+      {
+        "label": "Buyers",
+        "value": "20K+"
+      }
+    ],
+    "image": "https://images.unsplash.com/photo-1766096847418-9a2ae64c9621?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0MDQ1Njh8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzMzOTMyNTJ8&ixlib=rb-4.1.0&q=80&w=1080"
   },
   {
-    name: "Furniture", icon: "🪑", title: "Furniture",
-    desc: "Offer home furniture, office desks, modular systems, and custom woodwork to buyers looking for quality furnishings. Tap into the booming online furniture market.",
-    highlights: ["Online furniture sales growing 20%+ annually", "Home office trend driving new product demand", "Customization options command premium pricing"],
-    longDesc: "The online furniture market is booming with consumers increasingly comfortable purchasing furniture digitally. Our platform enables furniture manufacturers and retailers to reach both residential and commercial buyers globally. From home furniture and office systems to custom woodwork and modular designs, we provide 3D visualization tools, augmented reality previews, and white-glove delivery coordination to make selling furniture online seamless.",
-    benefits: ["3D product visualization and AR preview tools", "White-glove delivery coordination services", "Custom order management for bespoke furniture", "Assembly instruction and video integration", "Commercial and bulk order B2B tools"],
-    stats: [{ label: "Global Market Size", value: "$550B+" }, { label: "Annual Growth", value: "5.5%" }, { label: "Active Buyers", value: "90,000+" }],
+    "name": "Furniture & Supplies",
+    "icon": "\ud83e\ude91",
+    "title": "Furniture & Supplies",
+    "desc": "Sell furniture and office furnishings.",
+    "highlights": [
+      "Interior demand",
+      "Office setup growth",
+      "Online furniture sales"
+    ],
+    "longDesc": "Furniture manufacturers supply home and office furniture including tables, chairs, and modular designs.",
+    "benefits": [
+      "Interior designers",
+      "Retail buyers",
+      "Commercial orders"
+    ],
+    "stats": [
+      {
+        "label": "Market",
+        "value": "$550B+"
+      },
+      {
+        "label": "Growth",
+        "value": "5%"
+      },
+      {
+        "label": "Buyers",
+        "value": "90K+"
+      }
+    ],
+    "image": "https://images.unsplash.com/photo-1749372523243-1c0585ac3bef?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0MDQ1Njh8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzMzOTMyNTN8&ixlib=rb-4.1.0&q=80&w=1080"
   },
   {
-    name: "Automobiles & Spares", icon: "🚗", title: "Automobiles & Spares",
-    desc: "List auto parts, accessories, tools, and vehicle maintenance products for car enthusiasts and professional mechanics. Tap into the massive global automotive aftermarket.",
-    highlights: ["Global automotive aftermarket worth $400B+", "High repeat purchase rates for consumable parts", "Fast delivery logistics for urgent replacements"],
-    longDesc: "The automotive aftermarket is one of the most lucrative and fast-moving sectors in global trade. Our platform connects auto parts manufacturers and distributors with mechanics, workshops, fleet operators, and car enthusiasts worldwide. With vehicle compatibility matching, fast delivery logistics for urgent replacements, and a robust review system, we help sellers build trusted brands in the competitive automotive parts market.",
-    benefits: ["Vehicle compatibility matching and fitment data", "Urgent replacement fast-track delivery", "Workshop and fleet operator B2B accounts", "OEM vs aftermarket quality tier differentiation", "Installation guide and video content integration"],
-    stats: [{ label: "Global Market Size", value: "$400B+" }, { label: "Annual Growth", value: "4.8%" }, { label: "Active Buyers", value: "100,000+" }],
+    "name": "Automobile, Parts & Spares",
+    "icon": "\ud83d\ude97",
+    "title": "Automobile, Parts & Spares",
+    "desc": "Trade automotive components and accessories.",
+    "highlights": [
+      "Automotive aftermarket",
+      "High replacement demand",
+      "Global auto trade"
+    ],
+    "longDesc": "Automotive suppliers sell car parts, accessories, and maintenance equipment worldwide.",
+    "benefits": [
+      "Workshops",
+      "Auto dealers",
+      "Fleet operators"
+    ],
+    "stats": [
+      {
+        "label": "Market",
+        "value": "$400B+"
+      },
+      {
+        "label": "Growth",
+        "value": "4%"
+      },
+      {
+        "label": "Buyers",
+        "value": "100K+"
+      }
+    ],
+    "image": "https://images.unsplash.com/photo-1697825965442-cdef42ceb0e9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0MDQ1Njh8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzMzOTMyNTR8&ixlib=rb-4.1.0&q=80&w=1080"
   },
   {
-    name: "Agro, Poultry & Dairy", icon: "🐄", title: "Agro, Poultry & Dairy",
-    desc: "Supply poultry farming equipment, dairy processing machinery, animal feed, and livestock products to agricultural businesses and food producers globally.",
-    highlights: ["Dairy market projected at $700B+ by 2027", "Poultry equipment demand rising in emerging markets", "Cold chain logistics enabling perishable exports"],
-    longDesc: "The agro, poultry, and dairy sector is essential to global food security and represents a massive trade opportunity. Our platform connects equipment manufacturers, feed suppliers, and dairy product producers with agricultural businesses and food processing companies worldwide. With specialized cold-chain logistics, veterinary compliance support, and bulk trading capabilities, we make it easy to scale your agricultural business internationally.",
-    benefits: ["Cold-chain logistics for dairy and perishable products", "Veterinary compliance and health certification support", "Seasonal demand forecasting for agricultural cycles", "Feed and nutrition product subscription models", "Farm equipment financing and leasing options"],
-    stats: [{ label: "Global Market Size", value: "$700B+" }, { label: "Annual Growth", value: "6.5%" }, { label: "Active Buyers", value: "55,000+" }],
+    "name": "Agriculture & Farming",
+    "icon": "\ud83c\udf3e",
+    "title": "Agriculture & Farming",
+    "desc": "Sell agricultural products and equipment.",
+    "highlights": [
+      "Food demand rising",
+      "Farm equipment market",
+      "Global exports"
+    ],
+    "longDesc": "Agricultural suppliers provide seeds, fertilizers, equipment, and farming tools to farmers worldwide.",
+    "benefits": [
+      "Farm buyers",
+      "Agriculture distributors",
+      "Export markets"
+    ],
+    "stats": [
+      {
+        "label": "Market",
+        "value": "$3T+"
+      },
+      {
+        "label": "Growth",
+        "value": "6%"
+      },
+      {
+        "label": "Buyers",
+        "value": "80K+"
+      }
+    ],
+    "image": "https://images.unsplash.com/photo-1700025381480-8297144a18f7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0MDQ1Njh8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzMzOTMyNTV8&ixlib=rb-4.1.0&q=80&w=1080"
   },
   {
-    name: "Home Supplies", icon: "🏠", title: "Home Supplies",
-    desc: "Sell household essentials, cleaning products, storage solutions, and home improvement items to families and homeowners seeking quality everyday products.",
-    highlights: ["Home supplies is a recession-resistant category", "High purchase frequency and customer loyalty", "Growing demand for eco-friendly home products"],
-    longDesc: "Home supplies is a recession-resistant category with consistently high demand. Our platform helps sellers of household essentials, cleaning products, storage solutions, and home improvement items reach millions of families and homeowners globally. With subscription-based reorder options, eco-friendly product badges, and curated collection features, we help you build loyal customer relationships in this high-frequency purchase category.",
-    benefits: ["Subscription and auto-reorder tools for consumables", "Eco-friendly and green product certification badges", "Curated home essentials collection placements", "Seasonal promotion and bundle deal tools", "Customer loyalty and repeat purchase analytics"],
-    stats: [{ label: "Global Market Size", value: "$250B+" }, { label: "Annual Growth", value: "4.5%" }, { label: "Active Buyers", value: "120,000+" }],
+    "name": "Housewares & Supplies",
+    "icon": "\ud83c\udfe0",
+    "title": "Housewares & Supplies",
+    "desc": "Sell household items and daily essentials.",
+    "highlights": [
+      "Daily consumer demand",
+      "Retail sales",
+      "Repeat buyers"
+    ],
+    "longDesc": "Houseware products include cleaning tools, storage items, and everyday home supplies.",
+    "benefits": [
+      "Retail buyers",
+      "Ecommerce demand",
+      "High turnover"
+    ],
+    "stats": [
+      {
+        "label": "Market",
+        "value": "$250B+"
+      },
+      {
+        "label": "Growth",
+        "value": "4%"
+      },
+      {
+        "label": "Buyers",
+        "value": "120K+"
+      }
+    ],
+    "image": "https://images.unsplash.com/photo-1708459407329-d3dbafa91ea8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0MDQ1Njh8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzMzOTMyNTZ8&ixlib=rb-4.1.0&q=80&w=1080"
   },
   {
-    name: "Ores & Metals", icon: "⛏️", title: "Ores & Metals",
-    desc: "Trade raw metals, alloys, ores, steel products, and metal fabrication materials with manufacturers and construction companies across the globe.",
-    highlights: ["Global metals market exceeds $4T annually", "Infrastructure projects driving steel demand", "B2B bulk trading opportunities worldwide"],
-    longDesc: "The ores and metals market is one of the largest commodity trading sectors globally, exceeding $4 trillion annually. Our platform facilitates B2B trading of raw metals, alloys, steel products, and fabrication materials between miners, smelters, and manufacturers worldwide. With commodity pricing tools, quality assurance documentation, and bulk shipping coordination, we streamline international metals trade.",
-    benefits: ["Real-time commodity pricing and market data", "Quality assurance and mill test certificate management", "Bulk shipping and container booking coordination", "Letter of credit and trade financing support", "Metal grade and specification matching tools"],
-    stats: [{ label: "Global Market Size", value: "$4T+" }, { label: "Annual Growth", value: "3.8%" }, { label: "Active Buyers", value: "15,000+" }],
+    "name": "Metals, Alloys & Minerals",
+    "icon": "\u26cf\ufe0f",
+    "title": "Metals, Alloys & Minerals",
+    "desc": "Trade raw metals and mineral materials.",
+    "highlights": [
+      "Infrastructure demand",
+      "Industrial supply",
+      "Commodity trade"
+    ],
+    "longDesc": "Metal suppliers provide raw materials used in construction, manufacturing, and engineering industries.",
+    "benefits": [
+      "Industrial buyers",
+      "Bulk shipments",
+      "Commodity trade"
+    ],
+    "stats": [
+      {
+        "label": "Market",
+        "value": "$4T+"
+      },
+      {
+        "label": "Growth",
+        "value": "3%"
+      },
+      {
+        "label": "Buyers",
+        "value": "15K+"
+      }
+    ],
+    "image": "https://images.unsplash.com/photo-1584715787394-fdfce74d711f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0MDQ1Njh8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzMzOTMyNTd8&ixlib=rb-4.1.0&q=80&w=1080"
   },
   {
-    name: "Hand Tools", icon: "🛠️", title: "Hand Tools",
-    desc: "Sell wrenches, pliers, screwdrivers, power tool accessories, and professional-grade hand tools to tradespeople and DIY enthusiasts worldwide.",
-    highlights: ["Hand tools market growing steadily at 4.5% CAGR", "Strong demand from both professionals & hobbyists", "Tool sets and kits drive higher average order values"],
-    longDesc: "Hand tools remain essential for professionals and DIY enthusiasts alike. Our platform provides a global marketplace for tool manufacturers to reach tradespeople, workshops, hardware stores, and hobbyists. With product durability ratings, professional endorsement features, and tool set bundle capabilities, we help sellers maximize their average order values and build brand loyalty in this steady-growth category.",
-    benefits: ["Professional endorsement and tradesperson reviews", "Tool set and bundle creation tools", "Durability and warranty comparison features", "Workshop and hardware store B2B accounts", "Trade show and product demo video integration"],
-    stats: [{ label: "Global Market Size", value: "$25B+" }, { label: "Annual Growth", value: "4.5%" }, { label: "Active Buyers", value: "65,000+" }],
+    "name": "Hand & Machine Tools",
+    "icon": "\ud83d\udee0\ufe0f",
+    "title": "Hand & Machine Tools",
+    "desc": "Sell professional tools and equipment.",
+    "highlights": [
+      "Workshop demand",
+      "DIY market",
+      "Industrial use"
+    ],
+    "longDesc": "Tool manufacturers provide hand tools and machine tools used in workshops and factories.",
+    "benefits": [
+      "Tradespeople",
+      "Hardware stores",
+      "Industrial buyers"
+    ],
+    "stats": [
+      {
+        "label": "Market",
+        "value": "$25B+"
+      },
+      {
+        "label": "Growth",
+        "value": "4%"
+      },
+      {
+        "label": "Buyers",
+        "value": "65K+"
+      }
+    ],
+    "image": "https://images.unsplash.com/photo-1757032639365-b38363aa77a0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0MDQ1Njh8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzMzOTMyNTh8&ixlib=rb-4.1.0&q=80&w=1080"
   },
   {
-    name: "Handicrafts & Gifts", icon: "🎁", title: "Handicrafts & Gifts",
-    desc: "Showcase handmade crafts, artisan products, traditional artwork, and unique gift items to a global audience that values creativity and cultural heritage.",
-    highlights: ["Handmade marketplace growing at 10%+ annually", "Premium pricing for authentic artisan products", "Gift-friendly category with year-round demand"],
-    longDesc: "The handicrafts and gifts market celebrates creativity, cultural heritage, and artisan craftsmanship. Our platform provides a global stage for artisans and craft businesses to showcase their unique creations to buyers who value authenticity and handmade quality. With storytelling features, artisan profiles, and gift-wrapping options, we help sellers command premium prices for their handcrafted products.",
-    benefits: ["Artisan profile and storytelling feature pages", "Gift wrapping and personalized message options", "Cultural heritage and origin certification", "Seasonal gift guide and collection placements", "Custom order and personalization management tools"],
-    stats: [{ label: "Global Market Size", value: "$750B+" }, { label: "Annual Growth", value: "10.0%" }, { label: "Active Buyers", value: "85,000+" }],
+    "name": "Handicrafts & Decoratives",
+    "icon": "\ud83c\udf81",
+    "title": "Handicrafts & Decoratives",
+    "desc": "Sell handmade decorative products.",
+    "highlights": [
+      "Artisan products",
+      "Gift market",
+      "Cultural crafts"
+    ],
+    "longDesc": "Handicraft sellers showcase handmade decor and artisan products to global buyers.",
+    "benefits": [
+      "Gift buyers",
+      "Cultural exports",
+      "Online craft markets"
+    ],
+    "stats": [
+      {
+        "label": "Market",
+        "value": "$750B+"
+      },
+      {
+        "label": "Growth",
+        "value": "10%"
+      },
+      {
+        "label": "Buyers",
+        "value": "85K+"
+      }
+    ],
+    "image": "https://images.unsplash.com/photo-1708610673113-fb7f71ef282f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0MDQ1Njh8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzMzOTMyNTl8&ixlib=rb-4.1.0&q=80&w=1080"
   },
   {
-    name: "Kitchen Utensils & Cookware", icon: "🍳", title: "Kitchen Utensils & Cookware",
-    desc: "Offer cooking utensils, bakeware, kitchen gadgets, and premium cookware sets to home chefs and culinary professionals around the world.",
-    highlights: ["Cookware market valued at $30B+ globally", "Home cooking trend boosting kitchenware sales", "High margins on branded & specialty cookware"],
-    longDesc: "The kitchen utensils and cookware market is thriving as home cooking continues its global renaissance. Our platform connects cookware manufacturers with home chefs, professional kitchens, and culinary enthusiasts worldwide. From cast iron skillets to professional-grade knife sets, from innovative gadgets to premium bakeware, we provide the marketplace to help your kitchenware brand reach every kitchen in the world.",
-    benefits: ["Recipe integration and cooking content features", "Chef endorsement and professional review system", "Cookware set and kitchen bundle tools", "Food-safe certification and material showcase", "Gift registry and wedding list integration"],
-    stats: [{ label: "Global Market Size", value: "$30B+" }, { label: "Annual Growth", value: "6.2%" }, { label: "Active Buyers", value: "75,000+" }],
+    "name": "Kitchen Utensils & Appliances",
+    "icon": "\ud83c\udf73",
+    "title": "Kitchen Utensils & Appliances",
+    "desc": "Sell kitchenware and cooking appliances.",
+    "highlights": [
+      "Home cooking trend",
+      "Kitchen gadgets",
+      "Retail demand"
+    ],
+    "longDesc": "Kitchen equipment suppliers provide utensils, cookware, and appliances used in homes and restaurants.",
+    "benefits": [
+      "Home buyers",
+      "Restaurants",
+      "Retail stores"
+    ],
+    "stats": [
+      {
+        "label": "Market",
+        "value": "$30B+"
+      },
+      {
+        "label": "Growth",
+        "value": "6%"
+      },
+      {
+        "label": "Buyers",
+        "value": "75K+"
+      }
+    ],
+    "image": "https://images.unsplash.com/photo-1722606489938-c239ae15ec20?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0MDQ1Njh8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzMzOTMyNTl8&ixlib=rb-4.1.0&q=80&w=1080"
   },
   {
-    name: "Textiles & Yarn", icon: "🧵", title: "Textiles & Yarn",
-    desc: "Supply fabrics, yarns, threads, and textile raw materials to garment manufacturers, fashion designers, and craft enthusiasts globally.",
-    highlights: ["Global textile market worth $1T+", "Sustainable textiles demand surging 15% yearly", "B2B opportunities with garment manufacturers"],
-    longDesc: "The textiles and yarn industry is the foundation of the global fashion and home furnishing sectors. Our platform connects textile mills, yarn manufacturers, and fabric suppliers with garment producers, fashion designers, and craft enthusiasts worldwide. With swatch and sample order capabilities, sustainability certifications, and bulk ordering tools, we facilitate seamless B2B textile trade at scale.",
-    benefits: ["Fabric swatch and sample order facilitation", "Sustainability and organic certification showcase", "Color matching and Pantone reference tools", "Minimum order quantity flexibility options", "Textile testing and quality report integration"],
-    stats: [{ label: "Global Market Size", value: "$1T+" }, { label: "Annual Growth", value: "4.3%" }, { label: "Active Buyers", value: "50,000+" }],
+    "name": "Textiles, Yarn & Fabrics",
+    "icon": "\ud83e\uddf5",
+    "title": "Textiles, Yarn & Fabrics",
+    "desc": "Supply fabric materials and yarn.",
+    "highlights": [
+      "Garment production",
+      "Textile exports",
+      "Manufacturing demand"
+    ],
+    "longDesc": "Textile manufacturers supply raw fabrics and yarn used by garment and fashion industries.",
+    "benefits": [
+      "Garment factories",
+      "Fashion brands",
+      "Export demand"
+    ],
+    "stats": [
+      {
+        "label": "Market",
+        "value": "$1T+"
+      },
+      {
+        "label": "Growth",
+        "value": "4%"
+      },
+      {
+        "label": "Buyers",
+        "value": "50K+"
+      }
+    ],
+    "image": "https://images.unsplash.com/photo-1665570011208-6367795d3dde?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0MDQ1Njh8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzMzOTMyNjF8&ixlib=rb-4.1.0&q=80&w=1080"
   },
   {
-    name: "Printing & Publishing", icon: "🖨️", title: "Printing & Publishing",
-    desc: "Sell printing equipment, inks, publishing materials, and printing consumables to publishers, print shops, and creative agencies worldwide.",
-    highlights: ["Digital printing segment growing at 7% CAGR", "Packaging printing driving new demand", "Specialty inks & materials command premium prices"],
-    longDesc: "The printing and publishing industry is evolving with digital technologies while maintaining strong demand for physical print. Our platform serves printers, publishers, and creative professionals by connecting them with equipment manufacturers, ink suppliers, and consumable providers worldwide.",
-    benefits: ["Print sample and quality proof sharing tools", "Equipment demo and trial arrangement services", "Consumable subscription and auto-reorder features", "Print technology comparison and buying guides", "Trade-in and upgrade programs for equipment"],
-    stats: [{ label: "Global Market Size", value: "$480B+" }, { label: "Annual Growth", value: "2.5%" }, { label: "Active Buyers", value: "28,000+" }],
+    "name": "Books & Stationery",
+    "icon": "\ud83d\udcda",
+    "title": "Books & Stationery",
+    "desc": "Sell books and office stationery.",
+    "highlights": [
+      "Education demand",
+      "School supplies",
+      "Office use"
+    ],
+    "longDesc": "Stationery products include notebooks, office supplies, and books used in education and business.",
+    "benefits": [
+      "Schools",
+      "Offices",
+      "Retail stores"
+    ],
+    "stats": [
+      {
+        "label": "Market",
+        "value": "$350B+"
+      },
+      {
+        "label": "Growth",
+        "value": "2%"
+      },
+      {
+        "label": "Buyers",
+        "value": "40K+"
+      }
+    ],
+    "image": "https://images.unsplash.com/photo-1590059192860-8a218d1d1934?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0MDQ1Njh8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzMzOTMyNjJ8&ixlib=rb-4.1.0&q=80&w=1080"
   },
   {
-    name: "Cosmetics & Toiletries", icon: "💄", title: "Cosmetics & Toiletries",
-    desc: "Bring your beauty products, skincare, personal care items, and grooming essentials to millions of beauty-conscious consumers across the globe.",
-    highlights: ["Beauty & personal care market exceeds $500B", "Clean beauty segment growing at 12% annually", "High customer loyalty and repeat purchase rates"],
-    longDesc: "The cosmetics and toiletries market is driven by beauty-conscious consumers seeking quality products worldwide. Our platform provides beauty brands with the tools and reach to build international customer bases. From skincare and makeup to personal hygiene and grooming, we offer ingredient transparency features, beauty advisor tools, and subscription capabilities to help brands thrive.",
-    benefits: ["Ingredient transparency and clean beauty badges", "Virtual try-on and shade matching tools", "Subscription box and auto-replenishment features", "Beauty influencer partnership facilitation", "Dermatologist and expert endorsement features"],
-    stats: [{ label: "Global Market Size", value: "$500B+" }, { label: "Annual Growth", value: "7.5%" }, { label: "Active Buyers", value: "180,000+" }],
+    "name": "Cosmetics & Personal Care",
+    "icon": "\ud83d\udc84",
+    "title": "Cosmetics & Personal Care",
+    "desc": "Sell beauty and skincare products.",
+    "highlights": [
+      "Beauty market growth",
+      "High repeat purchases",
+      "Global demand"
+    ],
+    "longDesc": "Cosmetic brands supply skincare, makeup, and grooming products to beauty-conscious consumers worldwide.",
+    "benefits": [
+      "Beauty retailers",
+      "Online buyers",
+      "Subscription sales"
+    ],
+    "stats": [
+      {
+        "label": "Market",
+        "value": "$500B+"
+      },
+      {
+        "label": "Growth",
+        "value": "7%"
+      },
+      {
+        "label": "Buyers",
+        "value": "180K+"
+      }
+    ],
+    "image": "https://images.unsplash.com/photo-1598347612533-3f6d5629981d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0MDQ1Njh8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzMzOTMyNjN8&ixlib=rb-4.1.0&q=80&w=1080"
   },
   {
-    name: "Home Furnishings", icon: "🛋️", title: "Home Furnishings",
-    desc: "Sell curtains, carpets, bedding, cushions, and decorative textiles to homeowners and interior designers looking for quality home décor products.",
-    highlights: ["Home décor market valued at $130B+ globally", "Growing demand for sustainable & organic textiles", "Seasonal trends create year-round selling peaks"],
-    longDesc: "Home furnishings bring warmth, style, and personality to living spaces worldwide. Our platform connects textile manufacturers and home décor brands with homeowners, interior designers, and hospitality businesses seeking quality furnishing products.",
-    benefits: ["Room visualization and AR placement tools", "Interior designer trade account program", "Fabric swatch and sample ordering", "Custom size and made-to-measure options", "Hospitality and commercial bulk ordering"],
-    stats: [{ label: "Global Market Size", value: "$130B+" }, { label: "Annual Growth", value: "5.0%" }, { label: "Active Buyers", value: "95,000+" }],
+    "name": "Home Textile & Furnishing",
+    "icon": "\ud83d\udecb\ufe0f",
+    "title": "Home Textile & Furnishing",
+    "desc": "Sell home decor and furnishing products.",
+    "highlights": [
+      "Home decor demand",
+      "Interior design market",
+      "Textile exports"
+    ],
+    "longDesc": "Home furnishing products include curtains, carpets, bedding, and decorative textiles.",
+    "benefits": [
+      "Interior designers",
+      "Retail buyers",
+      "Hotel industry"
+    ],
+    "stats": [
+      {
+        "label": "Market",
+        "value": "$130B+"
+      },
+      {
+        "label": "Growth",
+        "value": "5%"
+      },
+      {
+        "label": "Buyers",
+        "value": "95K+"
+      }
+    ],
+    "image": "https://images.unsplash.com/photo-1693459575393-7b3be378bfb0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0MDQ1Njh8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzMzOTMyNjR8&ixlib=rb-4.1.0&q=80&w=1080"
   },
   {
-    name: "Fabrication", icon: "🏗️", title: "Fabrication",
-    desc: "Offer metal fabrication services, custom-built structures, welding supplies, and fabrication machinery to construction and manufacturing industries worldwide.",
-    highlights: ["Metal fabrication market growing at 4.2% CAGR", "Custom fabrication commands premium pricing", "Infrastructure boom driving global demand"],
-    longDesc: "The fabrication industry serves as a critical link between raw materials and finished structures. Our platform connects fabrication shops, welding service providers, and machinery manufacturers with construction companies, industrial plants, and engineering firms worldwide.",
-    benefits: ["Custom project quotation and RFQ tools", "Welding certification and quality showcase", "Project portfolio and case study features", "CAD/CAM file sharing for custom orders", "Progress tracking for fabrication projects"],
-    stats: [{ label: "Global Market Size", value: "$20B+" }, { label: "Annual Growth", value: "4.2%" }, { label: "Active Buyers", value: "18,000+" }],
+    "name": "Engineering Services",
+    "icon": "\ud83d\udcd0",
+    "title": "Engineering Services",
+    "desc": "Provide engineering and technical services.",
+    "highlights": [
+      "Infrastructure projects",
+      "Industrial consulting",
+      "Technical expertise"
+    ],
+    "longDesc": "Engineering service providers assist companies with design, manufacturing, and industrial solutions.",
+    "benefits": [
+      "Industrial clients",
+      "Project contracts",
+      "Global consulting"
+    ],
+    "stats": [
+      {
+        "label": "Market",
+        "value": "$300B+"
+      },
+      {
+        "label": "Growth",
+        "value": "6%"
+      },
+      {
+        "label": "Buyers",
+        "value": "25K+"
+      }
+    ],
+    "image": "https://images.unsplash.com/photo-1763992525759-c52b75234078?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0MDQ1Njh8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzMzOTMyNjV8&ixlib=rb-4.1.0&q=80&w=1080"
   },
   {
-    name: "Gems & Jewellery", icon: "💎", title: "Gems & Jewellery",
-    desc: "Showcase precious stones, fine jewellery, fashion accessories, and gemstone collections to discerning buyers and jewellery retailers across the world.",
-    highlights: ["Global jewellery market worth $350B+", "Online jewellery sales growing at 15% annually", "High margins and premium brand positioning"],
-    longDesc: "The gems and jewellery market combines luxury, craftsmanship, and emotional value. Our platform provides a trusted marketplace for jewellery brands and gemstone dealers to reach discerning buyers worldwide with authentication, certification, and secure transaction features.",
-    benefits: ["Gemological certification and grading integration", "High-resolution zoom and 360° product views", "Secure escrow payments for high-value items", "Insurance and shipping protection features", "Custom design and bespoke order management"],
-    stats: [{ label: "Global Market Size", value: "$350B+" }, { label: "Annual Growth", value: "5.8%" }, { label: "Active Buyers", value: "45,000+" }],
+    "name": "Gems, Jewelry & Astrology",
+    "icon": "\ud83d\udc8e",
+    "title": "Gems, Jewelry & Astrology",
+    "desc": "Sell jewelry and gemstones.",
+    "highlights": [
+      "Luxury market",
+      "High value items",
+      "Global demand"
+    ],
+    "longDesc": "Jewelry sellers trade precious stones, gold jewelry, and astrology gemstones worldwide.",
+    "benefits": [
+      "Luxury buyers",
+      "Retail stores",
+      "Export markets"
+    ],
+    "stats": [
+      {
+        "label": "Market",
+        "value": "$350B+"
+      },
+      {
+        "label": "Growth",
+        "value": "5%"
+      },
+      {
+        "label": "Buyers",
+        "value": "45K+"
+      }
+    ],
+    "image": "https://images.unsplash.com/photo-1711352637258-e75a2a6d4f52?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0MDQ1Njh8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzMzOTMyNjZ8&ixlib=rb-4.1.0&q=80&w=1080"
   },
   {
-    name: "Computer Hardware", icon: "💻", title: "Computer Hardware",
-    desc: "Sell computer components, peripherals, networking equipment, and IT hardware to businesses, gamers, and tech enthusiasts worldwide.",
-    highlights: ["PC hardware market driven by gaming & AI demand", "High repeat purchases for peripherals & upgrades", "B2B bulk orders from IT departments"],
-    longDesc: "The computer hardware market is fueled by gaming, AI development, and enterprise IT modernization. Our platform connects hardware manufacturers and distributors with businesses, gamers, and tech enthusiasts seeking the latest components and peripherals.",
-    benefits: ["PC builder compatibility checking tools", "IT department bulk procurement accounts", "Product benchmark and performance data integration", "Pre-order and launch day promotion tools", "Extended warranty and support plan options"],
-    stats: [{ label: "Global Market Size", value: "$400B+" }, { label: "Annual Growth", value: "6.5%" }, { label: "Active Buyers", value: "110,000+" }],
+    "name": "Computer & IT Solutions",
+    "icon": "\ud83d\udcbb",
+    "title": "Computer & IT Solutions",
+    "desc": "Provide computer hardware and IT products.",
+    "highlights": [
+      "Digital demand",
+      "IT infrastructure",
+      "Tech growth"
+    ],
+    "longDesc": "IT suppliers sell computer hardware, networking equipment, and software solutions.",
+    "benefits": [
+      "Business clients",
+      "IT departments",
+      "Online sales"
+    ],
+    "stats": [
+      {
+        "label": "Market",
+        "value": "$400B+"
+      },
+      {
+        "label": "Growth",
+        "value": "6%"
+      },
+      {
+        "label": "Buyers",
+        "value": "110K+"
+      }
+    ],
+    "image": "https://images.unsplash.com/photo-1705907014767-1c1a4d8ce6be?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0MDQ1Njh8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzMzOTMyNjd8&ixlib=rb-4.1.0&q=80&w=1080"
   },
   {
-    name: "Fashion Accessories", icon: "🕶️", title: "Fashion Accessories",
-    desc: "Offer sunglasses, watches, scarves, hats, and trendy accessories to fashion-forward consumers looking for the latest styles and statement pieces.",
-    highlights: ["Accessories market growing steadily at 8% CAGR", "High margins on branded fashion items", "Gift-friendly category with seasonal demand spikes"],
-    longDesc: "Fashion accessories complement every wardrobe and represent a high-margin opportunity for sellers. Our platform helps accessory brands reach fashion-forward consumers globally with trend-aligned product placement, influencer collaboration features, and gift-ready options.",
-    benefits: ["Trend analysis and seasonal fashion forecasting", "Influencer collaboration and gifting programs", "Gift wrapping and personalization options", "Style guide and outfit pairing features", "Flash sale and limited edition launch tools"],
-    stats: [{ label: "Global Market Size", value: "$450B+" }, { label: "Annual Growth", value: "8.0%" }, { label: "Active Buyers", value: "130,000+" }],
+    "name": "Fashion Accessories & Gear",
+    "icon": "\ud83d\udd76\ufe0f",
+    "title": "Fashion Accessories & Gear",
+    "desc": "Sell fashion accessories and lifestyle products.",
+    "highlights": [
+      "Style trends",
+      "Accessory demand",
+      "Retail buyers"
+    ],
+    "longDesc": "Fashion accessories include watches, sunglasses, hats, and fashion add-ons.",
+    "benefits": [
+      "Retail buyers",
+      "Online shoppers",
+      "Fashion stores"
+    ],
+    "stats": [
+      {
+        "label": "Market",
+        "value": "$450B+"
+      },
+      {
+        "label": "Growth",
+        "value": "8%"
+      },
+      {
+        "label": "Buyers",
+        "value": "130K+"
+      }
+    ],
+    "image": "https://images.unsplash.com/photo-1562263689-d8be49c4d218?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0MDQ1Njh8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzMzOTMyNjh8&ixlib=rb-4.1.0&q=80&w=1080"
   },
   {
-    name: "Ayurvedic & Herbal Products", icon: "🌿", title: "Ayurvedic & Herbal Products",
-    desc: "Bring traditional Ayurvedic medicines, herbal supplements, natural remedies, and wellness products to health-conscious consumers globally.",
-    highlights: ["Herbal supplements market growing at 8.5% CAGR", "Rising global interest in traditional medicine", "Premium pricing for certified organic products"],
-    longDesc: "Ayurvedic and herbal products are experiencing a global renaissance as consumers increasingly seek natural wellness solutions. Our platform helps traditional medicine brands and herbal product manufacturers reach health-conscious buyers worldwide with authenticity certifications and ingredient transparency.",
-    benefits: ["Ayurvedic and organic certification showcase", "Ingredient sourcing transparency features", "Wellness expert endorsement and review system", "Subscription and wellness routine bundles", "Educational content and usage guide integration"],
-    stats: [{ label: "Global Market Size", value: "$80B+" }, { label: "Annual Growth", value: "8.5%" }, { label: "Active Buyers", value: "60,000+" }],
+    "name": "Herbal & Ayurvedic Product",
+    "icon": "\ud83c\udf3f",
+    "title": "Herbal & Ayurvedic Product",
+    "desc": "Sell herbal and natural wellness products.",
+    "highlights": [
+      "Natural medicine demand",
+      "Ayurveda popularity",
+      "Wellness market"
+    ],
+    "longDesc": "Herbal and Ayurvedic products include natural remedies, supplements, and wellness solutions.",
+    "benefits": [
+      "Health-conscious buyers",
+      "Global wellness market",
+      "Organic demand"
+    ],
+    "stats": [
+      {
+        "label": "Market",
+        "value": "$80B+"
+      },
+      {
+        "label": "Growth",
+        "value": "8%"
+      },
+      {
+        "label": "Buyers",
+        "value": "60K+"
+      }
+    ],
+    "image": "https://images.unsplash.com/photo-1658315216624-b48c9692720c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0MDQ1Njh8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzMzOTMyNjl8&ixlib=rb-4.1.0&q=80&w=1080"
   },
   {
-    name: "Security Devices", icon: "🔒", title: "Security Devices",
-    desc: "Sell CCTV cameras, access control systems, alarms, smart locks, and surveillance equipment to homes and businesses prioritizing safety and security.",
-    highlights: ["Security market projected at $170B by 2027", "Smart home security is the fastest-growing segment", "Recurring revenue from monitoring subscriptions"],
-    longDesc: "Security devices protect homes, businesses, and public spaces worldwide. Our platform connects security equipment manufacturers with residential buyers, commercial properties, and security integrators seeking reliable surveillance and access control solutions.",
-    benefits: ["Smart home ecosystem compatibility listings", "Professional installer network partnerships", "Monitoring subscription plan integration", "Live demo and video walkthrough features", "Commercial security project quotation tools"],
-    stats: [{ label: "Global Market Size", value: "$170B+" }, { label: "Annual Growth", value: "9.4%" }, { label: "Active Buyers", value: "55,000+" }],
+    "name": "Security, Safety System & Service",
+    "icon": "\ud83d\udd12",
+    "title": "Security, Safety System & Service",
+    "desc": "Provide security devices and safety systems.",
+    "highlights": [
+      "Smart security growth",
+      "CCTV demand",
+      "Commercial safety"
+    ],
+    "longDesc": "Security providers sell surveillance systems, alarms, and safety equipment.",
+    "benefits": [
+      "Home security buyers",
+      "Commercial clients",
+      "Government projects"
+    ],
+    "stats": [
+      {
+        "label": "Market",
+        "value": "$170B+"
+      },
+      {
+        "label": "Growth",
+        "value": "9%"
+      },
+      {
+        "label": "Buyers",
+        "value": "55K+"
+      }
+    ],
+    "image": "https://images.unsplash.com/photo-1770827730731-98b013d432c9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0MDQ1Njh8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzMzOTMyNzB8&ixlib=rb-4.1.0&q=80&w=1080"
   },
   {
-    name: "Sports Goods", icon: "⚽", title: "Sports Goods",
-    desc: "List sports equipment, fitness gear, outdoor recreation products, and athletic accessories for sports enthusiasts and professional athletes worldwide.",
-    highlights: ["Sports equipment market worth $80B+ globally", "Fitness & wellness trend driving record sales", "Seasonal peaks around major sporting events"],
-    longDesc: "The sports goods market thrives on passion, fitness trends, and global sporting events. Our platform connects sports equipment manufacturers with athletes, fitness enthusiasts, gyms, and sports retailers worldwide.",
-    benefits: ["Athlete endorsement and review features", "Sports season and event-driven promotions", "Gym and fitness center B2B accounts", "Size and fit guide integration", "Equipment maintenance and care content"],
-    stats: [{ label: "Global Market Size", value: "$80B+" }, { label: "Annual Growth", value: "6.0%" }, { label: "Active Buyers", value: "95,000+" }],
+    "name": "Sports Goods, Toys & Games",
+    "icon": "\u26bd",
+    "title": "Sports Goods, Toys & Games",
+    "desc": "Sell sports equipment and toys.",
+    "highlights": [
+      "Fitness trends",
+      "Toy market demand",
+      "Sports retail"
+    ],
+    "longDesc": "Sports goods suppliers provide fitness equipment, sports gear, and toys.",
+    "benefits": [
+      "Sports stores",
+      "Gyms",
+      "Parents and kids"
+    ],
+    "stats": [
+      {
+        "label": "Market",
+        "value": "$80B+"
+      },
+      {
+        "label": "Growth",
+        "value": "6%"
+      },
+      {
+        "label": "Buyers",
+        "value": "95K+"
+      }
+    ],
+    "image": "https://images.unsplash.com/photo-1676315636766-7b129985c537?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0MDQ1Njh8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzMzOTMyNzF8&ixlib=rb-4.1.0&q=80&w=1080"
   },
   {
-    name: "Telecom Products", icon: "📡", title: "Telecom Products",
-    desc: "Supply telecom infrastructure components, networking cables, antennas, and communication devices to telecom operators and IT companies globally.",
-    highlights: ["5G rollout creating massive equipment demand", "Telecom infrastructure market worth $500B+", "B2B bulk orders from network operators"],
-    longDesc: "The telecom products sector is experiencing transformative growth driven by 5G deployment, fiber expansion, and IoT connectivity demands. Our platform connects telecom equipment manufacturers with network operators, ISPs, and IT companies worldwide.",
-    benefits: ["Telecom operator procurement portal access", "Technical specification and compliance documentation", "5G and next-gen compatibility certifications", "Network planning tool integration", "Bulk and project-based ordering systems"],
-    stats: [{ label: "Global Market Size", value: "$500B+" }, { label: "Annual Growth", value: "7.8%" }, { label: "Active Buyers", value: "12,000+" }],
+    "name": "Telecom Equipment & Goods",
+    "icon": "\ud83d\udce1",
+    "title": "Telecom Equipment & Goods",
+    "desc": "Supply telecom hardware and network equipment.",
+    "highlights": [
+      "5G expansion",
+      "Network upgrades",
+      "Telecom demand"
+    ],
+    "longDesc": "Telecom suppliers provide cables, antennas, routers, and communication equipment.",
+    "benefits": [
+      "Telecom companies",
+      "IT infrastructure",
+      "Global network operators"
+    ],
+    "stats": [
+      {
+        "label": "Market",
+        "value": "$500B+"
+      },
+      {
+        "label": "Growth",
+        "value": "7%"
+      },
+      {
+        "label": "Buyers",
+        "value": "12K+"
+      }
+    ],
+    "image": "https://images.unsplash.com/photo-1622977177914-50685fa0c317?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0MDQ1Njh8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzMzOTMyNzJ8&ixlib=rb-4.1.0&q=80&w=1080"
   },
   {
-    name: "Paper & Paper Products", icon: "📄", title: "Paper & Paper Products",
-    desc: "Sell office paper, stationery, specialty papers, packaging boards, and paper-based products to businesses, schools, and creative professionals.",
-    highlights: ["Specialty paper segment growing despite digital shift", "Sustainable paper products in high demand", "Steady B2B orders from offices & institutions"],
-    longDesc: "Despite the digital shift, the paper industry continues to thrive in specialty segments including packaging, stationery, and creative applications. Our platform connects paper manufacturers with businesses, educational institutions, and creative professionals seeking quality paper products.",
-    benefits: ["Paper sample and swatch ordering system", "FSC and sustainability certification showcase", "Custom printing and branding on paper products", "Institutional and school bulk order accounts", "Subscription delivery for office consumables"],
-    stats: [{ label: "Global Market Size", value: "$350B+" }, { label: "Annual Growth", value: "1.5%" }, { label: "Active Buyers", value: "40,000+" }],
+    "name": "Paper & Paper Products",
+    "icon": "\ud83d\udcc4",
+    "title": "Paper & Paper Products",
+    "desc": "Sell paper materials and stationery products.",
+    "highlights": [
+      "Packaging demand",
+      "Office supplies",
+      "Retail sales"
+    ],
+    "longDesc": "Paper suppliers provide printing paper, packaging boards, and stationery products.",
+    "benefits": [
+      "Offices",
+      "Schools",
+      "Printing businesses"
+    ],
+    "stats": [
+      {
+        "label": "Market",
+        "value": "$350B+"
+      },
+      {
+        "label": "Growth",
+        "value": "2%"
+      },
+      {
+        "label": "Buyers",
+        "value": "40K+"
+      }
+    ],
+    "image": "https://images.unsplash.com/photo-1770975765337-71da1d0f76d7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0MDQ1Njh8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzMzOTMyNzN8&ixlib=rb-4.1.0&q=80&w=1080"
   },
   {
-    name: "Bags, Belts & Wallets", icon: "👜", title: "Bags, Belts & Wallets",
-    desc: "Bring your leather goods, handbags, travel accessories, and fashion essentials to a worldwide audience. From handcrafted artisan pieces to everyday carry items.",
-    highlights: ["Accessories market growing steadily at 8% CAGR", "High margins on branded leather goods", "Gift-friendly category with year-round demand"],
-    longDesc: "Bags, belts, and wallets are essential fashion accessories with consistent global demand. Our platform helps leather goods manufacturers and accessory brands reach discerning buyers worldwide with premium product presentation and brand storytelling features.",
-    benefits: ["Material authenticity and leather grade certification", "Monogramming and personalization services", "Gift packaging and occasion-based promotions", "Travel collection and seasonal line launches", "Artisan craftsmanship storytelling features"],
-    stats: [{ label: "Global Market Size", value: "$85B+" }, { label: "Annual Growth", value: "8.0%" }, { label: "Active Buyers", value: "70,000+" }],
+    "name": "Bags, Belts & Wallets",
+    "icon": "\ud83d\udc5c",
+    "title": "Bags, Belts & Wallets",
+    "desc": "Sell leather accessories and travel goods.",
+    "highlights": [
+      "Fashion demand",
+      "Gift products",
+      "Retail sales"
+    ],
+    "longDesc": "Leather goods manufacturers produce bags, belts, wallets, and accessories.",
+    "benefits": [
+      "Retail stores",
+      "Fashion buyers",
+      "Gift market"
+    ],
+    "stats": [
+      {
+        "label": "Market",
+        "value": "$85B+"
+      },
+      {
+        "label": "Growth",
+        "value": "8%"
+      },
+      {
+        "label": "Buyers",
+        "value": "70K+"
+      }
+    ],
+    "image": "https://images.unsplash.com/photo-1633107939557-d4cb1703cb19?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0MDQ1Njh8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzMzOTMyNzV8&ixlib=rb-4.1.0&q=80&w=1080"
   },
   {
-    name: "Stones & Marble", icon: "🪨", title: "Stones & Marble",
-    desc: "Trade natural stones, marble slabs, granite, sandstone, and decorative stone products with builders, architects, and interior designers globally.",
-    highlights: ["Natural stone market growing at 5% CAGR", "Luxury construction driving marble demand", "Export opportunities to premium real estate markets"],
-    longDesc: "Natural stones and marble are premium building materials that define luxury architecture and interior design. Our platform connects quarry owners and stone processing companies with architects, builders, and designers seeking quality natural stone products for prestigious projects.",
-    benefits: ["High-resolution slab photography and veining detail", "Sample tile ordering for project matching", "Container and bulk shipping coordination", "Project-based quotation and RFQ tools", "Stone grading and quality classification system"],
-    stats: [{ label: "Global Market Size", value: "$45B+" }, { label: "Annual Growth", value: "5.0%" }, { label: "Active Buyers", value: "22,000+" }],
+    "name": "Marble, Granite & Stones",
+    "icon": "\ud83e\udea8",
+    "title": "Marble, Granite & Stones",
+    "desc": "Trade natural stones and marble slabs.",
+    "highlights": [
+      "Construction demand",
+      "Interior design market",
+      "Stone exports"
+    ],
+    "longDesc": "Stone suppliers provide marble, granite, and decorative stones used in buildings and interiors.",
+    "benefits": [
+      "Architects",
+      "Builders",
+      "Interior designers"
+    ],
+    "stats": [
+      {
+        "label": "Market",
+        "value": "$45B+"
+      },
+      {
+        "label": "Growth",
+        "value": "5%"
+      },
+      {
+        "label": "Buyers",
+        "value": "22K+"
+      }
+    ],
+    "image": "https://images.unsplash.com/photo-1665482048659-60c77d58769b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0MDQ1Njh8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzMzOTMyNzd8&ixlib=rb-4.1.0&q=80&w=1080"
   },
   {
-    name: "Trade Promotion", icon: "📊", title: "Trade Promotion",
-    desc: "Offer trade show services, exhibition materials, promotional merchandise, and marketing collateral to businesses looking to expand their market presence.",
-    highlights: ["Trade shows rebounding strongly post-pandemic", "Digital+physical hybrid events creating new demand", "Promotional products market worth $25B+"],
-    longDesc: "Trade promotion services are essential for businesses looking to expand their market presence through exhibitions, events, and promotional merchandise. Our platform connects service providers with businesses planning trade shows, corporate events, and marketing campaigns.",
-    benefits: ["Event planning and coordination tools", "Promotional product customization features", "Trade show booth design and sourcing", "Marketing material printing and distribution", "Post-event analytics and lead tracking"],
-    stats: [{ label: "Global Market Size", value: "$25B+" }, { label: "Annual Growth", value: "6.5%" }, { label: "Active Buyers", value: "15,000+" }],
+    "name": "Event Planner & Organizer",
+    "icon": "\ud83c\udf89",
+    "title": "Event Planner & Organizer",
+    "desc": "Provide event management services.",
+    "highlights": [
+      "Wedding industry",
+      "Corporate events",
+      "Event planning demand"
+    ],
+    "longDesc": "Event planners organize weddings, corporate functions, exhibitions, and social events.",
+    "benefits": [
+      "Corporate clients",
+      "Wedding industry",
+      "Event venues"
+    ],
+    "stats": [
+      {
+        "label": "Market",
+        "value": "$1T+"
+      },
+      {
+        "label": "Growth",
+        "value": "8%"
+      },
+      {
+        "label": "Buyers",
+        "value": "15K+"
+      }
+    ],
+    "image": "https://images.unsplash.com/photo-1663436683807-f7c3a35328a9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0MDQ1Njh8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzMzOTMyNzh8&ixlib=rb-4.1.0&q=80&w=1080"
   },
   {
-    name: "IT Services", icon: "🖥️", title: "IT Services",
-    desc: "Provide software solutions, IT consulting, cloud services, and digital transformation expertise to businesses modernizing their technology infrastructure.",
-    highlights: ["Global IT services market exceeds $1.2T", "Cloud computing driving 20%+ annual growth", "High demand for cybersecurity & AI services"],
-    longDesc: "IT services form the backbone of digital transformation across every industry. Our platform connects IT service providers with businesses seeking software development, cloud migration, cybersecurity, and digital consulting services worldwide.",
-    benefits: ["Service portfolio and case study showcase", "Client testimonial and review management", "Project milestone and delivery tracking", "NDA and contract management tools", "Technology stack and expertise badges"],
-    stats: [{ label: "Global Market Size", value: "$1.2T+" }, { label: "Annual Growth", value: "8.4%" }, { label: "Active Buyers", value: "35,000+" }],
+    "name": "IT & Telecom Services",
+    "icon": "\ud83d\udda5\ufe0f",
+    "title": "IT & Telecom Services",
+    "desc": "Offer digital and telecom services.",
+    "highlights": [
+      "Digital transformation",
+      "Cloud services",
+      "IT consulting"
+    ],
+    "longDesc": "IT service providers offer software development, networking solutions, and telecom services.",
+    "benefits": [
+      "Corporate clients",
+      "Startups",
+      "Tech companies"
+    ],
+    "stats": [
+      {
+        "label": "Market",
+        "value": "$1.2T+"
+      },
+      {
+        "label": "Growth",
+        "value": "8%"
+      },
+      {
+        "label": "Buyers",
+        "value": "35K+"
+      }
+    ],
+    "image": "https://images.unsplash.com/photo-1737455455084-4259c0299e7c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0MDQ1Njh8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzMzOTMyNzl8&ixlib=rb-4.1.0&q=80&w=1080"
   },
   {
-    name: "Rental Services", icon: "🏢", title: "Rental Services",
-    desc: "List equipment rentals, vehicle leasing, office space rentals, and industrial machinery hire services for businesses seeking flexible, cost-effective solutions.",
-    highlights: ["Equipment rental market growing at 6% CAGR", "Businesses prefer rental to reduce capital expenses", "Flexible terms attract startups & SMEs"],
-    longDesc: "Rental services offer businesses flexibility and cost-efficiency without heavy capital investment. Our platform connects rental providers with businesses seeking equipment, vehicles, office spaces, and industrial machinery on flexible terms.",
-    benefits: ["Availability calendar and real-time booking", "Rental agreement and contract management", "Equipment condition tracking and reporting", "Insurance and liability coverage options", "Long-term lease and rent-to-own programs"],
-    stats: [{ label: "Global Market Size", value: "$60B+" }, { label: "Annual Growth", value: "6.0%" }, { label: "Active Buyers", value: "20,000+" }],
+    "name": "Product Rental & Leasing",
+    "icon": "\ud83c\udfe2",
+    "title": "Product Rental & Leasing",
+    "desc": "Offer equipment and asset leasing services.",
+    "highlights": [
+      "Flexible asset usage",
+      "Business rentals",
+      "Startup demand"
+    ],
+    "longDesc": "Rental businesses lease machinery, vehicles, and equipment to companies.",
+    "benefits": [
+      "Lower capital cost",
+      "Flexible contracts",
+      "Business clients"
+    ],
+    "stats": [
+      {
+        "label": "Market",
+        "value": "$60B+"
+      },
+      {
+        "label": "Growth",
+        "value": "6%"
+      },
+      {
+        "label": "Buyers",
+        "value": "20K+"
+      }
+    ],
+    "image": "https://images.unsplash.com/photo-1590986201364-ce95ab280ca2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0MDQ1Njh8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzMzOTMyODB8&ixlib=rb-4.1.0&q=80&w=1080"
   },
   {
-    name: "Packers & Movers", icon: "🚚", title: "Packers & Movers",
-    desc: "Offer packing, moving, relocation, and logistics services to individuals and businesses transitioning to new locations domestically and internationally.",
-    highlights: ["Relocation services market growing at 5.5% CAGR", "Corporate relocations driving B2B demand", "International moving services command premium rates"],
-    longDesc: "Packers and movers provide essential services for individuals and businesses relocating domestically or internationally. Our platform connects professional moving companies with customers seeking reliable, insured relocation services.",
-    benefits: ["Instant quote generation and comparison tools", "Real-time shipment tracking for moves", "Insurance and damage protection options", "Corporate relocation account management", "Storage and warehousing add-on services"],
-    stats: [{ label: "Global Market Size", value: "$18B+" }, { label: "Annual Growth", value: "5.5%" }, { label: "Active Buyers", value: "25,000+" }],
+    "name": "Transportation & Logistics",
+    "icon": "\ud83d\ude9a",
+    "title": "Transportation & Logistics",
+    "desc": "Provide shipping and logistics services.",
+    "highlights": [
+      "Ecommerce logistics",
+      "Global shipping",
+      "Freight demand"
+    ],
+    "longDesc": "Logistics providers manage freight transportation and supply chain operations.",
+    "benefits": [
+      "Global trade",
+      "Shipping services",
+      "Warehouse support"
+    ],
+    "stats": [
+      {
+        "label": "Market",
+        "value": "$9T+"
+      },
+      {
+        "label": "Growth",
+        "value": "6%"
+      },
+      {
+        "label": "Buyers",
+        "value": "50K+"
+      }
+    ],
+    "image": "https://images.unsplash.com/photo-1770413188239-0d6c173370a8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0MDQ1Njh8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzMzOTMyODF8&ixlib=rb-4.1.0&q=80&w=1080"
   },
   {
-    name: "Business Facilitation Services", icon: "🤝", title: "Business Facilitation Services",
-    desc: "Provide company registration, compliance consulting, market entry support, and business setup services to entrepreneurs expanding into new markets.",
-    highlights: ["Startup ecosystem growth creating steady demand", "Cross-border business setup services in high demand", "Recurring revenue from compliance & advisory"],
-    longDesc: "Business facilitation services help entrepreneurs and companies navigate the complexities of establishing and growing businesses in new markets. Our platform connects service providers with businesses seeking registration, compliance, and market entry support.",
-    benefits: ["Service package and pricing comparison tools", "Document management and compliance tracking", "Market research and feasibility report features", "Multi-jurisdiction service coordination", "Client onboarding and project management"],
-    stats: [{ label: "Global Market Size", value: "$30B+" }, { label: "Annual Growth", value: "7.2%" }, { label: "Active Buyers", value: "18,000+" }],
+    "name": "Business & Audit Services",
+    "icon": "\ud83d\udcca",
+    "title": "Business & Audit Services",
+    "desc": "Provide auditing and consulting services.",
+    "highlights": [
+      "Compliance needs",
+      "Corporate audits",
+      "Financial consulting"
+    ],
+    "longDesc": "Audit firms help businesses manage financial reporting and compliance.",
+    "benefits": [
+      "Corporate clients",
+      "Legal compliance",
+      "Financial transparency"
+    ],
+    "stats": [
+      {
+        "label": "Market",
+        "value": "$900B+"
+      },
+      {
+        "label": "Growth",
+        "value": "6%"
+      },
+      {
+        "label": "Buyers",
+        "value": "30K+"
+      }
+    ],
+    "image": "https://images.unsplash.com/photo-1661704450248-87df8749d823?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0MDQ1Njh8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzMzOTMyODJ8&ixlib=rb-4.1.0&q=80&w=1080"
   },
   {
-    name: "Finance & Law Services", icon: "⚖️", title: "Finance & Law Services",
-    desc: "Offer financial consulting, legal advisory, accounting services, tax planning, and compliance support to businesses and individuals navigating complex regulations.",
-    highlights: ["FinTech & LegalTech disrupting traditional services", "Cross-border compliance demand rising rapidly", "High-value contracts with long-term engagements"],
-    longDesc: "Finance and law services are fundamental to business operations worldwide. Our platform connects financial advisors, legal consultants, and accounting firms with businesses and individuals seeking expert guidance.",
-    benefits: ["Secure document sharing and e-signature tools", "Expert profile and credential verification", "Consultation booking and scheduling system", "Multi-jurisdiction expertise matching", "Retainer and subscription service models"],
-    stats: [{ label: "Global Market Size", value: "$900B+" }, { label: "Annual Growth", value: "6.8%" }, { label: "Active Buyers", value: "30,000+" }],
+    "name": "Financial & Legal Services",
+    "icon": "\u2696\ufe0f",
+    "title": "Financial & Legal Services",
+    "desc": "Offer legal and financial advisory services.",
+    "highlights": [
+      "Regulation support",
+      "Business consulting",
+      "Legal demand"
+    ],
+    "longDesc": "Law firms and financial consultants provide legal advice and financial planning.",
+    "benefits": [
+      "Corporate clients",
+      "Legal guidance",
+      "Compliance support"
+    ],
+    "stats": [
+      {
+        "label": "Market",
+        "value": "$900B+"
+      },
+      {
+        "label": "Growth",
+        "value": "6%"
+      },
+      {
+        "label": "Buyers",
+        "value": "30K+"
+      }
+    ],
+    "image": "https://images.unsplash.com/photo-1618896748593-7828f28c03d2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0MDQ1Njh8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzMzOTMyODN8&ixlib=rb-4.1.0&q=80&w=1080"
   },
   {
-    name: "Education & Training", icon: "🎓", title: "Education & Training",
-    desc: "Sell educational materials, e-learning platforms, training programs, and skill development courses to students, professionals, and institutions worldwide.",
-    highlights: ["EdTech market projected at $400B by 2028", "Corporate training budgets increasing 10% annually", "Online certification programs in high demand"],
-    longDesc: "Education and training services are transforming with digital technology, creating unprecedented opportunities for content creators and training providers. Our platform connects educators with students, professionals, and institutions worldwide.",
-    benefits: ["Course creation and content management tools", "Certification and credential issuance features", "Corporate training bulk enrollment options", "Student progress tracking and analytics", "Live session and webinar hosting integration"],
-    stats: [{ label: "Global Market Size", value: "$400B+" }, { label: "Annual Growth", value: "10.0%" }, { label: "Active Buyers", value: "100,000+" }],
+    "name": "Education & Training",
+    "icon": "\ud83c\udf93",
+    "title": "Education & Training",
+    "desc": "Offer courses and skill development programs.",
+    "highlights": [
+      "EdTech growth",
+      "Online learning",
+      "Skill training"
+    ],
+    "longDesc": "Education providers deliver training programs, certifications, and learning platforms.",
+    "benefits": [
+      "Students",
+      "Professionals",
+      "Institutions"
+    ],
+    "stats": [
+      {
+        "label": "Market",
+        "value": "$400B+"
+      },
+      {
+        "label": "Growth",
+        "value": "10%"
+      },
+      {
+        "label": "Buyers",
+        "value": "100K+"
+      }
+    ],
+    "image": "https://images.unsplash.com/photo-1658235081033-ccd89cdfe77a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0MDQ1Njh8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzMzOTMyODR8&ixlib=rb-4.1.0&q=80&w=1080"
   },
   {
-    name: "Travel & Tourism", icon: "✈️", title: "Travel & Tourism",
-    desc: "Offer travel packages, tourism services, hospitality supplies, and travel accessories to adventure seekers and travel agencies across the globe.",
-    highlights: ["Tourism industry recovering to $10T+ globally", "Experience-based travel growing fastest", "Travel accessories market expanding 9% yearly"],
-    longDesc: "The travel and tourism industry is rebounding strongly with pent-up demand for experiences worldwide. Our platform connects travel service providers, tour operators, and hospitality suppliers with travel agencies and adventure seekers globally.",
-    benefits: ["Trip itinerary builder and package creation tools", "Real-time availability and booking management", "Customer review and photo sharing features", "Multi-language and multi-currency support", "Group travel and corporate event coordination"],
-    stats: [{ label: "Global Market Size", value: "$10T+" }, { label: "Annual Growth", value: "12.0%" }, { label: "Active Buyers", value: "150,000+" }],
+    "name": "Travel, Tourism & Hotels",
+    "icon": "\u2708\ufe0f",
+    "title": "Travel, Tourism & Hotels",
+    "desc": "Provide travel and hospitality services.",
+    "highlights": [
+      "Tourism recovery",
+      "Hotel industry",
+      "Travel demand"
+    ],
+    "longDesc": "Travel companies offer tourism packages, hotel bookings, and travel services.",
+    "benefits": [
+      "Tourists",
+      "Travel agencies",
+      "Hospitality sector"
+    ],
+    "stats": [
+      {
+        "label": "Market",
+        "value": "$10T+"
+      },
+      {
+        "label": "Growth",
+        "value": "12%"
+      },
+      {
+        "label": "Buyers",
+        "value": "150K+"
+      }
+    ],
+    "image": "https://images.unsplash.com/photo-1759849541309-a331ca2ab818?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0MDQ1Njh8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzMzOTMyODV8&ixlib=rb-4.1.0&q=80&w=1080"
   },
   {
-    name: "Call Center & BPO Services", icon: "🎧", title: "Call Center & BPO Services",
-    desc: "Provide call center operations, customer support outsourcing, data processing, and back-office services to global enterprises seeking cost-effective solutions.",
-    highlights: ["BPO market worth $260B+ and growing", "AI-enhanced support services in high demand", "Multilingual capabilities command premium pricing"],
-    longDesc: "Call center and BPO services enable businesses to scale operations efficiently through outsourcing. Our platform connects service providers with enterprises seeking customer support, data processing, and back-office management solutions.",
-    benefits: ["Service level agreement (SLA) management tools", "Multilingual capability showcase and matching", "Quality monitoring and performance dashboards", "Scalable team and capacity planning features", "Technology stack and AI capability profiles"],
-    stats: [{ label: "Global Market Size", value: "$260B+" }, { label: "Annual Growth", value: "8.0%" }, { label: "Active Buyers", value: "12,000+" }],
+    "name": "Call Center & BPO Services",
+    "icon": "\ud83c\udfa7",
+    "title": "Call Center & BPO Services",
+    "desc": "Provide outsourcing and support services.",
+    "highlights": [
+      "Global outsourcing",
+      "Customer support",
+      "AI integration"
+    ],
+    "longDesc": "BPO companies provide customer support, data entry, and back-office services.",
+    "benefits": [
+      "Enterprise clients",
+      "Cost savings",
+      "24/7 operations"
+    ],
+    "stats": [
+      {
+        "label": "Market",
+        "value": "$260B+"
+      },
+      {
+        "label": "Growth",
+        "value": "8%"
+      },
+      {
+        "label": "Buyers",
+        "value": "12K+"
+      }
+    ],
+    "image": "https://images.unsplash.com/photo-1766066014237-00645c74e9c6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0MDQ1Njh8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzMzOTMyODZ8&ixlib=rb-4.1.0&q=80&w=1080"
   },
   {
-    name: "Bicycles & Rickshaws", icon: "🚲", title: "Bicycles & Rickshaws",
-    desc: "Sell bicycles, e-bikes, rickshaws, cycling accessories, and spare parts to urban commuters and eco-conscious transportation buyers worldwide.",
-    highlights: ["E-bike market growing at 10%+ CAGR globally", "Urban mobility trends favoring cycling infrastructure", "Green transportation subsidies boosting demand"],
-    longDesc: "The bicycles and rickshaws market is riding the wave of sustainable urban mobility. Our platform connects bicycle manufacturers, e-bike brands, and accessory sellers with eco-conscious commuters, cycling enthusiasts, and urban transport operators worldwide.",
-    benefits: ["E-bike battery and range specification tools", "Cycling community and enthusiast engagement", "Green transportation certification badges", "Spare parts compatibility matching system", "Test ride and demo arrangement services"],
-    stats: [{ label: "Global Market Size", value: "$70B+" }, { label: "Annual Growth", value: "10.0%" }, { label: "Active Buyers", value: "45,000+" }],
+    "name": "Bicycle, Rickshaw & Spares",
+    "icon": "\ud83d\udeb2",
+    "title": "Bicycle, Rickshaw & Spares",
+    "desc": "Sell bicycles and spare parts.",
+    "highlights": [
+      "Urban mobility",
+      "Eco transport",
+      "Cycling demand"
+    ],
+    "longDesc": "Manufacturers supply bicycles, rickshaws, and cycling accessories.",
+    "benefits": [
+      "Retail stores",
+      "Cyclists",
+      "Urban transport"
+    ],
+    "stats": [
+      {
+        "label": "Market",
+        "value": "$70B+"
+      },
+      {
+        "label": "Growth",
+        "value": "10%"
+      },
+      {
+        "label": "Buyers",
+        "value": "45K+"
+      }
+    ],
+    "image": "https://images.unsplash.com/photo-1643186085291-3eb44c66c623?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0MDQ1Njh8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzMzOTMyODd8&ixlib=rb-4.1.0&q=80&w=1080"
   },
   {
-    name: "Research & Development", icon: "🧬", title: "Research & Development",
-    desc: "Offer R&D services, product testing, prototyping, and innovation consulting to companies investing in next-generation products and technologies.",
-    highlights: ["Global R&D spending exceeds $2.5T annually", "Biotech & pharma R&D demand surging", "IP licensing creates recurring revenue streams"],
-    longDesc: "Research and development services drive innovation across every industry. Our platform connects R&D service providers, testing laboratories, and innovation consultants with companies seeking to develop next-generation products and technologies.",
-    benefits: ["NDA and IP protection management tools", "Lab capability and accreditation showcase", "Project milestone and deliverable tracking", "Research collaboration and co-development features", "Patent and IP portfolio management"],
-    stats: [{ label: "Global Market Size", value: "$2.5T+" }, { label: "Annual Growth", value: "8.5%" }, { label: "Active Buyers", value: "10,000+" }],
+    "name": "R&D and Testing Labs",
+    "icon": "\ud83e\uddec",
+    "title": "R&D and Testing Labs",
+    "desc": "Provide research and product testing services.",
+    "highlights": [
+      "Innovation demand",
+      "Lab testing",
+      "Scientific research"
+    ],
+    "longDesc": "R&D labs offer product testing, innovation consulting, and scientific research services.",
+    "benefits": [
+      "Manufacturers",
+      "Universities",
+      "Government agencies"
+    ],
+    "stats": [
+      {
+        "label": "Market",
+        "value": "$2.5T+"
+      },
+      {
+        "label": "Growth",
+        "value": "8%"
+      },
+      {
+        "label": "Buyers",
+        "value": "10K+"
+      }
+    ],
+    "image": "https://images.unsplash.com/photo-1764835711461-117d67799a7d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0MDQ1Njh8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzMzOTMyODh8&ixlib=rb-4.1.0&q=80&w=1080"
   },
   {
-    name: "Architectural & Designing Services", icon: "📐", title: "Architectural & Designing Services",
-    desc: "Provide architectural design, interior planning, 3D visualization, and construction consulting services to property developers and homeowners globally.",
-    highlights: ["Green building design demand growing 14% annually", "3D visualization tools creating new service tiers", "International projects offering premium fee structures"],
-    longDesc: "Architectural and designing services shape the built environment and living spaces worldwide. Our platform connects architects, interior designers, and design consultants with property developers, homeowners, and commercial clients seeking creative design solutions.",
-    benefits: ["3D rendering and virtual walkthrough tools", "Portfolio showcase and project gallery", "Client collaboration and feedback management", "Green building and LEED certification expertise", "International project coordination support"],
-    stats: [{ label: "Global Market Size", value: "$350B+" }, { label: "Annual Growth", value: "5.5%" }, { label: "Active Buyers", value: "25,000+" }],
+    "name": "Architecture & Interiors",
+    "icon": "\ud83c\udfe0",
+    "title": "Architecture & Interiors",
+    "desc": "Provide architectural and interior design services.",
+    "highlights": [
+      "Real estate growth",
+      "Interior demand",
+      "Design innovation"
+    ],
+    "longDesc": "Architects and interior designers create building designs and interior layouts.",
+    "benefits": [
+      "Real estate developers",
+      "Homeowners",
+      "Commercial projects"
+    ],
+    "stats": [
+      {
+        "label": "Market",
+        "value": "$350B+"
+      },
+      {
+        "label": "Growth",
+        "value": "5%"
+      },
+      {
+        "label": "Buyers",
+        "value": "25K+"
+      }
+    ],
+    "image": "https://images.unsplash.com/photo-1643267514395-b36b3f7e8281?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0MDQ1Njh8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzMzOTMyODl8&ixlib=rb-4.1.0&q=80&w=1080"
   },
   {
-    name: "Human Resource Services", icon: "👥", title: "Human Resource Services",
-    desc: "Offer recruitment, staffing, payroll management, HR consulting, and talent acquisition services to businesses building and managing their workforce.",
-    highlights: ["HR outsourcing market worth $45B+ globally", "Remote work trend expanding global hiring needs", "HR tech integration creating premium service tiers"],
-    longDesc: "Human resource services are essential for businesses building, managing, and developing their workforce. Our platform connects HR service providers with companies seeking recruitment, staffing, payroll, and talent management solutions across borders.",
-    benefits: ["Candidate database and talent matching tools", "Payroll and compliance management features", "Employee engagement and survey tools", "Remote workforce management capabilities", "Training and development program integration"],
-    stats: [{ label: "Global Market Size", value: "$45B+" }, { label: "Annual Growth", value: "7.0%" }, { label: "Active Buyers", value: "22,000+" }],
+    "name": "HR Planning & Recruitment",
+    "icon": "\ud83d\udc65",
+    "title": "HR Planning & Recruitment",
+    "desc": "Offer recruitment and HR consulting.",
+    "highlights": [
+      "Workforce demand",
+      "Remote hiring",
+      "HR outsourcing"
+    ],
+    "longDesc": "HR firms provide recruitment services and workforce management solutions.",
+    "benefits": [
+      "Corporate hiring",
+      "Talent sourcing",
+      "Payroll services"
+    ],
+    "stats": [
+      {
+        "label": "Market",
+        "value": "$45B+"
+      },
+      {
+        "label": "Growth",
+        "value": "7%"
+      },
+      {
+        "label": "Buyers",
+        "value": "22K+"
+      }
+    ],
+    "image": "https://images.unsplash.com/photo-1698047681452-08eba22d0c64?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0MDQ1Njh8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzMzOTMyOTB8&ixlib=rb-4.1.0&q=80&w=1080"
   },
   {
-    name: "Transportation Services", icon: "🚛", title: "Transportation Services",
-    desc: "Provide freight forwarding, cargo logistics, fleet management, and last-mile delivery services to businesses shipping goods domestically and internationally.",
-    highlights: ["Logistics market exceeds $9T globally", "E-commerce driving last-mile delivery demand", "Cold chain logistics growing at 15% CAGR"],
-    longDesc: "Transportation services form the circulatory system of global commerce. Our platform connects freight forwarders, logistics companies, and fleet operators with businesses shipping goods domestically and internationally.",
-    benefits: ["Real-time shipment tracking and visibility", "Route optimization and cost estimation tools", "Multi-modal transport coordination", "Customs clearance and documentation support", "Fleet management and vehicle tracking"],
-    stats: [{ label: "Global Market Size", value: "$9T+" }, { label: "Annual Growth", value: "6.5%" }, { label: "Active Buyers", value: "50,000+" }],
+    "name": "Rail, Shipping & Aviation",
+    "icon": "\ud83d\udea2",
+    "title": "Rail, Shipping & Aviation",
+    "desc": "Provide transport infrastructure services.",
+    "highlights": [
+      "Global transport demand",
+      "Freight movement",
+      "Infrastructure projects"
+    ],
+    "longDesc": "Transportation providers manage rail, shipping, and aviation logistics.",
+    "benefits": [
+      "Global trade",
+      "Freight shipping",
+      "Infrastructure support"
+    ],
+    "stats": [
+      {
+        "label": "Market",
+        "value": "$2T+"
+      },
+      {
+        "label": "Growth",
+        "value": "6%"
+      },
+      {
+        "label": "Buyers",
+        "value": "15K+"
+      }
+    ],
+    "image": "https://images.unsplash.com/photo-1630561537873-5bd78f9dd8ad?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0MDQ1Njh8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzMzOTMyOTF8&ixlib=rb-4.1.0&q=80&w=1080"
   },
   {
-    name: "Facility Management Services", icon: "🧹", title: "Facility Management Services",
-    desc: "Offer building maintenance, janitorial services, HVAC management, and facility operations to commercial properties, offices, and industrial complexes.",
-    highlights: ["Facility management market worth $1.3T globally", "Smart building technologies creating new demand", "Long-term contracts ensure recurring revenue"],
-    longDesc: "Facility management services keep commercial and industrial properties running efficiently. Our platform connects FM providers with property owners, corporate offices, and industrial complexes seeking comprehensive building management solutions.",
-    benefits: ["Service contract and SLA management tools", "Preventive maintenance scheduling system", "Energy management and sustainability tracking", "Vendor and subcontractor coordination", "Building automation system integration"],
-    stats: [{ label: "Global Market Size", value: "$1.3T+" }, { label: "Annual Growth", value: "5.0%" }, { label: "Active Buyers", value: "18,000+" }],
+    "name": "Facility Management",
+    "icon": "\ud83e\uddf9",
+    "title": "Facility Management",
+    "desc": "Provide building maintenance services.",
+    "highlights": [
+      "Commercial properties",
+      "Maintenance demand",
+      "Smart buildings"
+    ],
+    "longDesc": "Facility management companies maintain offices, malls, and industrial buildings.",
+    "benefits": [
+      "Corporate contracts",
+      "Maintenance services",
+      "Energy management"
+    ],
+    "stats": [
+      {
+        "label": "Market",
+        "value": "$1.3T+"
+      },
+      {
+        "label": "Growth",
+        "value": "5%"
+      },
+      {
+        "label": "Buyers",
+        "value": "18K+"
+      }
+    ],
+    "image": "https://images.unsplash.com/photo-1760776110596-b3c29e32cac2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0MDQ1Njh8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzMzOTMyOTJ8&ixlib=rb-4.1.0&q=80&w=1080"
   },
   {
-    name: "Leather & Leather Products", icon: "🧥", title: "Leather & Leather Products",
-    desc: "Sell genuine leather, synthetic alternatives, finished leather goods, and leather crafting supplies to fashion brands and manufacturers worldwide.",
-    highlights: ["Premium leather goods market growing at 5% CAGR", "Vegan leather alternatives surging in demand", "Export opportunities to luxury fashion markets"],
-    longDesc: "The leather industry spans from raw material processing to luxury finished goods. Our platform connects tanneries, leather product manufacturers, and craft supply sellers with fashion brands, manufacturers, and artisans worldwide.",
-    benefits: ["Leather grade and quality certification system", "Sustainability and ethical sourcing badges", "Sample swatch and material testing orders", "Vegan and alternative leather category placement", "Luxury brand partnership facilitation"],
-    stats: [{ label: "Global Market Size", value: "$240B+" }, { label: "Annual Growth", value: "5.0%" }, { label: "Active Buyers", value: "35,000+" }],
+    "name": "Leather Products",
+    "icon": "\ud83e\udde5",
+    "title": "Leather Products",
+    "desc": "Sell leather goods and materials.",
+    "highlights": [
+      "Luxury demand",
+      "Fashion accessories",
+      "Global exports"
+    ],
+    "longDesc": "Leather manufacturers produce bags, jackets, shoes, and accessories.",
+    "benefits": [
+      "Fashion brands",
+      "Retail buyers",
+      "Export markets"
+    ],
+    "stats": [
+      {
+        "label": "Market",
+        "value": "$240B+"
+      },
+      {
+        "label": "Growth",
+        "value": "5%"
+      },
+      {
+        "label": "Buyers",
+        "value": "35K+"
+      }
+    ],
+    "image": "https://placehold.co/600x400?text=Leather+Products"
   },
   {
-    name: "Small Businesses", icon: "🏪", title: "Small Businesses",
-    desc: "Empower small businesses with tools, supplies, and marketplace access to compete globally. From craft supplies to niche products, reach customers beyond local markets.",
-    highlights: ["SME e-commerce adoption increasing 25% yearly", "Niche products command loyal customer bases", "Low entry barriers with marketplace platforms"],
-    longDesc: "Small businesses are the engine of economic growth worldwide. Our platform provides SMEs with the tools, visibility, and infrastructure to compete in the global marketplace alongside larger competitors.",
-    benefits: ["Low-cost listing and zero upfront investment", "Business growth analytics and insights", "Marketing tools and promotional support", "Mentorship and business development resources", "Community networking and peer support groups"],
-    stats: [{ label: "Global Market Size", value: "Vast" }, { label: "Annual Growth", value: "25.0%" }, { label: "Active Buyers", value: "200,000+" }],
+    "name": "Contractors & Freelancers",
+    "icon": "\ud83e\uddd1\u200d\ud83d\udcbb",
+    "title": "Contractors & Freelancers",
+    "desc": "Offer freelance and contractor services.",
+    "highlights": [
+      "Gig economy",
+      "Remote work",
+      "Project based work"
+    ],
+    "longDesc": "Freelancers and contractors provide digital and professional services worldwide.",
+    "benefits": [
+      "Flexible workforce",
+      "Global clients",
+      "Project work"
+    ],
+    "stats": [
+      {
+        "label": "Market",
+        "value": "$500B+"
+      },
+      {
+        "label": "Growth",
+        "value": "15%"
+      },
+      {
+        "label": "Buyers",
+        "value": "100K+"
+      }
+    ],
+    "image": "https://placehold.co/600x400?text=Contractors+&+Freelancers"
   },
   {
-    name: "Electronics Components & Supplies", icon: "🔌", title: "Electronics Components & Supplies",
-    desc: "Supply resistors, capacitors, semiconductors, PCBs, and electronic components to manufacturers, hobbyists, and electronics repair businesses globally.",
-    highlights: ["Semiconductor demand driven by AI & IoT growth", "Component shortage creating pricing opportunities", "Maker movement expanding hobbyist market"],
-    longDesc: "Electronics components are the fundamental building blocks of modern technology. Our platform connects component manufacturers and distributors with electronics OEMs, repair shops, and the growing maker/hobbyist community worldwide.",
-    benefits: ["Component datasheet and specification search", "Inventory availability and lead time tracking", "Small quantity ordering for prototyping", "BOM (Bill of Materials) upload and matching", "Counterfeit detection and authenticity guarantee"],
-    stats: [{ label: "Global Market Size", value: "$500B+" }, { label: "Annual Growth", value: "8.5%" }, { label: "Active Buyers", value: "60,000+" }],
+    "name": "Electronics Components",
+    "icon": "\ud83d\udd0c",
+    "title": "Electronics Components",
+    "desc": "Supply electronic components.",
+    "highlights": [
+      "IoT demand",
+      "Semiconductor market",
+      "Manufacturing supply"
+    ],
+    "longDesc": "Electronics component suppliers provide chips, resistors, PCBs, and parts used in electronic manufacturing.",
+    "benefits": [
+      "OEM manufacturers",
+      "Repair businesses",
+      "Tech startups"
+    ],
+    "stats": [
+      {
+        "label": "Market",
+        "value": "$500B+"
+      },
+      {
+        "label": "Growth",
+        "value": "8%"
+      },
+      {
+        "label": "Buyers",
+        "value": "60K+"
+      }
+    ],
+    "image": "https://placehold.co/600x400?text=Electronics+Components"
   },
   {
-    name: "Electrical Equipment & Supplies", icon: "⚡", title: "Electrical Equipment & Supplies",
-    desc: "Sell wiring, switchgear, transformers, electrical panels, and power distribution equipment to electricians, contractors, and industrial facilities.",
-    highlights: ["Electrical equipment market worth $180B+", "Renewable energy driving new installations", "Smart grid upgrades creating sustained demand"],
-    longDesc: "Electrical equipment and supplies power homes, businesses, and industries worldwide. Our platform connects manufacturers with electricians, contractors, utility companies, and industrial facilities seeking reliable electrical products.",
-    benefits: ["Electrical safety certification and compliance tools", "Wiring diagram and installation guide integration", "Contractor and electrician trade accounts", "Project-based bulk quotation system", "Renewable energy product category spotlight"],
-    stats: [{ label: "Global Market Size", value: "$180B+" }, { label: "Annual Growth", value: "6.0%" }, { label: "Active Buyers", value: "48,000+" }],
+    "name": "Electrical Equipment",
+    "icon": "\u26a1",
+    "title": "Electrical Equipment",
+    "desc": "Provide electrical devices and wiring equipment.",
+    "highlights": [
+      "Energy infrastructure",
+      "Smart grids",
+      "Electrical installations"
+    ],
+    "longDesc": "Electrical equipment suppliers provide wiring, switchgear, and power systems.",
+    "benefits": [
+      "Electricians",
+      "Construction firms",
+      "Energy companies"
+    ],
+    "stats": [
+      {
+        "label": "Market",
+        "value": "$180B+"
+      },
+      {
+        "label": "Growth",
+        "value": "6%"
+      },
+      {
+        "label": "Buyers",
+        "value": "48K+"
+      }
+    ],
+    "image": "https://placehold.co/600x400?text=Electrical+Equipment"
   },
   {
-    name: "Hospital & Consultation Services", icon: "🩺", title: "Hospital & Consultation Services",
-    desc: "Provide telemedicine platforms, hospital management tools, medical consultation services, and healthcare IT solutions to clinics and hospitals globally.",
-    highlights: ["Telehealth market projected at $286B by 2030", "Hospital digitization accelerating worldwide", "Remote consultation demand permanently elevated"],
-    longDesc: "Hospital and consultation services are at the forefront of healthcare transformation. Our platform connects healthcare IT providers, telemedicine platforms, and medical consultants with hospitals, clinics, and healthcare systems seeking to modernize their operations.",
-    benefits: ["HIPAA and data compliance certification", "Telemedicine platform integration capabilities", "Hospital management system feature showcase", "Patient review and satisfaction metrics", "Healthcare professional credential verification"],
-    stats: [{ label: "Global Market Size", value: "$286B+" }, { label: "Annual Growth", value: "15.0%" }, { label: "Active Buyers", value: "20,000+" }],
-  },
+    "name": "Hospital,Clinic and Consultation",
+    "icon": "\ud83e\ude7a",
+    "title": "Hospital, Clinic and Consultation",
+    "desc": "Provide healthcare consultation and services.",
+    "highlights": [
+      "Telemedicine growth",
+      "Healthcare demand",
+      "Digital health"
+    ],
+    "longDesc": "Healthcare providers offer consultation, telemedicine, and hospital management services.",
+    "benefits": [
+      "Patients",
+      "Hospitals",
+      "Healthcare networks"
+    ],
+    "stats": [
+      {
+        "label": "Market",
+        "value": "$286B+"
+      },
+      {
+        "label": "Growth",
+        "value": "15%"
+      },
+      {
+        "label": "Buyers",
+        "value": "20K+"
+      }
+    ],
+    "image": "https://placehold.co/600x400?text=Hospital,Clinic+and+Consultation"
+  }
 ];
 
 export const industries: Industry[] = rawIndustries.map((ind) => ({

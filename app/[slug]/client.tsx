@@ -4,8 +4,8 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import type { Industry } from "@/data/industries";
-import { industrySubcategories } from "@/data/industrySubcategories";
-import industryContent from "@/data/industry-content.json";
+import { industrySubcategories } from "@/data/newcate";
+import industryContent from "@/data/industry-content-2.json";
 
 /* ─── Animation helper ─── */
 function FadeIn({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
@@ -46,7 +46,7 @@ export default function IndustryClient({ industry, related, slug }: Props) {
     description: industry.desc
   };
 
-  const whyChooseUsData = industryData?.whyChooseUs || {
+  const whyChooseUsData = industryData?.whychooseus || {
     title: `Why Choose ${industry.title}`,
     description: `Discover the advantages of partnering with us for your ${industry.title.toLowerCase()} business.`,
     points: industry.benefits.map((benefit, i) => ({
@@ -230,11 +230,7 @@ export default function IndustryClient({ industry, related, slug }: Props) {
                         : "bg-white text-[#0F1111] border-[#e7e7e7] hover:border-[#111111] hover:shadow-md"
                       }`}
                   >
-                    <img
-                      src={cat.image}
-                      alt={cat.name}
-                      className="w-16 h-16 rounded-lg object-cover shrink-0"
-                    />
+                 
                     <div className="min-w-0">
                       <h4 className={`text-sm font-bold mb-1 ${activeCategory === i ? "text-white" : "text-[#0F1111]"}`}>
                         {cat.name}
@@ -260,7 +256,7 @@ export default function IndustryClient({ industry, related, slug }: Props) {
                 Buyer Leads for {activeSubcategory.name}
               </h2>
               <p className="text-center text-[#565959] text-[15px] max-w-[550px] mx-auto mb-10">
-                Click on a category to see detailed buyer leads and connect with potential customers.
+                Click on a category to see detailed.
               </p>
             </FadeIn>
 
@@ -294,14 +290,7 @@ export default function IndustryClient({ industry, related, slug }: Props) {
                 className="bg-[#FAFAFA] border border-[#e7e7e7] rounded-2xl overflow-hidden shadow-lg shadow-black/5"
               >
                 <div className="flex flex-col md:flex-row">
-                  {/* Image */}
-                  <div className="md:w-[360px] h-[240px] md:h-auto shrink-0 relative overflow-hidden bg-[#F5F5F5]">
-                    <img
-                      src={activeSubcategory.image}
-                      alt={activeSubcategory.name}
-                      className="absolute inset-0 w-full h-full object-cover"
-                    />
-                  </div>
+                
 
                   {/* Content */}
                   <div className="flex-1 p-8">

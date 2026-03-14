@@ -1,0 +1,22 @@
+User-agent: *
+Allow: /
+
+# Allow search engines to crawl important directories
+Allow: /components/
+Allow: /assets/
+Allow: /images/
+Allow: /public/
+
+# Block crawling of development and system files
+Disallow: /_next/
+Disallow: /api/
+Disallow: /node_modules/
+Disallow: /.git/
+Disallow: /*.json$
+Disallow: /_error
+
+# Sitemap location
+Sitemap: https://www.goexports.com/sitemap.xml
+
+# Crawl delay (optional, be considerate to server resources)
+Crawl-delay: 1

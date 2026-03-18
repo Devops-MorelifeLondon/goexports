@@ -146,7 +146,7 @@ export default function SellerVideos() {
               Latest Buyer Requirements
             </h2>
             <p className="text-center text-[#565959] text-base max-w-[560px] mx-auto leading-relaxed">
-              Real-time export leads from verified international buyers across 120+ countries. Register to connect with these buyers directly.
+              Real-time export leads from verified international buyers across 200+ countries. Register to connect with these buyers directly.
             </p>
           </div>
         </FadeIn>
@@ -156,7 +156,7 @@ export default function SellerVideos() {
           <div className="flex flex-wrap justify-center gap-8 mb-10">
             {[
               { value: `${buyers.length}+`, label: "Active Leads" },
-              { value: "120+", label: "Countries" },
+              { value: "200+", label: "Countries" },
               { value: "24hrs", label: "Avg Response Time" },
               { value: "92%", label: "Conversion Rate" },
             ].map((stat, i) => (

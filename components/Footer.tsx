@@ -88,7 +88,15 @@ export default function Footer() {
               ].map((icon, i) => (
                 <a
                   key={i}
-                  href="#"
+                  href={
+                    icon.label === "Facebook" ? "https://facebook.com/goexports" :
+                    icon.label === "Twitter" ? "https://twitter.com/goexports" :
+                    icon.label === "LinkedIn" ? "https://linkedin.com/company/goexports" :
+                    icon.label === "YouTube" ? "https://youtube.com/@goexports" :
+                    "https://instagram.com/goexports"
+                  }
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-all duration-200"
                 >
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="white">

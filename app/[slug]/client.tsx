@@ -60,7 +60,7 @@ export default function IndustryClient({ industry, related, slug }: Props) {
   return (
     <div className="min-h-screen bg-[#FAFAFA]">
       {/* ═══ HERO ═══ */}
-      <section className="relative bg-white text-[#0F1111] overflow-hidden">
+      <section id="hero" className="relative bg-white text-[#0F1111] overflow-hidden">
         {/* Background pattern */}
         <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, #111 1px, transparent 0)", backgroundSize: "40px 40px" }} />
 
@@ -94,14 +94,16 @@ export default function IndustryClient({ industry, related, slug }: Props) {
               <FadeIn delay={0.25}>
                 <div className="flex flex-wrap gap-4 mb-8">
                   <a
-                    href="#"
+                    href="https://wa.me/919876543210?text=Hi%20GoExports,%20I'm%20interested%20in%20exporting%20{encodeURIComponent(industry.title)}%20products"
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 px-8 py-3.5 bg-[#111111] text-white font-bold text-sm rounded-full no-underline transition-all duration-200 hover:bg-[#333333] shadow-lg shadow-black/15 hover:scale-[1.03] active:scale-[0.97]"
                   >
                     Contact Us Now →
                   </a>
                   <a
-                    href="#categories"
-                    className="inline-flex items-center gap-2 px-8 py-3.5 bg-transparent border border-[#111111] text-[#0F1111] font-bold text-sm rounded-full no-underline transition-all duration-200 hover:bg-[#111111] hover:text-white"
+                    onClick={() => document.getElementById('hero')?.scrollIntoView({ behavior: 'smooth' })}
+                    className="inline-flex items-center gap-2 px-8 py-3.5 bg-transparent border border-[#111111] text-[#0F1111] font-bold text-sm rounded-full no-underline transition-all duration-200 hover:bg-[#111111] hover:text-white cursor-pointer"
                   >
                     Browse Categories
                   </a>
@@ -191,7 +193,8 @@ export default function IndustryClient({ industry, related, slug }: Props) {
                     </select>
                   </div>
                   <button
-                    type="submit"
+                    type="button"
+                    onClick={() => window.open(`https://wa.me/919876543210?text=Hi%20GoExports,%20I'm%20interested%20in%20exporting%20${encodeURIComponent(industry.title)}%20products`, '_blank')}
                     className="w-full py-3 bg-[#111111] text-white font-bold text-sm rounded-lg mt-1 cursor-pointer transition-all duration-200 hover:bg-[#333333] shadow-lg shadow-black/20 hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]"
                   >
                     Submit Enquiry →
@@ -200,6 +203,80 @@ export default function IndustryClient({ industry, related, slug }: Props) {
 
               </div>
             </FadeIn>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══ HOW PLATFORM WORKS ═══ */}
+      <section className="py-16 px-6 bg-white">
+        <div className="max-w-[1200px] mx-auto">
+          <FadeIn>
+            <div className="text-center mb-16">
+              <span className="inline-block bg-[#111111] text-white text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-wider mb-4">
+                Simple Process
+              </span>
+              <h2 className="text-3xl md:text-4xl font-extrabold text-center mb-4">
+                How Our Platform Works
+              </h2>
+              <p className="text-center text-[#565959] text-base max-w-[560px] mx-auto leading-relaxed">
+                Start exporting {industry.title.toLowerCase()} products in 4 simple steps. Connect with verified global buyers and grow your import export business.
+              </p>
+            </div>
+          </FadeIn>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {[
+              {
+                number: "01",
+                title: "Submit your product details",
+                description: `Tell us about your ${industry.title.toLowerCase()} products, industry, and export requirements.`,
+              },
+              {
+                number: "02", 
+                title: "We find verified global buyers",
+                description: "Our AI-powered system matches you with pre-verified international buyers actively looking for your products.",
+              },
+              {
+                number: "03",
+                title: "Receive qualified buyer leads", 
+                description: "Get direct access to verified buyer contacts, complete with product requirements and purchasing details.",
+              },
+              {
+                number: "04",
+                title: "Start exporting internationally",
+                description: "Connect directly with buyers, negotiate deals, and expand your export business to new global markets.",
+              },
+            ].map((step, index) => (
+              <FadeIn key={index} delay={index * 0.1}>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1, duration: 0.5 }}
+                  className="relative"
+                >
+                  {/* Step Number */}
+                  <div className="mb-6">
+                    <div className="w-16 h-16 bg-[#111111] text-white rounded-full flex items-center justify-center text-xl font-bold">
+                      {step.number}
+                    </div>
+                  </div>
+
+                  {/* Content */}
+                  <h3 className="text-xl font-bold text-[#0F1111] mb-3">
+                    {step.title}
+                  </h3>
+                  <p className="text-[#565959] text-sm leading-relaxed">
+                    {step.description}
+                  </p>
+
+                  {/* Connection Line */}
+                  {index < 3 && (
+                    <div className="hidden lg:block absolute top-8 left-full w-full h-0.5 bg-gradient-to-r from-[#111111] to-transparent" 
+                         style={{ width: 'calc(100% - 4rem)', left: '4rem' }} />
+                  )}
+                </motion.div>
+              </FadeIn>
+            ))}
           </div>
         </div>
       </section>
@@ -346,6 +423,226 @@ export default function IndustryClient({ industry, related, slug }: Props) {
               </FadeIn>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* ═══ TESTIMONIALS ═══ */}
+      <section className="py-16 px-6 bg-[#FAFAFA]">
+        <div className="max-w-[1200px] mx-auto">
+          <FadeIn>
+            <div className="text-center mb-16">
+              <span className="inline-block bg-[#111111] text-white text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-wider mb-4">
+                Success Stories
+              </span>
+              <h2 className="text-3xl md:text-4xl font-extrabold text-center mb-4">
+                {industry.title} Exporters Growing Globally
+              </h2>
+              <p className="text-center text-[#565959] text-base max-w-[560px] mx-auto leading-relaxed">
+                Join successful {industry.title.toLowerCase()} exporters who found verified international buyers through our global sourcing platform.
+              </p>
+            </div>
+          </FadeIn>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[
+              {
+                name: "Rajesh Kumar",
+                company: "Premium Exports Ltd",
+                country: "India",
+                image: "👔",
+                content: `GoExports transformed our ${industry.title.toLowerCase()} export business. Within 3 months, we connected with 15 verified buyers across Europe and Middle East.`,
+                rating: 5,
+                results: "200% Revenue Growth"
+              },
+              {
+                name: "Maria Rodriguez",
+                company: "Global Trade Co",
+                country: "Brazil", 
+                image: "👩‍💼",
+                content: `The quality of buyer leads on GoExports is exceptional. We found distributors in 8 countries for our ${industry.title.toLowerCase()} products.`,
+                rating: 5,
+                results: "8 New Markets"
+              },
+              {
+                name: "Chen Wei",
+                company: "International Manufacturing",
+                country: "China",
+                image: "👨‍💻",
+                content: `As a {industry.title.toLowerCase()} manufacturer, finding reliable international buyers was challenging. GoExports made it simple.`,
+                rating: 5,
+                results: "Consistent Orders"
+              }
+            ].map((testimonial, index) => (
+              <FadeIn key={index} delay={index * 0.1}>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1, duration: 0.5 }}
+                  className="bg-white border border-[#e7e7e7] rounded-xl p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+                >
+                  {/* Rating */}
+                  <div className="flex gap-0.5 mb-4">
+                    {[...Array(testimonial.rating)].map((_, i) => (
+                      <svg key={i} width="16" height="16" viewBox="0 0 24 24" fill="#FBBF24" stroke="#FBBF24" strokeWidth="1">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                      </svg>
+                    ))}
+                  </div>
+
+                  {/* Content */}
+                  <blockquote className="text-[#565959] text-sm leading-relaxed mb-6 italic">
+                    "{testimonial.content}"
+                  </blockquote>
+
+                  {/* Author Info */}
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="w-12 h-12 bg-[#111111] rounded-full flex items-center justify-center text-2xl">
+                      {testimonial.image}
+                    </div>
+                    <div>
+                      <div className="font-bold text-[#0F1111]">{testimonial.name}</div>
+                      <div className="text-xs text-[#565959]">{testimonial.company}</div>
+                      <div className="text-xs text-[#999]">{testimonial.country}</div>
+                    </div>
+                  </div>
+
+                  {/* Results Badge */}
+                  <div className="inline-flex items-center gap-1.5 bg-green-50 border border-green-200 rounded-full px-3 py-1 text-xs font-semibold text-green-700">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                    {testimonial.results}
+                  </div>
+                </motion.div>
+              </FadeIn>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══ BENEFITS FOR EXPORTERS ═══ */}
+      <section className="py-16 px-6 bg-white">
+        <div className="max-w-[1200px] mx-auto">
+          <FadeIn>
+            <div className="text-center mb-16">
+              <span className="inline-block bg-[#111111] text-white text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-wider mb-4">
+                Why Choose GoExports
+              </span>
+              <h2 className="text-3xl md:text-4xl font-extrabold text-center mb-4">
+                Benefits for {industry.title} Exporters
+              </h2>
+              <p className="text-center text-[#565959] text-base max-w-[560px] mx-auto leading-relaxed">
+                Discover why thousands of {industry.title.toLowerCase()} exporters choose GoExports to grow their international trade business and connect with verified global buyers.
+              </p>
+            </div>
+          </FadeIn>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[
+              {
+                icon: "✅",
+                title: "Verified International Buyer Leads",
+                description: `Connect with pre-verified buyers actively looking for ${industry.title.toLowerCase()} products. No more time wasted on unqualified leads.`,
+                highlight: "100% Verified Buyers"
+              },
+              {
+                icon: "🌍",
+                title: "Global Trade Opportunities",
+                description: `Access buyers from 200+ countries for your ${industry.title.toLowerCase()} products. Expand your export business to new international markets.`,
+                highlight: "200+ Countries"
+              },
+              {
+                icon: "🚀",
+                title: "Faster Market Expansion",
+                description: `Reduce your ${industry.title.toLowerCase()} market entry time by 80%. Our platform helps you find buyers and start exporting within weeks.`,
+                highlight: "80% Faster Entry"
+              },
+              {
+                icon: "🤝",
+                title: "Connect with Trusted Importers",
+                description: `Build relationships with reliable ${industry.title.toLowerCase()} importers and distributors who have been thoroughly vetted for credibility.`,
+                highlight: "Trusted Partners"
+              },
+              {
+                icon: "📦",
+                title: "Access to Worldwide Distributors",
+                description: `Reach global distribution networks for your ${industry.title.toLowerCase()} products. From local retailers to multinational chains.`,
+                highlight: "Global Distribution"
+              },
+              {
+                icon: "💰",
+                title: "Increased Revenue Potential",
+                description: `Tap into international markets for your ${industry.title.toLowerCase()} products and increase revenue by up to 300% in the first year.`,
+                highlight: "300% Revenue Growth"
+              }
+            ].map((benefit, index) => (
+              <FadeIn key={index} delay={index * 0.1}>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1, duration: 0.5 }}
+                  className="bg-[#FAFAFA] border border-[#e7e7e7] rounded-xl p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 h-full"
+                >
+                  {/* Icon */}
+                  <div className="text-4xl mb-4">{benefit.icon}</div>
+
+                  {/* Content */}
+                  <h3 className="text-xl font-bold text-[#0F1111] mb-3">
+                    {benefit.title}
+                  </h3>
+                  <p className="text-[#565959] text-sm leading-relaxed mb-4">
+                    {benefit.description}
+                  </p>
+
+                  {/* Highlight Badge */}
+                  <div className="inline-flex items-center gap-1.5 bg-[#111111] text-white rounded-full px-3 py-1 text-xs font-semibold">
+                    {benefit.highlight}
+                  </div>
+                </motion.div>
+              </FadeIn>
+            ))}
+          </div>
+
+          {/* CTA Section */}
+          <FadeIn delay={0.5}>
+            <div className="mt-16 bg-gradient-to-r from-[#111111] to-[#333333] rounded-2xl p-8 text-center text-white">
+              <h3 className="text-2xl md:text-3xl font-extrabold mb-4">
+                Ready to Grow Your {industry.title} Export Business?
+              </h3>
+              <p className="text-white/80 mb-6 max-w-[600px] mx-auto">
+                Join thousands of successful {industry.title.toLowerCase()} exporters who are already connecting with verified international buyers through GoExports.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <motion.button
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                  onClick={() => window.open(`https://wa.me/919876543210?text=Hi%20GoExports,%20I'm%20interested%20in%20${encodeURIComponent(industry.title)}%20export%20business`, '_blank')}
+                  className="inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-white text-[#111111] font-bold text-sm rounded-full cursor-pointer transition-all duration-200 hover:bg-gray-100 shadow-lg"
+                >
+                  Start Free Trial
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                    <polyline points="12 5 19 12 12 19" />
+                  </svg>
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                  onClick={() => document.getElementById('hero')?.scrollIntoView({ behavior: 'smooth' })}
+                  className="inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-transparent text-white font-bold text-sm rounded-full cursor-pointer transition-all duration-200 border-2 border-white hover:bg-white hover:text-[#111111]"
+                >
+                  Schedule Demo
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M3 12h18m-9-9v18" />
+                    <circle cx="12" cy="12" r="10" />
+                  </svg>
+                </motion.button>
+              </div>
+              <p className="text-xs text-white/60 mt-4">
+                No credit card required • Free setup • Start connecting with {industry.title.toLowerCase()} buyers today
+              </p>
+            </div>
+          </FadeIn>
         </div>
       </section>
 

@@ -19,6 +19,7 @@ function FadeIn({ children, delay = 0 }: { children: React.ReactNode; delay?: nu
 const featureIcons: Record<string, string> = {
   "Targeted Industry Leads": "🎯",
   "International Buyers": "🌍",
+  "Verified Global Buyers": "✅",
   "Dedicated Account Manager": "👤",
   "24/7/365 Support": "🛡️",
   "Weekly Reporting": "📊",
@@ -37,7 +38,7 @@ const plans = [
     leadsLabel: "Qualified Leads / Month",
     color: "from-[#f0f0f0] to-[#e0e0e0]",
     ringColor: "ring-[#ccc]",
-    features: ["Targeted Industry Leads", "International Buyers", "Dedicated Account Manager", "24/7/365 Support", "Weekly Reporting", "Monthly Reporting", "Weekly / Monthly Call"],
+    features: ["Targeted Industry Leads", "International Buyers", "Verified Global Buyers", "Dedicated Account Manager", "24/7/365 Support", "Weekly Reporting", "Monthly Reporting", "Weekly / Monthly Call"],
   },
   {
     name: "Growth",
@@ -48,7 +49,7 @@ const plans = [
     popular: true,
     color: "from-[#111111] to-[#333333]",
     ringColor: "ring-[#111111]",
-    features: ["Targeted Industry Leads", "International Buyers", "Dedicated Account Manager", "24/7/365 Support", "Weekly Reporting", "Monthly Reporting", "Weekly / Monthly Call"],
+    features: ["Targeted Industry Leads", "International Buyers", "Verified Global Buyers", "Dedicated Account Manager", "24/7/365 Support", "Weekly Reporting", "Monthly Reporting", "Weekly / Monthly Call"],
   },
   {
     name: "Enterprise",
@@ -58,7 +59,7 @@ const plans = [
     leadsLabel: "Qualified Leads / Month",
     color: "from-[#1a1a2e] to-[#16213e]",
     ringColor: "ring-[#1a1a2e]",
-    features: ["Targeted Industry Leads", "International Buyers", "Dedicated Account Manager", "24/7/365 Support", "Weekly Reporting", "Monthly Reporting", "Weekly / Monthly Call"],
+    features: ["Targeted Industry Leads", "International Buyers", "Verified Global Buyers", "Dedicated Account Manager", "24/7/365 Support", "Weekly Reporting", "Monthly Reporting", "Weekly / Monthly Call"],
   },
   {
     name: "Custom",
@@ -85,10 +86,10 @@ export default function SellToUS() {
               Pricing Plans
             </span>
             <h2 className="text-4xl md:text-5xl font-extrabold text-[#0F1111] mb-3">
-              Get Buyer Leads Plans
+              Find International Buyers Plans
             </h2>
             <p className="text-[#565959] text-base max-w-[520px] mx-auto leading-relaxed">
-              Choose the right plan to access verified international buyer leads for your business.
+              Choose the right plan to connect with verified global buyers and grow your import export business with international trade leads.
             </p>
           </div>
         </FadeIn>

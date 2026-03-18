@@ -7,18 +7,29 @@ import StructuredData from "@/components/StructuredData";
 
 export const metadata: Metadata = {
   title: {
-    default: "Buyer Leads for Exporters | Global Trade Leads",
-    template: "%s | Export Buyer Leads"
+    default: "Global Sourcing Platform | Import Export Business | International Buyers",
+    template: "%s | Global Trade Leads"
   },
   description:
-    "Get verified buyer leads from 190+ countries. Connect with importers, distributors, and wholesalers worldwide. Accelerate your export business with qualified international buyer leads.",
+    "Find international buyers and grow your import export business on our global sourcing platform. Connect with verified global buyers, get international trade leads, and access export market opportunities worldwide.",
   keywords: [
+    "global sourcing platform",
+    "import export business",
+    "international buyers",
+    "find international buyers",
+    "verified global buyers",
+    "connect with global buyers",
+    "find buyers for export",
+    "global trade opportunities",
+    "connect exporters with buyers",
+    "international trade connections",
+    "export business leads",
+    "export market opportunities",
+    "international leads",
     "buyer leads",
     "export leads",
-    "international buyers",
     "importers leads",
     "global trade leads",
-    "export business",
     "international trade",
     "verified buyers",
     "wholesale leads",
@@ -51,8 +62,8 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'en_US',
     url: 'https://www.goexports.com',
-    title: 'Buyer Leads for Exporters | Global Trade Leads',
-    description: 'Get verified buyer leads from 190+ countries. Connect with importers, distributors, and wholesalers worldwide.',
+    title: 'Global Sourcing Platform | Import Export Business | International Buyers',
+    description: 'Find international buyers and grow your import export business on our global sourcing platform. Connect with verified global buyers worldwide.',
     siteName: 'Global Export Leads',
     images: [
       {
@@ -65,8 +76,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Buyer Leads for Exporters | Global Trade Leads',
-    description: 'Get verified buyer leads from 190+ countries. Connect with importers, distributors, and wholesalers worldwide.',
+    title: 'Global Sourcing Platform | Import Export Business | International Buyers',
+    description: 'Find international buyers and grow your import export business on our global sourcing platform. Connect with verified global buyers worldwide.',
     images: ['/assets/twitter-image.jpg'],
     creator: '@globalexportleads',
   },

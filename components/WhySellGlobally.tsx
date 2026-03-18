@@ -28,10 +28,10 @@ export default function WhySellGlobally() {
               Explore Industries
             </p>
             <h2 className="text-4xl md:text-[52px] font-extrabold text-gray-900 leading-[1.1] mb-4">
-              55+ Industries.<br />Unlimited Buyer Leads.
+              55+ Industries.<br />Unlimited Global Trade Opportunities.
             </h2>
             <p className="text-gray-600 text-[15px] max-w-[520px] mx-auto leading-relaxed">
-              Get verified buyer leads from importers, distributors, and wholesalers across 190+ countries.
+              Find international buyers and connect with verified global buyers across 190+ countries. Your trusted import export business platform.
             </p>
           </div>
         </FadeIn>
@@ -93,7 +93,7 @@ export default function WhySellGlobally() {
                     {/* CTA at bottom */}
                     <div className="absolute bottom-0 left-0 right-0 p-5">
                       <span className="inline-flex items-center gap-2 px-6 py-3 bg-red-600 text-white text-[14px] font-bold rounded-full shadow-lg shadow-red-800/30 group-hover:bg-red-700 transition-all duration-300">
-                        Explore Leads
+                        Find Buyers
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="transition-transform duration-300 group-hover:translate-x-1"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>
                       </span>
                     </div>

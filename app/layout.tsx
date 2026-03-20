@@ -104,6 +104,16 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <StructuredData />
+        {/* Google tag (gtag.js) */}
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-3YVK8TPYEV"></script>
+        <script dangerouslySetInnerHTML={{
+          __html: `
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-3YVK8TPYEV');
+          `
+        }} />
       </head>
       <body>
         <div className="min-h-screen text-[#0F1111] relative">

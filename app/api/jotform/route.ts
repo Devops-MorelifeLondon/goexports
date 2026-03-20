@@ -2,10 +2,10 @@ import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
-    const { fullName, contactNumber, email, country, message, pageURL } =
+    const { fullName, phone, email, company, productCategory } =
       await req.json();
-console.log( fullName, contactNumber, email, country, message, pageURL)
-    const formId = '252822609352053'; // Using the formId from your provided snippet
+console.log( fullName, phone, email, company, productCategory)
+    const formId = '260778155209059'; // Updated form ID from the provided HTML
 
     if (!formId) {
       return NextResponse.json(
@@ -16,13 +16,12 @@ console.log( fullName, contactNumber, email, country, message, pageURL)
 
     const params = new URLSearchParams();
 
-    // Map fields to your REAL JotForm field names
-    params.append("q8_fullName", fullName);
-    params.append("q9_contactNumber", contactNumber);
-    params.append("q5_email", email);
-    params.append("q10_country", country);
-    params.append("q6_message", message);
-    params.append("q13_websiteURL", encodeURIComponent(pageURL || "")); // Encode URI component for URL
+    // Map fields to the new JotForm field names from HTML
+    params.append("q3_fullName", fullName);
+    params.append("q5_typeA5", phone);
+    params.append("q4_typeA4", email);
+    params.append("q6_typeA6", company);
+    params.append("q7_productCategory", productCategory);
 
     // REQUIRED FIELD – MUST BE SENT
     params.append("formID", formId);

@@ -6,6 +6,7 @@ import Link from "next/link";
 import type { Industry } from "@/data/industries";
 import { industrySubcategories } from "@/data/newcate";
 import industryContent from "@/data/industry-content-2.json";
+import GetInTouchForm from "@/components/GetInTouchForm";
 
 /* ─── Animation helper ─── */
 function FadeIn({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
@@ -140,68 +141,7 @@ export default function IndustryClient({ industry, related, slug }: Props) {
 
             {/* Hero Form */}
             <FadeIn delay={0.3}>
-              <div className="w-full lg:w-[400px] bg-[#FAFAFA] border border-[#e7e7e7] rounded-2xl p-7 shadow-xl shadow-black/5">
-                <h3 className="text-xl font-extrabold text-[#0F1111] mb-1">Get Started Today</h3>
-                <p className="text-sm text-[#565959] mb-5">Fill in your details and our team will reach out within 24 hours.</p>
-
-                <form className="flex flex-col gap-3.5" onSubmit={(e) => e.preventDefault()}>
-                  <div>
-                    <label className="block text-xs font-semibold text-[#333] mb-1">Full Name *</label>
-                    <input
-                      type="text"
-                      placeholder="Enter your full name"
-                      required
-                      className="w-full px-4 py-2.5 rounded-lg border border-[#e0e0e0] text-sm text-[#0F1111] placeholder:text-[#aaa] focus:outline-none focus:border-[#111111] focus:ring-1 focus:ring-[#111111] transition-all"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-semibold text-[#333] mb-1">Email Address *</label>
-                    <input
-                      type="email"
-                      placeholder="you@company.com"
-                      required
-                      className="w-full px-4 py-2.5 rounded-lg border border-[#e0e0e0] text-sm text-[#0F1111] placeholder:text-[#aaa] focus:outline-none focus:border-[#111111] focus:ring-1 focus:ring-[#111111] transition-all"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-semibold text-[#333] mb-1">Phone Number *</label>
-                    <input
-                      type="tel"
-                      placeholder="+91 98765 43210"
-                      required
-                      className="w-full px-4 py-2.5 rounded-lg border border-[#e0e0e0] text-sm text-[#0F1111] placeholder:text-[#aaa] focus:outline-none focus:border-[#111111] focus:ring-1 focus:ring-[#111111] transition-all"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-semibold text-[#333] mb-1">Company Name</label>
-                    <input
-                      type="text"
-                      placeholder="Your company name"
-                      className="w-full px-4 py-2.5 rounded-lg border border-[#e0e0e0] text-sm text-[#0F1111] placeholder:text-[#aaa] focus:outline-none focus:border-[#111111] focus:ring-1 focus:ring-[#111111] transition-all"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-semibold text-[#333] mb-1">Product Category</label>
-                    <select
-                      className="w-full px-4 py-2.5 rounded-lg border border-[#e0e0e0] text-sm text-[#0F1111] bg-white focus:outline-none focus:border-[#111111] focus:ring-1 focus:ring-[#111111] transition-all appearance-none cursor-pointer"
-                      defaultValue=""
-                    >
-                      <option value="" disabled>Select a category</option>
-                      {subcategories.map((sub, i) => (
-                        <option key={i} value={sub.name}>{sub.name}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => window.open(`https://wa.me/919876543210?text=Hi%20GoExports,%20I'm%20interested%20in%20exporting%20${encodeURIComponent(industry.title)}%20products`, '_blank')}
-                    className="w-full py-3 bg-[#111111] text-white font-bold text-sm rounded-lg mt-1 cursor-pointer transition-all duration-200 hover:bg-[#333333] shadow-lg shadow-black/20 hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]"
-                  >
-                    Submit Enquiry →
-                  </button>
-                </form>
-
-              </div>
+              <GetInTouchForm />
             </FadeIn>
           </div>
         </div>

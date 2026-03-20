@@ -132,7 +132,7 @@ export default function HeroSection() {
 
             <div>
               <a
-                href="https://wa.me/your-number-here"
+                href="https://api.whatsapp.com/send/?phone=917042059572&text=I+would+like+to+consult+with+Goexports(FinacBooks))&type=phone_number&app_absent=0"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-6 py-3 bg-[#25D366] text-white font-bold text-[14px] rounded-full no-underline transition-transform duration-200 hover:scale-105 active:scale-95 shadow-lg shadow-[#25D366]/30"

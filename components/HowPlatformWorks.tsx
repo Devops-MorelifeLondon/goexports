@@ -84,6 +84,7 @@ export default function HowPlatformWorks() {
             <motion.button
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
+              onClick={() => window.open("https://api.whatsapp.com/send/?phone=917042059572&text=I+would+like+to+consult+with+Goexports(FinacBooks))&type=phone_number&app_absent=0", "_blank")}
               className="inline-flex items-center gap-2 px-8 py-3.5 bg-[#111111] text-white font-bold text-sm rounded-full cursor-pointer transition-all duration-200 hover:bg-[#333333] shadow-lg shadow-black/15"
             >
               Start Exporting Today

@@ -102,6 +102,7 @@ export default function BenefitsForExporters() {
               <motion.button
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
+                onClick={()=> window.location.href = '#contact-form'}
                 className="inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-white text-[#111111] font-bold text-sm rounded-full cursor-pointer transition-all duration-200 hover:bg-gray-100 shadow-lg"
               >
                 Start Free Trial
@@ -113,6 +114,7 @@ export default function BenefitsForExporters() {
               <motion.button
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
+                   onClick={() => window.open("https://api.whatsapp.com/send/?phone=917042059572&text=I+would+like+to+consult+with+Goexports(FinacBooks))&type=phone_number&app_absent=0", "_blank")}
                 className="inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-transparent text-white font-bold text-sm rounded-full cursor-pointer transition-all duration-200 border-2 border-white hover:bg-white hover:text-[#111111]"
               >
                 Schedule Demo

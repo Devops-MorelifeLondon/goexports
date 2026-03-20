@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { MenuIcon } from "./Icons";
+import Link from "next/link";
 
 const WhatsAppIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
@@ -32,14 +33,14 @@ export default function Navbar() {
     <nav className="border-b border-white/10 sticky top-0 z-[1000] bg-black/20 backdrop-blur-md h-16">
       <div className="max-w-[1200px] mx-auto px-6 flex items-center h-full justify-between">
         <div className="flex items-center gap-10">
-          <div className="flex items-center gap-1.5 cursor-pointer">
+          <Link href={'/'} className="flex items-center gap-1.5 cursor-pointer">
             <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center text-black font-extrabold text-sm shadow-md">
               G
             </div>
             <span className="text-xl font-extrabold text-white tracking-tight">
               go<span className="text-white/70">exports</span>
             </span>
-          </div>
+          </Link>
 
           <div className="hidden lg:flex items-center gap-1">
             {navItems.map((item) => (
@@ -94,14 +95,14 @@ export default function Navbar() {
               </button>
             ))}
             <div className="border-t border-white/10 mt-2 pt-3 flex flex-col gap-1">
-              <button
-                onClick={() => scrollTo("#contact-form")}
+              <Link
+                href="#contact-form"
                 className="text-sm font-semibold text-white/80 bg-transparent border-none px-4 py-3 rounded-lg hover:bg-white/10 hover:text-white cursor-pointer text-left"
               >
                 Contact us
-              </button>
+              </Link>
               <a
-                href="https://wa.me/your-number-here"
+                href="https://api.whatsapp.com/send/?phone=917042059572&text=I+would+like+to+consult+with+Goexports(FinacBooks))&type=phone_number&app_absent=0"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-sm font-bold text-center text-white border-none px-4 py-3 rounded-lg bg-[#25D366] hover:bg-[#1EBE5D] transition-all duration-200 mt-1 cursor-pointer no-underline flex items-center justify-center gap-2"

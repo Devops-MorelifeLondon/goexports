@@ -4,9 +4,9 @@ import { useState, useEffect } from "react";
 import GetInTouchForm from "./GetInTouchForm";
 
 const lines = [
-  { prefix: "Find ", keyword: "International Buyers" },
-  { prefix: "Connect with ", keyword: "Global Buyers" },
-  { prefix: "Grow ", keyword: "Export Business" },
+  { prefix: "Get ", keyword: "Buyer Leads" },
+  { prefix: "Find ", keyword: "Verified Buyers" },
+  { prefix: "Connect ", keyword: "Globally" },
 ];
 
 export default function HeroSection() {
@@ -113,7 +113,7 @@ export default function HeroSection() {
           
           <div className="flex-[1.2] text-center lg:text-left">
             <div className="inline-block bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-3 py-0.5 text-[12px] font-semibold text-white mb-3">
-              Global Sourcing Platform
+               Buyer Lead Generation
             </div>
 
             <h1 className="text-[32px] lg:text-[44px] font-extrabold leading-[1.1] tracking-tight mb-3 text-white">
@@ -123,11 +123,11 @@ export default function HeroSection() {
             </h1>
 
             <p className="text-base lg:text-lg leading-snug text-white/80 max-w-[520px] mb-2 mx-auto lg:mx-0">
-              Verified Global Buyers from 190+ Countries
+       Verified Global Buyers from 190+ Countries
             </p>
 
             <p className="text-base lg:text-lg leading-snug text-white/80 max-w-[520px] mb-6 mx-auto lg:mx-0">
-              The ultimate import export business platform to find international buyers and access global trade opportunities.
+               Get access to verified buyer leads from around the world. Accelerate your international sales.
             </p>
 
             <div>

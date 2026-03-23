@@ -4,7 +4,7 @@ import { getIndustryBySlug, getAllIndustrySlugs, industries } from "@/data/indus
 import IndustryClient from "./client";
 import metadata from '@/data/industry-content.json'
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://goexports.com";
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://www.goexports.co.uk";
 
 // ─── Static params for SSG ───
 export async function generateStaticParams() {

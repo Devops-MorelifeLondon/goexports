@@ -4,6 +4,7 @@ import { FadeIn, StaggerContainer, StaggerItem } from "./MotionWrappers";
 // Adjust these imports to match the actual file paths where you saved the data
 import { industries } from "@/data/industries";
 import { industrySubcategories } from "@/data/newcate";
+import { FaCcVisa, FaCcMastercard, FaCcPaypal, FaCcAmex } from "react-icons/fa";
 
 // Function to convert name to slug
 function toSlug(name: string): string {
@@ -154,13 +155,17 @@ export default function Footer() {
                 © 2025 GoExports. All rights reserved.
               </span>
               <div className="flex gap-3">
-                {["Terms of Service", "Privacy Policy", "Cookies"].map((t, i) => (
+                {[
+                  { label: "Terms of Service", href: "/tos" },
+                  { label: "Privacy Policy", href: "/privacy" },
+                  { label: "Cookies", href: "/cookies" }
+                ].map((item, i) => (
                   <a
                     key={i}
-                    href="#"
+                    href={item.href}
                     className="text-white/50 text-xs no-underline hover:text-white transition-colors duration-200"
                   >
-                    {t}
+                    {item.label}
                   </a>
                 ))}
               </div>
@@ -169,40 +174,22 @@ export default function Footer() {
               <span className="text-white/60 text-xs mr-3">We Accept:</span>
               <div className="flex gap-3">
                 {[
-                  {
-                    name: "Visa",
-                    icon: "M4 1h16M7 4v10h2V4h6v16m-8 0l-3 3h6l3-3m0 6l-3 3h6l3-3",
-                  },
-                  {
-                    name: "Mastercard",
-                    icon: "M3 3h18v18H3V3zm0 2h18v14H3V5z",
-                  },
-                  {
-                    name: "PayPal",
-                    icon: "M7 12l3-3 3 3-3 3-3-3-3-3-3h14m-7 0l-3 3h6l3-3",
-                  },
-                  {
-                    name: "American Express",
-                    icon: "M3 3h18v18H3V3zm0 2h18v14H3V5z",
-                  },
-                ].map((payment, i) => (
-                  <div
-                    key={i}
-                    className="w-8 h-5 bg-white/10 rounded flex items-center justify-center hover:bg-white/20 transition-all duration-200"
-                    title={payment.name}
-                  >
-                    <svg
-                      width="20"
-                      height="20"
-                      viewBox="0 0 24 24"
-                      fill="white"
-                      stroke="white"
-                      strokeWidth="1.5"
+                  { name: "Visa", icon: FaCcVisa },
+                  { name: "Mastercard", icon: FaCcMastercard },
+                  { name: "PayPal", icon: FaCcPaypal },
+                  { name: "American Express", icon: FaCcAmex },
+                ].map((payment, i) => {
+                  const Icon = payment.icon;
+                  return (
+                    <div
+                      key={i}
+                      className="w-8 h-8 rounded flex items-center justify-center hover:bg-white/20 transition-all duration-200"
+                      title={payment.name}
                     >
-                      <path d={payment.icon} />
-                    </svg>
-                  </div>
-                ))}
+                      <Icon size={20} className="text-white" />
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>

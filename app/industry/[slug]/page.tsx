@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getIndustryBySlug, getAllIndustrySlugs, industries } from "@/data/industries";
-import DrugsAndMedicinesPage from "./DrugsAndMedicinesPage";
 import IndustryPageClient from "./IndustryPageClient";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://yoursite.com";
@@ -310,9 +309,7 @@ export default async function IndustryPage({ params }: { params: Promise<{ slug:
       )}
 
       {/* Page Content */}
-      {slug === "drugs-and-medicines" ? (
-        <DrugsAndMedicinesPage />
-      ) : (
+  
         <IndustryPageClient
           industry={industry}
           related={[1, 2, 3].map(
@@ -323,7 +320,7 @@ export default async function IndustryPage({ params }: { params: Promise<{ slug:
               ]
           )}
         />
-      )}
+ 
     </>
   );
 }

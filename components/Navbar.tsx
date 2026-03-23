@@ -3,6 +3,7 @@
 import { useState, useCallback } from "react";
 import { MenuIcon } from "./Icons";
 import Link from "next/link";
+import Image from "next/image";
 
 const WhatsAppIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
@@ -30,16 +31,11 @@ export default function Navbar() {
   }, []);
 
   return (
-    <nav className="border-b border-white/10 sticky top-0 z-[1000] bg-black/20 backdrop-blur-md h-16">
+    <nav className="border-b border-white/10 sticky top-0 z-[1000] bg-white backdrop-blur-md shadow-sm h-16">
       <div className="max-w-[1200px] mx-auto px-6 flex items-center h-full justify-between">
         <div className="flex items-center gap-10">
           <Link href={'/'} className="flex items-center gap-1.5 cursor-pointer">
-            <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center text-black font-extrabold text-sm shadow-md">
-              G
-            </div>
-            <span className="text-xl font-extrabold text-white tracking-tight">
-              go<span className="text-white/70">exports</span>
-            </span>
+           <Image src="/logo/logo.png" alt="Goexports Logo" width={120} height={32} />
           </Link>
 
           <div className="hidden lg:flex items-center gap-1">
@@ -47,7 +43,7 @@ export default function Navbar() {
               <button
                 key={item.label}
                 onClick={() => scrollTo(item.href)}
-                className="relative text-sm font-semibold text-white/80 bg-transparent border-none px-3.5 py-2 rounded-lg transition-all duration-200 hover:text-white hover:bg-white/10 cursor-pointer group"
+                className="relative text-sm font-semibold text-black bg-transparent border-none px-3.5 py-2 rounded-lg transition-all duration-200 hover:underline hover:bg-white/10 cursor-pointer group"
               >
                 {item.label}
                 <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-white rounded-full transition-all duration-300 group-hover:w-3/5" />
@@ -57,15 +53,15 @@ export default function Navbar() {
         </div>
 
         <div className="flex items-center gap-2">
-          <button
-            onClick={() => scrollTo("#contact-form")}
-            className="hidden lg:inline-flex items-center text-sm font-semibold text-white/80 px-3.5 py-2 rounded-lg transition-all duration-200 hover:text-white hover:bg-white/10 bg-transparent border-none cursor-pointer"
+          <Link
+                href="#contact-form"
+            className="hidden lg:inline-flex items-center text-sm font-semibold text-black px-3.5 py-2 rounded-lg transition-all duration-200 hover:text-white hover:bg-white/10 bg-transparent border-none cursor-pointer"
           >
             Contact us
-          </button>
+          </Link>
           <div className="hidden lg:block w-px h-6 bg-white/20 mx-1" />
           <a
-            href="https://wa.me/your-number-here"
+            href="https://api.whatsapp.com/send/?phone=917042059572&text=I+would+like+to+consult+with+Goexports(FinacBooks))&type=phone_number&app_absent=0"
             target="_blank"
             rel="noopener noreferrer"
             className="hidden lg:inline-flex items-center gap-1.5 px-5 py-2 bg-[#25D366] text-white font-bold text-sm rounded-lg border-none transition-all duration-200 hover:bg-[#1EBE5D] shadow-sm hover:shadow-md cursor-pointer no-underline"
@@ -74,7 +70,7 @@ export default function Navbar() {
             WhatsApp
           </a>
           <button
-            className="flex lg:hidden items-center justify-center w-9 h-9 rounded-lg text-white hover:bg-white/10 transition-all duration-200 bg-transparent border-none cursor-pointer"
+            className="flex lg:hidden items-center justify-center w-9 h-9 rounded-lg text-black hover:bg-white/10 transition-all duration-200 bg-transparent border-none cursor-pointer"
             onClick={() => setMobileMenu(!mobileMenu)}
           >
             <MenuIcon />
@@ -89,7 +85,7 @@ export default function Navbar() {
               <button
                 key={item.label}
                 onClick={() => scrollTo(item.href)}
-                className="text-sm font-semibold text-white/80 bg-transparent border-none px-4 py-3 rounded-lg transition-all duration-200 hover:text-white hover:bg-white/10 cursor-pointer text-left"
+                className="text-sm font-semibold text-white bg-transparent border-none px-4 py-3 rounded-lg transition-all duration-200 hover:text-white hover:bg-white/10 cursor-pointer text-left"
               >
                 {item.label}
               </button>
@@ -97,7 +93,7 @@ export default function Navbar() {
             <div className="border-t border-white/10 mt-2 pt-3 flex flex-col gap-1">
               <Link
                 href="#contact-form"
-                className="text-sm font-semibold text-white/80 bg-transparent border-none px-4 py-3 rounded-lg hover:bg-white/10 hover:text-white cursor-pointer text-left"
+                className="text-sm font-semibold text-white bg-transparent border-none px-4 py-3 rounded-lg hover:bg-white/10 hover:text-white cursor-pointer text-left"
               >
                 Contact us
               </Link>

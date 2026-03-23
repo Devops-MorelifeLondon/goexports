@@ -112,7 +112,7 @@ export default function HeroSection() {
         <div className="flex flex-col lg:flex-row gap-10 lg:gap-16 items-center">
           
           <div className="flex-[1.2] text-center lg:text-left">
-            <div className="inline-block bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-3 py-0.5 text-[12px] font-semibold text-white mb-3">
+            <div className="inline-block mt-8 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-3 py-0.5 text-[12px] font-semibold text-white mb-3">
                Buyer Lead Generation
             </div>
 

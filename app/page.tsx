@@ -11,7 +11,7 @@ import BenefitsForExporters from "@/components/BenefitsForExporters";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Global Sourcing Platform | Import Export Business Leads | Find International Buyers",
+  title: "Goexports | Import Export Business Leads | Find International Buyers",
   description: "Connect with verified global buyers on our international sourcing platform. Find buyers for export business, get international trade leads, and grow your import export business with verified buyers worldwide.",
   keywords: [
     "import export business",

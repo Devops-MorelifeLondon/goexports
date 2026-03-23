@@ -7,6 +7,7 @@ import type { Industry } from "@/data/industries";
 import { industrySubcategories } from "@/data/newcate";
 import industryContent from "@/data/industry-content-2.json";
 import GetInTouchForm from "@/components/GetInTouchForm";
+import SellToUS from "@/components/SellToUS";
 
 /* ─── Animation helper ─── */
 function FadeIn({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
@@ -95,7 +96,7 @@ export default function IndustryClient({ industry, related, slug }: Props) {
               <FadeIn delay={0.25}>
                 <div className="flex flex-wrap gap-4 mb-8">
                   <a
-                    href="https://wa.me/919876543210?text=Hi%20GoExports,%20I'm%20interested%20in%20exporting%20{encodeURIComponent(industry.title)}%20products"
+                    href={`https://wa.me/917042059572?text=Hi%20GoExports,%20I'm%20interested%20in%20exporting%20${encodeURIComponent(industry.title)}%20products`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 px-8 py-3.5 bg-[#111111] text-white font-bold text-sm rounded-full no-underline transition-all duration-200 hover:bg-[#333333] shadow-lg shadow-black/15 hover:scale-[1.03] active:scale-[0.97]"
@@ -103,7 +104,7 @@ export default function IndustryClient({ industry, related, slug }: Props) {
                     Contact Us Now →
                   </a>
                   <a
-                    onClick={() => document.getElementById('hero')?.scrollIntoView({ behavior: 'smooth' })}
+                    onClick={() => document.getElementById('categories')?.scrollIntoView({ behavior: 'smooth' })}
                     className="inline-flex items-center gap-2 px-8 py-3.5 bg-transparent border border-[#111111] text-[#0F1111] font-bold text-sm rounded-full no-underline transition-all duration-200 hover:bg-[#111111] hover:text-white cursor-pointer"
                   >
                     Browse Categories
@@ -556,7 +557,7 @@ export default function IndustryClient({ industry, related, slug }: Props) {
                 <motion.button
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.97 }}
-                  onClick={() => window.open(`https://wa.me/919876543210?text=Hi%20GoExports,%20I'm%20interested%20in%20${encodeURIComponent(industry.title)}%20export%20business`, '_blank')}
+                  onClick={() => window.open(`https://wa.me/917042059572?text=Hi%20GoExports,%20I'm%20interested%20in%20${encodeURIComponent(industry.title)}%20export%20business`, '_blank')}
                   className="inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-white text-[#111111] font-bold text-sm rounded-full cursor-pointer transition-all duration-200 hover:bg-gray-100 shadow-lg"
                 >
                   Start Free Trial
@@ -568,7 +569,7 @@ export default function IndustryClient({ industry, related, slug }: Props) {
                 <motion.button
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.97 }}
-                  onClick={() => document.getElementById('hero')?.scrollIntoView({ behavior: 'smooth' })}
+         onClick={() => window.open(`https://wa.me/917042059572?text=Hi%20GoExports,%20I'm%20interested%20in%20${encodeURIComponent(industry.title)}%20export%20business`, '_blank')}
                   className="inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-transparent text-white font-bold text-sm rounded-full cursor-pointer transition-all duration-200 border-2 border-white hover:bg-white hover:text-[#111111]"
                 >
                   Schedule Demo
@@ -658,6 +659,8 @@ export default function IndustryClient({ industry, related, slug }: Props) {
           </FadeIn>
         </div>
       </section>
+
+       <SellToUS />
 
       {/* ═══ RELATED INDUSTRIES ═══ */}
       <section className="py-16 px-6 bg-[#FAFAFA]">

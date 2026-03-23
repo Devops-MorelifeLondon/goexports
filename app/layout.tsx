@@ -48,7 +48,7 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL('https://www.goexports.com'),
+  metadataBase: new URL('https://www.goexports.co.uk'),
   alternates: {
     canonical: '/',
     languages: {

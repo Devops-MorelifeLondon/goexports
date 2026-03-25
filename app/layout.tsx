@@ -3,7 +3,6 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppFloat from "@/components/WhatsAppFloat";
-import StructuredData from "@/components/StructuredData";
 
 export const metadata: Metadata = {
   title: {
@@ -103,7 +102,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <StructuredData />
+        
         {/* Google tag (gtag.js) */}
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-3YVK8TPYEV"></script>
         <script dangerouslySetInnerHTML={{

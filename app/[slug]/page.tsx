@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getIndustryBySlug, getAllIndustrySlugs, industries } from "@/data/industries";
 import IndustryClient from "./client";
-import metadata from '@/data/industry-content.json'
+import metadata from '@/data/industry-content-2.json';
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://www.goexports.co.uk";
 

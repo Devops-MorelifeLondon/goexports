@@ -54,7 +54,7 @@ export default function GetInTouchForm() {
 
   const inputFields = [
     { name: "fullName", label: "Full Name", type: "text", placeholder: "John Doe", fullWidth: false },
-    { name: "phone", label: "Phone", type: "tel", placeholder: "+91 98765 43210", fullWidth: false },
+    { name: "phone", label: "Phone", type: "tel", placeholder: "+1 (555) 000-0000", fullWidth: false },
     { name: "email", label: "Email Address", type: "email", placeholder: "john@company.com", fullWidth: true },
     { name: "company", label: "Company", type: "text", placeholder: "Your company name", fullWidth: true },
   ];

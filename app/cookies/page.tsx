@@ -115,8 +115,6 @@ export default function CookiesPolicy() {
               </p>
               <div className="mt-4 bg-gray-50 p-4 rounded">
                 <p><strong>Email:</strong> info@goexports.co.uk</p>
-                <p><strong>Phone:</strong> +91 98765 43210</p>
-                <p><strong>Address:</strong> 123 Business Park, Mumbai - 400069, India</p>
               </div>
             </section>
           </div>

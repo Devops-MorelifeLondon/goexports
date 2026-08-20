@@ -171,22 +171,6 @@ export default function Footer() {
                     info@goexports.co.uk
                   </a>
                 </div>
-                <div>
-                  <span style={{ fontWeight: 600, color: "var(--body-strong)" }}>Phone: </span>
-                  <a
-                    href="tel:+919876543210"
-                    className="no-underline transition-colors"
-                    style={{ color: "var(--muted)" }}
-                    onMouseEnter={(e) => (e.currentTarget.style.color = "var(--ink)")}
-                    onMouseLeave={(e) => (e.currentTarget.style.color = "var(--muted)")}
-                  >
-                    +91 98765 43210
-                  </a>
-                </div>
-                <div>
-                  <span style={{ fontWeight: 600, color: "var(--body-strong)" }}>Address: </span>
-                  <span>123 Business Park, Mumbai - 400069, India</span>
-                </div>
               </div>
             </div>
 

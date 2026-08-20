@@ -365,7 +365,7 @@ export default function SellerVideos() {
                       </svg>
                       <input
                         type="tel"
-                        placeholder="+91 98765 43210"
+                        placeholder="+1 (555) 000-0000"
                         required
                         className="w-full pl-11 pr-4 py-3.5 rounded-xl border border-[#e0e0e0] text-sm text-[#0F1111] placeholder:text-[#bbb] focus:outline-none focus:border-[#111111] focus:ring-1 focus:ring-[#111111] transition-all bg-white"
                       />

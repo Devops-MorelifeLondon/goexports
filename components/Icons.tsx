@@ -173,3 +173,18 @@ export const FeatureIconMap: Record<string, React.FC<IconProps>> = {
   "Custom Integrations": IconSettings,
   "Priority Support": IconZap,
 };
+
+// Aliases for convenience & backwards compatibility
+export const Star = IconStar;
+export const Check = IconCheck;
+export const Search = IconSearch;
+export const Lock = IconLock;
+export const Globe = IconGlobe;
+export const Shield = IconShield;
+export const Rocket = IconRocket;
+export const Handshake = IconHandshake;
+export const Package = IconPackage;
+export const Zap = IconZap;
+export const Phone = IconPhone;
+export const User = IconUser;
+export const Target = IconTarget;

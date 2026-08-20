@@ -2,86 +2,178 @@
 
 import { motion } from "framer-motion";
 import { FadeIn } from "./MotionWrappers";
+import {
+  IconVerified, IconGlobe, IconRocket, IconHandshake,
+  IconPackage, IconTrendingUp,
+} from "./Icons";
 
 const benefits = [
   {
-    icon: "✅",
+    Icon: IconVerified,
     title: "Verified International Buyer Leads",
     description: "Connect with pre-verified buyers who are actively looking for your products. No more time wasted on unqualified leads.",
-    highlight: "100% Verified Buyers"
+    highlight: "Verified Buyers",
+    cardColor: "var(--brand-pink)",
+    dark: true,
   },
   {
-    icon: "🌍",
+    Icon: IconGlobe,
     title: "Global Trade Opportunities",
-    description: "Access buyers from 200+ countries across all industries. Expand your export business to new international markets.",
-    highlight: "200+ Countries"
+    description: "Access buyers across all industries and regions worldwide. Expand your export business to new international markets.",
+    highlight: "190+ Countries",
+    cardColor: "var(--brand-teal)",
+    dark: true,
   },
   {
-    icon: "🚀",
+    Icon: IconRocket,
     title: "Faster Market Expansion",
-    description: "Reduce your market entry time by 80%. Our platform helps you find buyers and start exporting within weeks, not months.",
-    highlight: "80% Faster Entry"
+    description: "Our platform helps you find qualified buyers and start exporting sooner — without the delays of traditional lead generation.",
+    highlight: "Quick Onboarding",
+    cardColor: "var(--brand-lavender)",
+    dark: false,
   },
   {
-    icon: "🤝",
+    Icon: IconHandshake,
     title: "Connect with Trusted Importers",
-    description: "Build relationships with reliable importers and distributors who have been thoroughly vetted for credibility and payment reliability.",
-    highlight: "Trusted Partners"
+    description: "Build relationships with reliable importers and distributors who have been vetted for credibility and payment reliability.",
+    highlight: "Trusted Partners",
+    cardColor: "var(--brand-peach)",
+    dark: false,
   },
   {
-    icon: "📦",
+    Icon: IconPackage,
     title: "Access to Worldwide Distributors",
-    description: "Reach global distribution networks that can scale your business. From local retailers to multinational chains.",
-    highlight: "Global Distribution"
+    description: "Reach global distribution networks that can scale your business — from regional retailers to multinational supply chains.",
+    highlight: "Global Distribution",
+    cardColor: "var(--brand-ochre)",
+    dark: false,
   },
   {
-    icon: "💰",
+    Icon: IconTrendingUp,
     title: "Increased Revenue Potential",
-    description: "Tap into international markets and increase your revenue by up to 300%. Our exporters see average growth of 150% in the first year.",
-    highlight: "300% Revenue Growth"
-  }
+    description: "Tapping into international markets opens new revenue streams for your business beyond your existing domestic footprint.",
+    highlight: "New Revenue Streams",
+    cardColor: "var(--surface-card)",
+    dark: false,
+  },
 ];
+
 
 export default function BenefitsForExporters() {
   return (
-    <section className="bg-white text-[#0F1111] py-20 px-6">
-      <div className="max-w-[1200px] mx-auto">
+    <section
+      id="benefits"
+      style={{
+        backgroundColor: "var(--surface-soft)",
+        paddingTop: "var(--space-section)",
+        paddingBottom: "var(--space-section)",
+      }}
+    >
+      <div className="section-wrap">
         <FadeIn>
           <div className="text-center mb-16">
-            <span className="inline-block bg-[#111111] text-white text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-wider mb-4">
+            <span
+              className="inline-block mb-4 caption-upper"
+              style={{
+                color: "var(--muted)",
+                backgroundColor: "var(--surface-card)",
+                padding: "6px 16px",
+                borderRadius: "var(--r-pill)",
+              }}
+            >
               Why Choose GoExports
             </span>
-            <h2 className="text-4xl md:text-5xl font-extrabold text-center mb-4">
+            <h2
+              className="mb-4"
+              style={{
+                fontSize: "clamp(32px, 4vw, 56px)",
+                fontWeight: 500,
+                lineHeight: 1.05,
+                letterSpacing: "-2px",
+                color: "var(--ink)",
+              }}
+            >
               Benefits for Exporters
             </h2>
-            <p className="text-center text-[#565959] text-base max-w-[560px] mx-auto leading-relaxed">
+            <p
+              className="mx-auto"
+              style={{
+                fontSize: "16px",
+                color: "var(--muted)",
+                maxWidth: "520px",
+                lineHeight: 1.6,
+              }}
+            >
               Discover why thousands of exporters choose GoExports to grow their international trade business and connect with verified global buyers.
             </p>
           </div>
         </FadeIn>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {/* 6 saturated feature cards cycling through brand palette */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {benefits.map((benefit, index) => (
-            <FadeIn key={index} delay={index * 0.1}>
+            <FadeIn key={index} delay={index * 0.08}>
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1, duration: 0.5 }}
-                className="bg-[#FAFAFA] border border-[#e7e7e7] rounded-xl p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 h-full"
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-60px" }}
+                transition={{ delay: index * 0.08, duration: 0.5 }}
+                className="flex flex-col h-full"
+                style={{
+                  backgroundColor: benefit.cardColor,
+                  borderRadius: "var(--r-xl)",
+                  padding: "var(--space-xl)",
+                }}
               >
                 {/* Icon */}
-                <div className="text-4xl mb-4">{benefit.icon}</div>
+                <div
+                  className="mb-5 flex items-center justify-center w-11 h-11 rounded-xl"
+                  style={{
+                    backgroundColor: benefit.dark ? "rgba(255,255,255,0.15)" : "var(--canvas)",
+                    color: benefit.dark ? "#ffffff" : "var(--ink)",
+                  }}
+                >
+                  <benefit.Icon size={22} />
+                </div>
 
-                {/* Content */}
-                <h3 className="text-xl font-bold text-[#0F1111] mb-3">
+                {/* Title */}
+                <h3
+                  className="mb-3"
+                  style={{
+                    fontSize: "18px",
+                    fontWeight: 600,
+                    color: benefit.dark ? "var(--on-primary)" : "var(--ink)",
+                    lineHeight: 1.4,
+                  }}
+                >
                   {benefit.title}
                 </h3>
-                <p className="text-[#565959] text-sm leading-relaxed mb-4">
+
+                {/* Body */}
+                <p
+                  className="flex-1 mb-6"
+                  style={{
+                    fontSize: "14px",
+                    color: benefit.dark ? "rgba(255,255,255,0.75)" : "var(--body)",
+                    lineHeight: 1.6,
+                  }}
+                >
                   {benefit.description}
                 </p>
 
-                {/* Highlight Badge */}
-                <div className="inline-flex items-center gap-1.5 bg-[#111111] text-white rounded-full px-3 py-1 text-xs font-semibold">
+                {/* Highlight badge */}
+                <div
+                  className="inline-flex items-center gap-2 self-start"
+                  style={{
+                    backgroundColor: benefit.dark ? "rgba(255,255,255,0.15)" : "var(--canvas)",
+                    color: benefit.dark ? "var(--on-primary)" : "var(--ink)",
+                    padding: "6px 14px",
+                    borderRadius: "var(--r-pill)",
+                    fontSize: "12px",
+                    fontWeight: 600,
+                    letterSpacing: "0.5px",
+                  }}
+                >
                   {benefit.highlight}
                 </div>
               </motion.div>
@@ -89,44 +181,56 @@ export default function BenefitsForExporters() {
           ))}
         </div>
 
-        {/* CTA Section */}
-        <FadeIn delay={0.5}>
-          <div className="mt-16 bg-gradient-to-r from-[#111111] to-[#333333] rounded-2xl p-8 text-center text-white">
-            <h3 className="text-2xl md:text-3xl font-extrabold mb-4">
+        {/* Pre-footer CTA band */}
+        <FadeIn delay={0.4}>
+          <div
+            className="mt-16 text-center"
+            style={{
+              backgroundColor: "var(--surface-strong)",
+              borderRadius: "var(--r-xl)",
+              padding: "64px var(--space-xl)",
+            }}
+          >
+            <h3
+              className="mb-4"
+              style={{
+                fontSize: "clamp(28px, 3.5vw, 40px)",
+                fontWeight: 500,
+                letterSpacing: "-1px",
+                color: "var(--ink)",
+              }}
+            >
               Ready to Grow Your Export Business?
             </h3>
-            <p className="text-white/80 mb-6 max-w-[600px] mx-auto">
+            <p
+              className="mb-8 mx-auto"
+              style={{
+                fontSize: "16px",
+                color: "var(--muted)",
+                maxWidth: "520px",
+                lineHeight: 1.6,
+              }}
+            >
               Join thousands of successful exporters who are already connecting with verified international buyers through GoExports.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <motion.button
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-                onClick={()=> window.location.href = '#contact-form'}
-                className="inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-white text-[#111111] font-bold text-sm rounded-full cursor-pointer transition-all duration-200 hover:bg-gray-100 shadow-lg"
-              >
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <a href="#contact-form" className="btn-primary">
                 Start Free Trial
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <line x1="5" y1="12" x2="19" y2="12" />
                   <polyline points="12 5 19 12 12 19" />
                 </svg>
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-                   onClick={() => window.open("https://api.whatsapp.com/send/?phone=917042059572&text=I+would+like+to+consult+with+Goexports(FinacBooks))&type=phone_number&app_absent=0", "_blank")}
-                className="inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-transparent text-white font-bold text-sm rounded-full cursor-pointer transition-all duration-200 border-2 border-white hover:bg-white hover:text-[#111111]"
+              </a>
+              <a
+                href="https://api.whatsapp.com/send/?phone=917042059572&text=I+would+like+to+consult+with+Goexports(FinacBooks))&type=phone_number&app_absent=0"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-secondary"
               >
                 Schedule Demo
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M3 12h18m-9-9v18" />
-                  <circle cx="12" cy="12" r="10" />
-                </svg>
-              </motion.button>
+              </a>
             </div>
-            <p className="text-xs text-white/60 mt-4">
-              No credit card required • Free setup • Start connecting with buyers today
-            </p>
+
           </div>
         </FadeIn>
       </div>

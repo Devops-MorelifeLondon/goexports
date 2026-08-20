@@ -50,7 +50,7 @@ const rawIndustries: Omit<Industry, "slug">[] = [
         "value": "190+"
       }
     ],
-    "image": "https://impactcare.co.in/wp-content/uploads/2024/10/What-is-Medicine-to-Medicine.webp"
+    "image": "https://images.pexels.com/photos/12672390/pexels-photo-12672390.jpeg"
   },
   {
     "name": "Hospital and Diagnosis Instrument",
@@ -1650,7 +1650,7 @@ const rawIndustries: Omit<Industry, "slug">[] = [
         "value": "35K+"
       }
     ],
-    "image": "https://placehold.co/600x400?text=Leather+Products"
+    "image": "https://images.pexels.com/photos/4452502/pexels-photo-4452502.jpeg"
   },
   {
     "name": "Contractors & Freelancers",
@@ -1682,7 +1682,7 @@ const rawIndustries: Omit<Industry, "slug">[] = [
         "value": "100K+"
       }
     ],
-    "image": "https://placehold.co/600x400?text=Contractors+&+Freelancers"
+    "image": "https://images.pexels.com/photos/6285155/pexels-photo-6285155.jpeg"
   },
   {
     "name": "Electronics Components",
@@ -1714,7 +1714,7 @@ const rawIndustries: Omit<Industry, "slug">[] = [
         "value": "60K+"
       }
     ],
-    "image": "https://placehold.co/600x400?text=Electronics+Components"
+    "image": "https://images.pexels.com/photos/4584612/pexels-photo-4584612.jpeg"
   },
   {
     "name": "Electrical Equipment",
@@ -1746,7 +1746,7 @@ const rawIndustries: Omit<Industry, "slug">[] = [
         "value": "48K+"
       }
     ],
-    "image": "https://placehold.co/600x400?text=Electrical+Equipment"
+    "image": "https://images.pexels.com/photos/7867332/pexels-photo-7867332.jpeg"
   },
   {
     "name": "Hospital,Clinic and Consultation",
@@ -1778,7 +1778,7 @@ const rawIndustries: Omit<Industry, "slug">[] = [
         "value": "20K+"
       }
     ],
-    "image": "https://placehold.co/600x400?text=Hospital,Clinic+and+Consultation"
+    "image": "https://images.pexels.com/photos/7089296/pexels-photo-7089296.jpeg"
   }
 ];
 

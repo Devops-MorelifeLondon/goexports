@@ -1,12 +1,9 @@
 import HeroSection from "@/components/HeroSection";
 import WhySellGlobally from "@/components/WhySellGlobally";
-import SellerVideos from "@/components/SellerVideos";
 import SellToUS from "@/components/SellToUS";
-import GlobalShoppingCTA from "@/components/GlobalShoppingCTA";
 import Presence from "@/components/Presence";
 import Locations from "@/components/Locations";
 import HowPlatformWorks from "@/components/HowPlatformWorks";
-import Testimonials from "@/components/Testimonials";
 import BenefitsForExporters from "@/components/BenefitsForExporters";
 import { Metadata } from "next";
 
@@ -63,10 +60,7 @@ export default function Home() {
       <HowPlatformWorks />
       <BenefitsForExporters />
       <WhySellGlobally />
-      <SellerVideos />
-      <Testimonials />
       <SellToUS />
-      <GlobalShoppingCTA />
       <Presence />
       <Locations />
     </>

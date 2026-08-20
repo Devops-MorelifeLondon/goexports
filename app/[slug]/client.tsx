@@ -8,6 +8,10 @@ import { industrySubcategories } from "@/data/newcate";
 import industryContent from "@/data/industry-content-2.json";
 import GetInTouchForm from "@/components/GetInTouchForm";
 import SellToUS from "@/components/SellToUS";
+import {
+  IconVerified, IconGlobe, IconRocket,
+  IconHandshake, IconPackage, IconTrendingUp,
+} from "@/components/Icons";
 
 /* ─── Animation helper ─── */
 function FadeIn({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
@@ -367,99 +371,7 @@ export default function IndustryClient({ industry, related, slug }: Props) {
         </div>
       </section>
 
-      {/* ═══ TESTIMONIALS ═══ */}
-      <section className="py-16 px-6 bg-[#FAFAFA]">
-        <div className="max-w-[1200px] mx-auto">
-          <FadeIn>
-            <div className="text-center mb-16">
-              <span className="inline-block bg-[#111111] text-white text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-wider mb-4">
-                Success Stories
-              </span>
-              <h2 className="text-3xl md:text-4xl font-extrabold text-center mb-4">
-                {industry.title} Exporters Growing Globally
-              </h2>
-              <p className="text-center text-[#565959] text-base max-w-[560px] mx-auto leading-relaxed">
-                Join successful {industry.title.toLowerCase()} exporters who found verified international buyers through our global sourcing platform.
-              </p>
-            </div>
-          </FadeIn>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              {
-                name: "Rajesh Kumar",
-                company: "Premium Exports Ltd",
-                country: "India",
-                image: "👔",
-                content: `GoExports transformed our ${industry.title.toLowerCase()} export business. Within 3 months, we connected with 15 verified buyers across Europe and Middle East.`,
-                rating: 5,
-                results: "200% Revenue Growth"
-              },
-              {
-                name: "Maria Rodriguez",
-                company: "Global Trade Co",
-                country: "Brazil", 
-                image: "👩‍💼",
-                content: `The quality of buyer leads on GoExports is exceptional. We found distributors in 8 countries for our ${industry.title.toLowerCase()} products.`,
-                rating: 5,
-                results: "8 New Markets"
-              },
-              {
-                name: "Chen Wei",
-                company: "International Manufacturing",
-                country: "China",
-                image: "👨‍💻",
-                content: `As a {industry.title.toLowerCase()} manufacturer, finding reliable international buyers was challenging. GoExports made it simple.`,
-                rating: 5,
-                results: "Consistent Orders"
-              }
-            ].map((testimonial, index) => (
-              <FadeIn key={index} delay={index * 0.1}>
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1, duration: 0.5 }}
-                  className="bg-white border border-[#e7e7e7] rounded-xl p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
-                >
-                  {/* Rating */}
-                  <div className="flex gap-0.5 mb-4">
-                    {[...Array(testimonial.rating)].map((_, i) => (
-                      <svg key={i} width="16" height="16" viewBox="0 0 24 24" fill="#FBBF24" stroke="#FBBF24" strokeWidth="1">
-                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                      </svg>
-                    ))}
-                  </div>
-
-                  {/* Content */}
-                  <blockquote className="text-[#565959] text-sm leading-relaxed mb-6 italic">
-                    "{testimonial.content}"
-                  </blockquote>
-
-                  {/* Author Info */}
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className="w-12 h-12 bg-[#111111] rounded-full flex items-center justify-center text-2xl">
-                      {testimonial.image}
-                    </div>
-                    <div>
-                      <div className="font-bold text-[#0F1111]">{testimonial.name}</div>
-                      <div className="text-xs text-[#565959]">{testimonial.company}</div>
-                      <div className="text-xs text-[#999]">{testimonial.country}</div>
-                    </div>
-                  </div>
-
-                  {/* Results Badge */}
-                  <div className="inline-flex items-center gap-1.5 bg-green-50 border border-green-200 rounded-full px-3 py-1 text-xs font-semibold text-green-700">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                      <polyline points="20 6 9 17 4 12" />
-                    </svg>
-                    {testimonial.results}
-                  </div>
-                </motion.div>
-              </FadeIn>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* ═══ BENEFITS FOR EXPORTERS ═══ */}
       <section className="py-16 px-6 bg-white">
@@ -481,40 +393,40 @@ export default function IndustryClient({ industry, related, slug }: Props) {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
               {
-                icon: "✅",
+                Icon: IconVerified,
                 title: "Verified International Buyer Leads",
-                description: `Connect with pre-verified buyers actively looking for ${industry.title.toLowerCase()} products. No more time wasted on unqualified leads.`,
-                highlight: "100% Verified Buyers"
+                description: `Connect with pre-verified buyers actively looking for ${industry.title.toLowerCase()} products.`,
+                highlight: "Verified Buyers"
               },
               {
-                icon: "🌍",
+                Icon: IconGlobe,
                 title: "Global Trade Opportunities",
-                description: `Access buyers from 200+ countries for your ${industry.title.toLowerCase()} products. Expand your export business to new international markets.`,
-                highlight: "200+ Countries"
+                description: `Access buyers across all industries and regions worldwide for your ${industry.title.toLowerCase()} products.`,
+                highlight: "190+ Countries"
               },
               {
-                icon: "🚀",
+                Icon: IconRocket,
                 title: "Faster Market Expansion",
-                description: `Reduce your ${industry.title.toLowerCase()} market entry time by 80%. Our platform helps you find buyers and start exporting within weeks.`,
-                highlight: "80% Faster Entry"
+                description: `Our platform helps you find qualified buyers for ${industry.title.toLowerCase()} and start exporting sooner.`,
+                highlight: "Quick Onboarding"
               },
               {
-                icon: "🤝",
+                Icon: IconHandshake,
                 title: "Connect with Trusted Importers",
-                description: `Build relationships with reliable ${industry.title.toLowerCase()} importers and distributors who have been thoroughly vetted for credibility.`,
+                description: `Build relationships with reliable ${industry.title.toLowerCase()} importers vetted for credibility.`,
                 highlight: "Trusted Partners"
               },
               {
-                icon: "📦",
+                Icon: IconPackage,
                 title: "Access to Worldwide Distributors",
-                description: `Reach global distribution networks for your ${industry.title.toLowerCase()} products. From local retailers to multinational chains.`,
+                description: `Reach global distribution networks for your ${industry.title.toLowerCase()} products.`,
                 highlight: "Global Distribution"
               },
               {
-                icon: "💰",
+                Icon: IconTrendingUp,
                 title: "Increased Revenue Potential",
-                description: `Tap into international markets for your ${industry.title.toLowerCase()} products and increase revenue by up to 300% in the first year.`,
-                highlight: "300% Revenue Growth"
+                description: `International markets open new revenue streams for your ${industry.title.toLowerCase()} business.`,
+                highlight: "New Revenue Streams"
               }
             ].map((benefit, index) => (
               <FadeIn key={index} delay={index * 0.1}>
@@ -525,7 +437,12 @@ export default function IndustryClient({ industry, related, slug }: Props) {
                   className="bg-[#FAFAFA] border border-[#e7e7e7] rounded-xl p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 h-full"
                 >
                   {/* Icon */}
-                  <div className="text-4xl mb-4">{benefit.icon}</div>
+                  <div
+                    className="mb-4 w-10 h-10 flex items-center justify-center rounded-lg"
+                    style={{ backgroundColor: "var(--surface-card)", color: "var(--ink)" }}
+                  >
+                    <benefit.Icon size={20} />
+                  </div>
 
                   {/* Content */}
                   <h3 className="text-xl font-bold text-[#0F1111] mb-3">

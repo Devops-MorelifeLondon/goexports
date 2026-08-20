@@ -2,6 +2,10 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
+import {
+  FeatureIconMap,
+  IconLock, IconFileText, IconRefreshCw, IconMessageCircle,
+} from "./Icons";
 
 function FadeIn({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
   return (
@@ -16,206 +20,325 @@ function FadeIn({ children, delay = 0 }: { children: React.ReactNode; delay?: nu
   );
 }
 
-const featureIcons: Record<string, string> = {
-  "Targeted Industry Leads": "🎯",
-  "International Buyers": "🌍",
-  "Verified Global Buyers": "✅",
-  "Dedicated Account Manager": "👤",
-  "24/7/365 Support": "🛡️",
-  "Weekly Reporting": "📊",
-  "Monthly Reporting": "📈",
-  "Weekly / Monthly Call": "📞",
-  "Custom Integrations": "⚙️",
-  "Priority Support": "⚡",
-};
+
 
 const plans = [
   {
     name: "Starter",
     tagline: "Perfect for new exporters",
     price: "25,000",
+    currency: "₹",
     leads: "20",
     leadsLabel: "Qualified Leads / Month",
-    color: "from-[#f0f0f0] to-[#e0e0e0]",
-    ringColor: "ring-[#ccc]",
-    features: ["Targeted Industry Leads", "International Buyers", "Verified Global Buyers", "Dedicated Account Manager", "24/7/365 Support", "Weekly Reporting", "Monthly Reporting", "Weekly / Monthly Call"],
+    featured: false,
+    features: [
+      "Targeted Industry Leads",
+      "International Buyers",
+      "Verified Global Buyers",
+      "Dedicated Account Manager",
+      "24/7/365 Support",
+      "Weekly Reporting",
+      "Monthly Reporting",
+      "Weekly / Monthly Call",
+    ],
   },
   {
     name: "Growth",
     tagline: "Most popular for scaling",
     price: "50,000",
+    currency: "₹",
     leads: "50",
     leadsLabel: "Qualified Leads / Month",
-    popular: true,
-    color: "from-[#111111] to-[#333333]",
-    ringColor: "ring-[#111111]",
-    features: ["Targeted Industry Leads", "International Buyers", "Verified Global Buyers", "Dedicated Account Manager", "24/7/365 Support", "Weekly Reporting", "Monthly Reporting", "Weekly / Monthly Call"],
+    featured: true,
+    features: [
+      "Targeted Industry Leads",
+      "International Buyers",
+      "Verified Global Buyers",
+      "Dedicated Account Manager",
+      "24/7/365 Support",
+      "Weekly Reporting",
+      "Monthly Reporting",
+      "Weekly / Monthly Call",
+    ],
   },
   {
     name: "Enterprise",
     tagline: "For established businesses",
     price: "1,00,000",
+    currency: "₹",
     leads: "120",
     leadsLabel: "Qualified Leads / Month",
-    color: "from-[#1a1a2e] to-[#16213e]",
-    ringColor: "ring-[#1a1a2e]",
-    features: ["Targeted Industry Leads", "International Buyers", "Verified Global Buyers", "Dedicated Account Manager", "24/7/365 Support", "Weekly Reporting", "Monthly Reporting", "Weekly / Monthly Call"],
+    featured: false,
+    features: [
+      "Targeted Industry Leads",
+      "International Buyers",
+      "Verified Global Buyers",
+      "Dedicated Account Manager",
+      "24/7/365 Support",
+      "Weekly Reporting",
+      "Monthly Reporting",
+      "Weekly / Monthly Call",
+    ],
   },
   {
     name: "Custom",
     tagline: "Tailored to your needs",
     price: null,
+    currency: "",
     leads: "∞",
     leadsLabel: "Unlimited Leads / Month",
-    color: "from-[#0F1111] to-[#0F1111]",
-    ringColor: "ring-[#0F1111]",
-    features: ["Targeted Industry Leads", "International Buyers", "Dedicated Account Manager", "24/7/365 Support", "Weekly Reporting", "Monthly Reporting", "Weekly / Monthly Call", "Custom Integrations", "Priority Support"],
+    featured: false,
+    features: [
+      "Targeted Industry Leads",
+      "International Buyers",
+      "Dedicated Account Manager",
+      "24/7/365 Support",
+      "Weekly Reporting",
+      "Monthly Reporting",
+      "Weekly / Monthly Call",
+      "Custom Integrations",
+      "Priority Support",
+    ],
   },
+];
+
+const trustItems = [
+  { Icon: IconLock, text: "Secure Payments" },
+  { Icon: IconFileText, text: "No Hidden Fees" },
+  { Icon: IconRefreshCw, text: "Cancel Anytime" },
+  { Icon: IconMessageCircle, text: "Free Consultation" },
 ];
 
 export default function SellToUS() {
   const [activePlan, setActivePlan] = useState(1);
 
   return (
-    <section id="pricing" className="bg-[#F5F7FA] py-20 px-6">
-      <div className="max-w-[1200px] mx-auto">
-
+    <section
+      id="pricing"
+      style={{
+        backgroundColor: "var(--canvas)",
+        paddingTop: "var(--space-section)",
+        paddingBottom: "var(--space-section)",
+      }}
+    >
+      <div className="section-wrap">
         <FadeIn>
           <div className="text-center mb-14">
-            <span className="inline-block bg-[#111111] text-white text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-wider mb-4">
+            <span
+              className="inline-block mb-4 caption-upper"
+              style={{
+                color: "var(--muted)",
+                backgroundColor: "var(--surface-card)",
+                padding: "6px 16px",
+                borderRadius: "var(--r-pill)",
+              }}
+            >
               Pricing Plans
             </span>
-            <h2 className="text-4xl md:text-5xl font-extrabold text-[#0F1111] mb-3">
+            <h2
+              className="mb-4"
+              style={{
+                fontSize: "clamp(32px, 4vw, 56px)",
+                fontWeight: 500,
+                lineHeight: 1.05,
+                letterSpacing: "-2px",
+                color: "var(--ink)",
+              }}
+            >
               Find International Buyers Plans
             </h2>
-            <p className="text-[#565959] text-base max-w-[520px] mx-auto leading-relaxed">
+            <p
+              className="mx-auto"
+              style={{
+                fontSize: "16px",
+                color: "var(--muted)",
+                maxWidth: "520px",
+                lineHeight: 1.6,
+              }}
+            >
               Choose the right plan to connect with verified global buyers and grow your import export business with international trade leads.
             </p>
           </div>
         </FadeIn>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           {plans.map((plan, i) => {
             const isActive = activePlan === i;
-            const isDark = plan.popular || plan.name === "Enterprise" || plan.name === "Custom";
+            const isFeatured = plan.featured;
 
             return (
-              <FadeIn key={i} delay={i * 0.1}>
+              <FadeIn key={i} delay={i * 0.08}>
                 <motion.div
-                  whileHover={{ y: -6, transition: { duration: 0.25 } }}
+                  whileHover={{ y: -4, transition: { duration: 0.2 } }}
                   onClick={() => setActivePlan(i)}
-                  className={`rounded-2xl p-8 flex flex-col transition-all duration-300 relative cursor-pointer h-full overflow-hidden
-                    ${isActive
-                      ? isDark
-                        ? "bg-[#0F1111] text-white shadow-[0_16px_48px_rgba(0,0,0,0.25)]"
-                        : "bg-white border-2 border-[#111111] shadow-[0_16px_48px_rgba(0,0,0,0.12)]"
-                      : "bg-white border border-[#e0e0e0] hover:border-[#111111] hover:shadow-lg"
-                    }`}
+                  className="relative flex flex-col h-full cursor-pointer"
+                  style={{
+                    backgroundColor: isFeatured ? "var(--brand-teal)" : "var(--canvas)",
+                    border: isFeatured
+                      ? "none"
+                      : isActive
+                      ? "2px solid var(--primary)"
+                      : "1px solid var(--hairline)",
+                    borderRadius: "var(--r-lg)",
+                    padding: "var(--space-xl)",
+                    transition: "box-shadow 0.2s, border-color 0.2s",
+                    boxShadow: isActive && !isFeatured
+                      ? "0 12px 40px rgba(10,10,10,0.10)"
+                      : isFeatured
+                      ? "0 20px 60px rgba(26,58,58,0.30)"
+                      : "none",
+                  }}
                 >
-                  {/* Popular badge */}
-                  {plan.popular && (
-                    <motion.div
-                      initial={{ scale: 0, opacity: 0 }}
-                      whileInView={{ scale: 1, opacity: 1 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: 0.5, type: "spring", stiffness: 300, damping: 15 }}
-                      className={`absolute -top-0 right-6 px-4 py-2 rounded-b-xl text-[11px] font-extrabold uppercase tracking-wider shadow-md
-                        ${isActive ? "bg-white text-[#0F1111]" : "bg-[#111111] text-white shadow-black/30"}`}
+                  {/* Featured badge */}
+                  {isFeatured && (
+                    <div
+                      className="absolute -top-px right-6 px-4 py-1.5"
+                      style={{
+                        backgroundColor: "var(--brand-ochre)",
+                        color: "var(--ink)",
+                        fontSize: "11px",
+                        fontWeight: 700,
+                        letterSpacing: "1px",
+                        textTransform: "uppercase",
+                        borderRadius: "0 0 var(--r-sm) var(--r-sm)",
+                      }}
                     >
                       ⭐ Most Popular
-                    </motion.div>
-                  )}
-
-                  {/* Decorative corner gradient */}
-                  {isActive && isDark && (
-                    <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-bl from-white/[0.06] to-transparent rounded-bl-full pointer-events-none" />
+                    </div>
                   )}
 
                   {/* Plan header */}
-                  <div className="flex items-center gap-6 mb-7">
-                    {/* Big price circle */}
-                    <div className={`w-[120px] h-[120px] rounded-full bg-gradient-to-br ${plan.color} flex flex-col items-center justify-center shrink-0 ring-4 ${plan.ringColor} ring-offset-2 ${isActive && isDark ? "ring-offset-[#0F1111]" : "ring-offset-white"} shadow-lg`}>
-                      {plan.price ? (
-                        <>
-                          <span className={`text-[11px] font-semibold ${isDark ? "text-white/60" : "text-[#999]"} -mb-0.5`}>₹</span>
-                          <span className={`text-[22px] font-extrabold leading-none ${isDark ? "text-white" : "text-[#111111]"}`}>{plan.price}</span>
-                          <span className={`text-[10px] mt-1 ${isDark ? "text-white/50" : "text-[#999]"}`}>per month</span>
-                        </>
-                      ) : (
-                        <>
-                          <span className="text-3xl font-extrabold text-white leading-none">∞</span>
-                          <span className="text-[10px] text-white/60 mt-1">Let&apos;s Talk</span>
-                        </>
-                      )}
-                    </div>
+                  <div className="mb-6">
+                    <h3
+                      className="mb-1"
+                      style={{
+                        fontSize: "24px",
+                        fontWeight: 600,
+                        letterSpacing: "-0.3px",
+                        color: isFeatured ? "#ffffff" : "var(--ink)",
+                      }}
+                    >
+                      {plan.name}
+                    </h3>
+                    <p style={{ fontSize: "13px", color: isFeatured ? "rgba(255,255,255,0.6)" : "var(--muted)" }}>
+                      {plan.tagline}
+                    </p>
+                  </div>
 
-                    <div>
-                      <h3 className={`text-2xl font-extrabold mb-1 ${isActive && isDark ? "text-white" : "text-[#111111]"}`}>
-                        {plan.name}
-                      </h3>
-                      <p className={`text-sm mb-2 ${isActive && isDark ? "text-white/50" : "text-[#999]"}`}>
-                        {plan.tagline}
-                      </p>
-                      <div className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-bold
-                        ${isActive && isDark
-                          ? "bg-white/10 text-white/80"
-                          : "bg-[#F5F5F5] text-[#0F1111]"
-                        }`}>
-                        <span className="text-lg leading-none">{plan.leads}</span>
-                        <span className="font-medium opacity-70">{plan.leadsLabel}</span>
+                  {/* Price */}
+                  <div className="mb-4">
+                    {plan.price ? (
+                      <div className="flex items-baseline gap-1">
+                        <span style={{ fontSize: "20px", fontWeight: 500, color: isFeatured ? "rgba(255,255,255,0.7)" : "var(--muted)" }}>
+                          {plan.currency}
+                        </span>
+                        <span
+                          style={{
+                            fontSize: "clamp(28px, 4vw, 40px)",
+                            fontWeight: 500,
+                            letterSpacing: "-1px",
+                            color: isFeatured ? "#ffffff" : "var(--ink)",
+                          }}
+                        >
+                          {plan.price}
+                        </span>
+                        <span style={{ fontSize: "13px", color: isFeatured ? "rgba(255,255,255,0.5)" : "var(--muted-soft)" }}>
+                          / month
+                        </span>
                       </div>
+                    ) : (
+                      <div
+                        style={{
+                          fontSize: "clamp(28px, 4vw, 40px)",
+                          fontWeight: 500,
+                          letterSpacing: "-1px",
+                          color: "var(--ink)",
+                        }}
+                      >
+                        Let&apos;s Talk
+                      </div>
+                    )}
+
+                    {/* Leads badge */}
+                    <div
+                      className="inline-flex items-center gap-1.5 mt-3"
+                      style={{
+                        backgroundColor: isFeatured ? "rgba(255,255,255,0.12)" : "var(--surface-card)",
+                        color: isFeatured ? "#ffffff" : "var(--body-strong)",
+                        padding: "5px 12px",
+                        borderRadius: "var(--r-pill)",
+                        fontSize: "12px",
+                        fontWeight: 600,
+                      }}
+                    >
+                      <span style={{ fontSize: "16px", fontWeight: 700 }}>{plan.leads}</span>
+                      <span style={{ opacity: 0.7 }}>{plan.leadsLabel}</span>
                     </div>
                   </div>
 
                   {/* Divider */}
-                  <div className={`h-px mb-6 ${isActive && isDark ? "bg-white/10" : "bg-[#e7e7e7]"}`} />
+                  <div
+                    className="mb-6"
+                    style={{ height: "1px", backgroundColor: isFeatured ? "rgba(255,255,255,0.15)" : "var(--hairline)" }}
+                  />
 
                   {/* Features */}
-                  <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-3 mb-7">
+                  <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2.5 mb-8">
                     {plan.features.map((feature, j) => (
-                      <div key={j} className={`flex items-center gap-2.5 text-sm ${isActive && isDark ? "text-white/70" : "text-[#565959]"}`}>
-                        <span className={`w-7 h-7 rounded-lg flex items-center justify-center text-[13px] shrink-0
-                          ${isActive && isDark ? "bg-white/10" : "bg-[#F5F5F5]"}`}>
-                          {featureIcons[feature] || "✓"}
+                      <div
+                        key={j}
+                        className="flex items-center gap-2.5"
+                        style={{ fontSize: "13px", color: isFeatured ? "rgba(255,255,255,0.75)" : "var(--body)" }}
+                      >
+                        <span
+                          className="w-6 h-6 flex items-center justify-center shrink-0"
+                          style={{
+                            backgroundColor: isFeatured ? "rgba(255,255,255,0.12)" : "var(--surface-card)",
+                            borderRadius: "var(--r-xs)",
+                            color: isFeatured ? "rgba(255,255,255,0.85)" : "var(--muted)",
+                          }}
+                        >
+                          {(() => { const IC = FeatureIconMap[feature]; return IC ? <IC size={13} /> : <IconLock size={13} />; })()}
                         </span>
-                        <span className="font-medium">{feature}</span>
+                        <span style={{ fontWeight: 500 }}>{feature}</span>
                       </div>
                     ))}
                   </div>
 
                   {/* CTA */}
-                  <motion.a
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.97 }}
-                    href="#"
-                    className={`w-full py-3.5 rounded-xl text-sm font-bold cursor-pointer text-center no-underline block transition-all duration-200
-                      ${isActive && isDark
-                        ? "bg-white text-[#0F1111] hover:bg-gray-100 shadow-lg shadow-white/20"
-                        : isActive
-                          ? "bg-[#111111] text-white hover:bg-[#333333] shadow-lg shadow-black/25"
-                          : "bg-[#111111] text-white hover:bg-[#333333] border-0"
-                      }`}
+                  <a
+                    href="#contact-form"
+                    className="block text-center no-underline font-semibold transition-opacity duration-200 hover:opacity-85"
+                    style={{
+                      padding: "12px 20px",
+                      height: "44px",
+                      lineHeight: "20px",
+                      backgroundColor: isFeatured ? "#ffffff" : "var(--primary)",
+                      color: isFeatured ? "var(--ink)" : "var(--on-primary)",
+                      fontSize: "14px",
+                      fontWeight: 600,
+                      borderRadius: "var(--r-md)",
+                    }}
                   >
                     {plan.price ? "Get Started →" : "Contact Sales →"}
-                  </motion.a>
+                  </a>
                 </motion.div>
               </FadeIn>
             );
           })}
         </div>
 
-        {/* Bottom trust strip */}
+        {/* Trust strip */}
         <FadeIn delay={0.5}>
-          <div className="flex flex-wrap items-center justify-center gap-6 mt-12 text-sm text-[#999]">
-            {[
-              { icon: "🔒", text: "Secure Payments" },
-              { icon: "📋", text: "No Hidden Fees" },
-              { icon: "🔄", text: "Cancel Anytime" },
-              { icon: "💬", text: "Free Consultation" },
-            ].map((item, i) => (
-              <div key={i} className="flex items-center gap-2">
-                <span className="text-base">{item.icon}</span>
-                <span className="font-medium">{item.text}</span>
+          <div className="flex flex-wrap items-center justify-center gap-6 mt-12">
+            {trustItems.map((item, i) => (
+              <div
+                key={i}
+                className="flex items-center gap-2"
+                style={{ fontSize: "13px", color: "var(--muted)", fontWeight: 500 }}
+              >
+                <item.Icon size={14} />
+                <span>{item.text}</span>
               </div>
             ))}
           </div>

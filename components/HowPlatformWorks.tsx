@@ -140,16 +140,16 @@ export default function HowPlatformWorks() {
         {/* CTA */}
         <FadeIn delay={0.5}>
           <div className="text-center mt-16">
-            <button
-              onClick={() => window.open("https://api.whatsapp.com/send/?phone=917042059572&text=I+would+like+to+consult+with+Goexports(FinacBooks))&type=phone_number&app_absent=0", "_blank")}
-              className="btn-primary"
+            <a
+              href="#contact-form"
+              className="btn-primary inline-flex"
             >
               Start Exporting Today
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="5" y1="12" x2="19" y2="12" />
                 <polyline points="12 5 19 12 12 19" />
               </svg>
-            </button>
+            </a>
 
           </div>
         </FadeIn>

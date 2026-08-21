@@ -386,6 +386,21 @@ export default function SellerVideos() {
                     </div>
                   </div>
 
+                  <div>
+                    <label className="block text-[12px] font-bold uppercase tracking-wider text-[#0F1111] mb-2">Country</label>
+                    <div className="relative">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ccc" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                        <circle cx="12" cy="12" r="10" /><path d="M2 12h20" /><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+                      </svg>
+                      <input
+                        type="text"
+                        placeholder="United Kingdom"
+                        required
+                        className="w-full pl-11 pr-4 py-3.5 rounded-xl border border-[#e0e0e0] text-sm text-[#0F1111] placeholder:text-[#bbb] focus:outline-none focus:border-[#111111] focus:ring-1 focus:ring-[#111111] transition-all bg-white"
+                      />
+                    </div>
+                  </div>
+
                   <button
                     type="submit"
                     className="w-full py-4 bg-[#111111] text-white font-bold text-sm rounded-xl cursor-pointer transition-all duration-200 hover:bg-[#333333] shadow-lg shadow-black/20 hover:shadow-xl hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2 border-none mt-1"

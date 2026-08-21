@@ -7,6 +7,7 @@ interface FormData {
   email: string;
   phone: string;
   company: string;
+  country: string;
   productCategory: string;
 }
 
@@ -16,6 +17,7 @@ export default function GetInTouchForm() {
     email: "",
     phone: "",
     company: "",
+    country: "",
     productCategory: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -42,7 +44,7 @@ export default function GetInTouchForm() {
       if (!response.ok) throw new Error("Failed to submit form");
 
       setSubmitted(true);
-      setFormData({ fullName: "", email: "", phone: "", company: "", productCategory: "" });
+      setFormData({ fullName: "", email: "", phone: "", company: "", country: "", productCategory: "" });
       setTimeout(() => setSubmitted(false), 5000);
     } catch (err) {
       console.error("Submission error:", err);
@@ -56,7 +58,8 @@ export default function GetInTouchForm() {
     { name: "fullName", label: "Full Name", type: "text", placeholder: "John Doe", fullWidth: false },
     { name: "phone", label: "Phone", type: "tel", placeholder: "+1 (555) 000-0000", fullWidth: false },
     { name: "email", label: "Email Address", type: "email", placeholder: "john@company.com", fullWidth: true },
-    { name: "company", label: "Company", type: "text", placeholder: "Your company name", fullWidth: true },
+    { name: "company", label: "Company", type: "text", placeholder: "Your company name", fullWidth: false },
+    { name: "country", label: "Country", type: "text", placeholder: "e.g. United Kingdom", fullWidth: false },
   ];
 
   return (

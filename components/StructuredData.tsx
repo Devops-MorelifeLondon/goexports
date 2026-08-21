@@ -77,11 +77,21 @@ export default function StructuredData() {
           "@type": "Offer",
           "itemOffered": {
             "@type": "Service",
+            "name": "Free Plan - 5 Qualified Leads Monthly"
+          },
+          "description": "Try our platform and connect with verified global buyers",
+          "price": "0",
+          "priceCurrency": "GBP"
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
             "name": "Starter Plan - 20 Qualified Leads Monthly"
           },
           "description": "Perfect for new exporters starting their global journey",
-          "price": "25000",
-          "priceCurrency": "INR"
+          "price": "249",
+          "priceCurrency": "GBP"
         },
         {
           "@type": "Offer",
@@ -90,8 +100,8 @@ export default function StructuredData() {
             "name": "Growth Plan - 50 Qualified Leads Monthly"
           },
           "description": "Most popular plan for scaling export businesses",
-          "price": "50000",
-          "priceCurrency": "INR"
+          "price": "499",
+          "priceCurrency": "GBP"
         },
         {
           "@type": "Offer",
@@ -100,8 +110,8 @@ export default function StructuredData() {
             "name": "Enterprise Plan - 120 Qualified Leads Monthly"
           },
           "description": "For established businesses with high-volume needs",
-          "price": "100000",
-          "priceCurrency": "INR"
+          "price": "999",
+          "priceCurrency": "GBP"
         }
       ]
     },

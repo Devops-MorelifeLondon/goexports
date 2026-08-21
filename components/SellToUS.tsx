@@ -24,10 +24,25 @@ function FadeIn({ children, delay = 0 }: { children: React.ReactNode; delay?: nu
 
 const plans = [
   {
+    name: "Free",
+    tagline: "Start exploring international markets",
+    price: "0",
+    currency: "£",
+    leads: "5",
+    leadsLabel: "Qualified Leads / Month",
+    featured: false,
+    features: [
+      "Targeted Industry Leads",
+      "International Buyers",
+      "Verified Global Buyers",
+      "24/7/365 Support",
+    ],
+  },
+  {
     name: "Starter",
     tagline: "Perfect for new exporters",
-    price: "25,000",
-    currency: "₹",
+    price: "249",
+    currency: "£",
     leads: "20",
     leadsLabel: "Qualified Leads / Month",
     featured: false,
@@ -45,8 +60,8 @@ const plans = [
   {
     name: "Growth",
     tagline: "Most popular for scaling",
-    price: "50,000",
-    currency: "₹",
+    price: "499",
+    currency: "£",
     leads: "50",
     leadsLabel: "Qualified Leads / Month",
     featured: true,
@@ -64,8 +79,8 @@ const plans = [
   {
     name: "Enterprise",
     tagline: "For established businesses",
-    price: "1,00,000",
-    currency: "₹",
+    price: "999",
+    currency: "£",
     leads: "120",
     leadsLabel: "Qualified Leads / Month",
     featured: false,
@@ -80,26 +95,6 @@ const plans = [
       "Weekly / Monthly Call",
     ],
   },
-  {
-    name: "Custom",
-    tagline: "Tailored to your needs",
-    price: null,
-    currency: "",
-    leads: "∞",
-    leadsLabel: "Unlimited Leads / Month",
-    featured: false,
-    features: [
-      "Targeted Industry Leads",
-      "International Buyers",
-      "Dedicated Account Manager",
-      "24/7/365 Support",
-      "Weekly Reporting",
-      "Monthly Reporting",
-      "Weekly / Monthly Call",
-      "Custom Integrations",
-      "Priority Support",
-    ],
-  },
 ];
 
 const trustItems = [
@@ -110,7 +105,7 @@ const trustItems = [
 ];
 
 export default function SellToUS() {
-  const [activePlan, setActivePlan] = useState(1);
+  const [activePlan, setActivePlan] = useState(2);
 
   return (
     <section

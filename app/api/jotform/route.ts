@@ -2,9 +2,9 @@ import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
-    const { fullName, phone, email, company, productCategory } =
+    const { fullName, phone, email, company, country, productCategory } =
       await req.json();
-console.log( fullName, phone, email, company, productCategory)
+console.log( fullName, phone, email, company, country, productCategory)
     const formId = '260778155209059'; // Updated form ID from the provided HTML
 
     if (!formId) {
@@ -21,6 +21,9 @@ console.log( fullName, phone, email, company, productCategory)
     params.append("q5_typeA5", phone);
     params.append("q4_typeA4", email);
     params.append("q6_typeA6", company);
+    if (country) {
+      params.append("q8_country", country);
+    }
     params.append("q7_productCategory", productCategory);
 
     // REQUIRED FIELD – MUST BE SENT

@@ -106,14 +106,6 @@ export default function Footer() {
                 <polyline points="12 5 19 12 12 19" />
               </svg>
             </a>
-            <a
-              href="https://api.whatsapp.com/send/?phone=917042059572&text=I+would+like+to+consult+with+Goexports(FinacBooks))&type=phone_number&app_absent=0"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-secondary"
-            >
-              Chat on WhatsApp
-            </a>
           </div>
         </div>
       </div>

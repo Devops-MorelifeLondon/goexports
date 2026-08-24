@@ -52,7 +52,7 @@ export default function WhySellGlobally() {
                 color: "var(--ink)",
               }}
             >
-              55+ Industries.<br />Unlimited Global Trade Opportunities.
+              Diverse Industries.<br />Global Trade Opportunities.
             </h2>
             <p
               className="mx-auto"
@@ -63,7 +63,7 @@ export default function WhySellGlobally() {
                 lineHeight: 1.6,
               }}
             >
-              Find international buyers and connect with verified global buyers across 190+ countries. Your trusted import export business platform.
+              Find international buyers and connect with verified global buyers worldwide. Your trusted import export business platform.
             </p>
           </div>
         </FadeIn>
@@ -285,7 +285,7 @@ export default function WhySellGlobally() {
                 className="mb-6 mx-auto"
                 style={{ fontSize: "14px", color: "var(--muted)", maxWidth: "380px", lineHeight: 1.6 }}
               >
-                We cover 55+ industries and are always expanding. Tell us your category.
+                We cover diverse global industries and are always expanding. Tell us your category.
               </p>
               <a href="#contact-form" className="btn-primary">
                 Request Custom Industry

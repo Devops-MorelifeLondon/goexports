@@ -20,7 +20,7 @@ const benefits = [
     Icon: IconGlobe,
     title: "Global Trade Opportunities",
     description: "Access buyers across all industries and regions worldwide. Expand your export business to new international markets.",
-    highlight: "190+ Countries",
+    highlight: "Global Reach",
     cardColor: "var(--brand-teal)",
     dark: true,
   },
@@ -104,7 +104,7 @@ export default function BenefitsForExporters() {
                 lineHeight: 1.6,
               }}
             >
-              Discover why thousands of exporters choose GoExports to grow their international trade business and connect with verified global buyers.
+              Discover how GoExports helps exporters grow their international trade business and connect with verified global buyers.
             </p>
           </div>
         </FadeIn>
@@ -211,7 +211,7 @@ export default function BenefitsForExporters() {
                 lineHeight: 1.6,
               }}
             >
-              Join thousands of successful exporters who are already connecting with verified international buyers through GoExports.
+              Connect with verified international buyers and accelerate your global trade growth with GoExports.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <a href="#contact-form" className="btn-primary">

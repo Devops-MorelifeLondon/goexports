@@ -116,20 +116,8 @@ export default function IndustryClient({ industry, related, slug }: Props) {
                 </div>
               </FadeIn>
 
-              {/* Stats strip */}
-              <FadeIn delay={0.3}>
-                <div className="flex flex-wrap gap-6 mb-8">
-                  {industry.stats.map((stat, i) => (
-                    <div key={i} className="flex items-center gap-2.5">
-                      <span className="text-2xl font-extrabold text-[#0F1111]">{stat.value}</span>
-                      <span className="text-xs text-[#999] leading-tight">{stat.label}</span>
-                    </div>
-                  ))}
-                </div>
-              </FadeIn>
-
               {/* Trust badges */}
-              <FadeIn delay={0.35}>
+              <FadeIn delay={0.3}>
                 <div className="flex flex-wrap gap-3">
                   {industry.highlights.slice(0, 4).map((highlight, i) => (
                     <span
@@ -402,7 +390,7 @@ export default function IndustryClient({ industry, related, slug }: Props) {
                 Icon: IconGlobe,
                 title: "Global Trade Opportunities",
                 description: `Access buyers across all industries and regions worldwide for your ${industry.title.toLowerCase()} products.`,
-                highlight: "190+ Countries"
+                highlight: "Global Reach"
               },
               {
                 Icon: IconRocket,

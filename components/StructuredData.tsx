@@ -43,7 +43,7 @@ export default function StructuredData() {
     "@type": "WebSite",
     "name": "Global Export Leads",
     "url": "https://your-domain.com",
-    "description": "Get verified buyer leads from 190+ countries. Connect with importers, distributors, and wholesalers worldwide.",
+    "description": "Get verified buyer leads worldwide. Connect with importers, distributors, and wholesalers.",
     "potentialAction": {
       "@type": "SearchAction",
       "target": {
@@ -62,7 +62,7 @@ export default function StructuredData() {
     "@context": "https://schema.org",
     "@type": "Service",
     "name": "Buyer Lead Generation for Exporters",
-    "description": "Comprehensive service providing verified buyer leads from importers, distributors, and wholesalers across 190+ countries",
+    "description": "Comprehensive service providing verified buyer leads from importers, distributors, and wholesalers worldwide",
     "provider": {
       "@type": "Organization",
       "name": "Global Export Leads"
@@ -170,7 +170,7 @@ export default function StructuredData() {
         "name": "What industries do you cover?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "We cover 55+ industries including manufacturing, textiles, electronics, agriculture, chemicals, pharmaceuticals, automotive, construction, and many more sectors."
+          "text": "We cover diverse industries including manufacturing, textiles, electronics, agriculture, chemicals, pharmaceuticals, automotive, construction, and many more sectors."
         }
       },
       {

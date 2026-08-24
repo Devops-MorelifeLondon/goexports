@@ -4,12 +4,12 @@ import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-
+import { UserCheck } from "lucide-react";
 
 const navItems = [
   { label: "How It Works", href: "#how-it-works" },
   { label: "Benefits", href: "#benefits" },
-  { label: "Industries", href: "#industries", badge: "55+" },
+  { label: "Industries", href: "#industries" },
   { label: "Pricing", href: "#pricing" },
   { label: "Presence", href: "#presence" },
 ];
@@ -27,6 +27,10 @@ export default function Navbar() {
   }, []);
 
   const scrollTo = useCallback((href: string) => {
+    if (typeof window !== "undefined" && window.location.pathname !== "/") {
+      window.location.href = `/${href}`;
+      return;
+    }
     const el = document.querySelector(href);
     if (el) {
       el.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -69,31 +73,36 @@ export default function Navbar() {
                 className="relative px-4 py-1.5 rounded-full border-none bg-transparent cursor-pointer text-[13.5px] font-medium text-[var(--muted)] transition-all duration-200 hover:text-[var(--ink)] hover:bg-[var(--surface-card)] flex items-center gap-1.5"
               >
                 {item.label}
-                {item.badge && (
-                  <span
-                    className="text-[10px] font-bold px-1.5 py-0.5 rounded-full"
-                    style={{
-                      backgroundColor: "var(--brand-ochre)",
-                      color: "var(--ink)",
-                      lineHeight: "1",
-                    }}
-                  >
-                    {item.badge}
-                  </span>
-                )}
               </button>
             ))}
           </nav>
         </div>
 
         {/* Right Action Cluster */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <Link
+            href="/exporter/login"
+            className="hidden md:inline-flex items-center gap-1.5 px-3.5 py-1.5 text-[12.5px] font-semibold text-[var(--ink)] bg-[var(--canvas)] border border-[var(--hairline)] rounded-full no-underline cursor-pointer transition-all duration-200 hover:bg-[var(--surface-card)]"
+            style={{ height: "38px" }}
+          >
+            <UserCheck className="w-3.5 h-3.5 text-[var(--muted)]" />
+            <span>Exporter Login</span>
+          </Link>
+
           <button
             onClick={() => scrollTo("#contact-form")}
-            className="inline-flex items-center gap-1.5 px-5 py-2 text-[13.5px] font-semibold text-[var(--on-primary)] border-none rounded-full cursor-pointer transition-all duration-200 hover:opacity-90 active:scale-[0.98]"
-            style={{ backgroundColor: "var(--primary)", height: "38px" }}
+            className="hidden sm:inline-flex items-center gap-1.5 px-4 py-2 text-[13px] font-medium text-[var(--ink)] bg-[var(--surface-soft)] border border-[var(--hairline)] rounded-full cursor-pointer transition-all duration-200 hover:bg-[var(--surface-card)] active:scale-[0.98]"
+            style={{ height: "38px" }}
           >
             Contact Sales
+          </button>
+
+          <Link
+            href="/create-export-profile"
+            className="inline-flex items-center gap-1.5 px-4 sm:px-5 py-2 text-[13px] sm:text-[13.5px] font-semibold text-[var(--ink)] border-none rounded-full no-underline cursor-pointer transition-all duration-200 hover:opacity-90 active:scale-[0.98] shadow-sm"
+            style={{ backgroundColor: "var(--brand-ochre)", height: "38px" }}
+          >
+            <span>Create Export Profile</span>
             <svg
               width="13"
               height="13"
@@ -103,12 +112,12 @@ export default function Navbar() {
               strokeWidth="2.2"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="opacity-70 transition-transform duration-200 group-hover:translate-x-0.5"
+              className="opacity-80 transition-transform duration-200 group-hover:translate-x-0.5"
             >
               <line x1="5" y1="12" x2="19" y2="12" />
               <polyline points="12 5 19 12 12 19" />
             </svg>
-          </button>
+          </Link>
 
           {/* Mobile Hamburger Button */}
           <button
@@ -154,17 +163,6 @@ export default function Navbar() {
                   className="text-left px-4 py-3 rounded-xl border-none bg-transparent cursor-pointer transition-all duration-200 hover:bg-[var(--surface-card)] flex items-center justify-between text-[14.5px] font-semibold text-[var(--ink)]"
                 >
                   <span>{item.label}</span>
-                  {item.badge && (
-                    <span
-                      className="text-[11px] font-bold px-2 py-0.5 rounded-full"
-                      style={{
-                        backgroundColor: "var(--brand-ochre)",
-                        color: "var(--ink)",
-                      }}
-                    >
-                      {item.badge}
-                    </span>
-                  )}
                 </button>
               ))}
 
@@ -172,10 +170,31 @@ export default function Navbar() {
                 className="mt-3 pt-4 flex flex-col gap-3"
                 style={{ borderTop: "1px solid var(--hairline)" }}
               >
+                <Link
+                  href="/create-export-profile"
+                  onClick={() => setMobileMenu(false)}
+                  className="w-full text-center py-3 rounded-xl border-none text-[14px] font-semibold text-[var(--ink)] no-underline flex items-center justify-center gap-2"
+                  style={{ backgroundColor: "var(--brand-ochre)" }}
+                >
+                  Create Export Profile
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                    <polyline points="12 5 19 12 12 19" />
+                  </svg>
+                </Link>
+
+                <Link
+                  href="/exporter/login"
+                  onClick={() => setMobileMenu(false)}
+                  className="w-full text-center py-2.5 rounded-xl border border-[var(--hairline)] bg-[var(--canvas)] text-[13.5px] font-semibold text-[var(--ink)] no-underline flex items-center justify-center gap-2"
+                >
+                  <UserCheck className="w-4 h-4 text-[var(--muted)]" />
+                  <span>Exporter Portal Login</span>
+                </Link>
+
                 <button
                   onClick={() => scrollTo("#contact-form")}
-                  className="w-full text-center py-3 rounded-xl border-none text-[14px] font-semibold text-[var(--on-primary)] cursor-pointer"
-                  style={{ backgroundColor: "var(--primary)" }}
+                  className="w-full text-center py-2.5 rounded-xl border border-[var(--hairline)] bg-[var(--surface-soft)] text-[13.5px] font-semibold text-[var(--ink)] cursor-pointer"
                 >
                   Contact Sales
                 </button>

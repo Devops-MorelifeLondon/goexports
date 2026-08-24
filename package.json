@@ -6,15 +6,20 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "seed:packages": "node scripts/seed-packages.mjs"
   },
   "dependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "bcryptjs": "^3.0.3",
     "framer-motion": "^12.34.0",
     "lucide-react": "^0.563.0",
+    "mongodb": "^7.5.0",
     "next": "16.1.6",
     "react": "19.2.3",
     "react-dom": "19.2.3",
-    "react-icons": "^5.6.0"
+    "react-icons": "^5.6.0",
+    "sonner": "^2.0.8"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.18",

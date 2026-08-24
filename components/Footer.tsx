@@ -96,7 +96,7 @@ export default function Footer() {
               lineHeight: 1.6,
             }}
           >
-            Connect with verified international buyers and grow your export business across 190+ countries.
+            Connect with verified international buyers and grow your export business worldwide.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <a href="#contact-form" className="btn-primary">
@@ -121,7 +121,7 @@ export default function Footer() {
                 <Image src="/logo/logo.png" alt="Goexports Logo" width={140} height={36} />
               </Link>
               <p style={{ fontSize: "13px", color: "var(--muted)", lineHeight: 1.6 }}>
-                Your global sourcing platform for connecting exporters with verified international buyers across 190+ countries.
+                Your global sourcing platform for connecting exporters with verified international buyers worldwide.
               </p>
               {/* Social icons */}
               <div className="flex gap-2 mt-1">
@@ -171,6 +171,7 @@ export default function Footer() {
               <p style={{ fontSize: "13px", fontWeight: 600, color: "var(--ink)" }}>Quick Links</p>
               <div className="flex flex-col gap-2">
                 {[
+                  { label: "Create Export Profile", href: "/create-export-profile" },
                   { label: "Industries", href: "#industries" },
                   { label: "Pricing", href: "#pricing" },
                   { label: "Contact", href: "#contact-form" },
@@ -230,7 +231,7 @@ export default function Footer() {
                           onMouseLeave={(e) => (e.currentTarget.style.color = "var(--muted-soft)")}
                         >
                           <span>›</span>
-                          100+ More...
+                          View More...
                         </a>
                       </li>
                     </>
@@ -245,7 +246,7 @@ export default function Footer() {
         <FadeIn delay={0.3}>
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <span style={{ fontSize: "12px", color: "var(--muted-soft)" }}>
-              © 2025 GoExports. All rights reserved.
+              © 2026 GoExports. All rights reserved.
             </span>
             <div className="flex items-center gap-4">
               <span style={{ fontSize: "12px", color: "var(--muted-soft)", marginRight: "4px" }}>We Accept:</span>
@@ -254,7 +255,8 @@ export default function Footer() {
                 { name: "Mastercard", icon: FaCcMastercard },
                 { name: "PayPal", icon: FaCcPaypal },
                 { name: "American Express", icon: FaCcAmex },
-              ].map((payment, i) => {
+                { name: "Bank Transfer", icon: FaCcVisa },
+              ].slice(0, 4).map((payment, i) => {
                 const Icon = payment.icon;
                 return (
                   <div key={i} title={payment.name}>

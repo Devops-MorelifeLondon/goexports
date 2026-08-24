@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { toast } from "sonner";
 
 interface FormData {
   fullName: string;
@@ -41,13 +42,20 @@ export default function GetInTouchForm() {
         body: JSON.stringify(formData),
       });
 
-      if (!response.ok) throw new Error("Failed to submit form");
+      if (!response.ok) throw new Error("Failed to submit enquiry");
+
+      toast.success("Enquiry Submitted Successfully!", {
+        description: "Our trade team will get back to you within 24 hours.",
+      });
 
       setSubmitted(true);
       setFormData({ fullName: "", email: "", phone: "", company: "", country: "", productCategory: "" });
       setTimeout(() => setSubmitted(false), 5000);
-    } catch (err) {
+    } catch (err: any) {
       console.error("Submission error:", err);
+      toast.error("Submission Failed", {
+        description: err.message || "Something went wrong. Please try again.",
+      });
       setError("Something went wrong. Please try again.");
     } finally {
       setIsSubmitting(false);

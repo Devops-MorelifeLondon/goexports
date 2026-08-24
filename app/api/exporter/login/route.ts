@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { getExportProfilesCollection } from "@/lib/mongodb";
+import { createExporterToken, SESSION_COOKIE_NAME } from "@/lib/exporter-auth";
 
 export async function POST(req: Request) {
   try {
@@ -53,18 +54,45 @@ export async function POST(req: Request) {
     }
 
     const slug = userDoc.slug || userDoc.id || "exporter";
-    const { password: _, ...safeUser } = userDoc;
+    const profileId = userDoc.id || userDoc._id.toString();
+    const companyName = userDoc.companyName || "Exporter";
 
-    return NextResponse.json(
+    // Generate signed session token
+    const token = createExporterToken({
+      id: profileId,
+      email: userDoc.email,
+      slug,
+      companyName,
+    });
+
+    const { password: _, ...safeUser } = userDoc;
+    safeUser.id = profileId;
+
+    const response = NextResponse.json(
       {
         success: true,
-        message: "Login successful! Redirecting to your exporter profile...",
+        message: "Login successful! Redirecting to your exporter portal...",
+        token,
         slug,
         profileUrl: `/${slug}`,
+        dashboardUrl: "/exporter/profile",
         seller: safeUser,
       },
       { status: 200 }
     );
+
+    // Set cookie on response for 30 days
+    response.cookies.set({
+      name: SESSION_COOKIE_NAME,
+      value: token,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: 60 * 60 * 24 * 30, // 30 days
+    });
+
+    return response;
   } catch (error: any) {
     console.error("Exporter login error:", error);
     return NextResponse.json(

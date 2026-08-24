@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getSellerProfile } from "@/lib/seller";
+import { getExporterSessionFromRequest } from "@/lib/exporter-auth";
 import SellerProfileClient from "@/components/SellerProfileClient";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://www.goexports.co.uk";
@@ -11,7 +12,8 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
-  const seller = await getSellerProfile(id);
+  // Public metadata is only generated for approved profiles
+  const seller = await getSellerProfile(id, false);
 
   if (!seller) {
     return { title: "Exporter Profile Not Found | Goexports" };
@@ -79,7 +81,23 @@ export default async function SellerProfilePage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const seller = await getSellerProfile(id);
+  let seller = await getSellerProfile(id, false);
+
+  // If not approved for public, check if authenticated owner is viewing
+  if (!seller) {
+    const session = await getExporterSessionFromRequest();
+    if (session) {
+      const pendingSeller = await getSellerProfile(id, true);
+      if (
+        pendingSeller &&
+        (pendingSeller.email?.toLowerCase() === session.email?.toLowerCase() ||
+          pendingSeller.id === session.id ||
+          pendingSeller.slug === session.slug)
+      ) {
+        seller = pendingSeller;
+      }
+    }
+  }
 
   if (!seller) {
     notFound();

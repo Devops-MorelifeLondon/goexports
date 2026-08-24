@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   ShieldCheck,
@@ -19,7 +19,8 @@ import {
   Send,
   Check,
   User,
-  TrendingUp
+  TrendingUp,
+  Edit3
 } from "lucide-react";
 import { toast } from "sonner";
 import { SellerProfile } from "@/lib/seller";
@@ -30,6 +31,24 @@ interface SellerProfileClientProps {
 
 export default function SellerProfileClient({ seller }: SellerProfileClientProps) {
   const [isCopied, setIsCopied] = useState(false);
+  const [isOwner, setIsOwner] = useState(false);
+
+  useEffect(() => {
+    try {
+      const localUserStr = typeof window !== "undefined" ? localStorage.getItem("exporter_user") : null;
+      if (localUserStr) {
+        const localUser = JSON.parse(localUserStr);
+        if (
+          localUser &&
+          (localUser.email?.toLowerCase() === seller.email?.toLowerCase() ||
+            localUser.id === seller.id ||
+            localUser.slug === seller.slug)
+        ) {
+          setIsOwner(true);
+        }
+      }
+    } catch {}
+  }, [seller]);
 
   // Buyer RFQ Form state
   const [buyerName, setBuyerName] = useState("");
@@ -111,6 +130,37 @@ export default function SellerProfileClient({ seller }: SellerProfileClientProps
 
   return (
     <div className="min-h-screen pb-24" style={{ backgroundColor: "var(--canvas)" }}>
+      {/* ── Owner Mode Banner ── */}
+      {isOwner && (
+        <div className="bg-[var(--ink)] text-white py-2.5 px-4 text-xs border-b border-white/10 shadow-sm">
+          <div className="section-wrap flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-[var(--brand-ochre)] animate-pulse" />
+              <span className="font-bold">Storefront Owner Mode:</span>
+              <span className="text-white/80 hidden sm:inline">You are viewing your public exporter profile.</span>
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-white/20 text-white">
+                {seller.status || "Pending Verification"}
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Link
+                href="/exporter/profile?tab=edit"
+                className="px-3 py-1 rounded-lg text-xs font-bold text-[var(--ink)] bg-[var(--brand-ochre)] hover:opacity-90 no-underline transition-opacity flex items-center gap-1.5"
+              >
+                <Edit3 className="w-3.5 h-3.5" />
+                <span>Edit Profile</span>
+              </Link>
+              <Link
+                href="/exporter/profile"
+                className="px-3 py-1 rounded-lg text-xs font-semibold text-white bg-white/10 hover:bg-white/20 no-underline transition-colors"
+              >
+                Exporter Dashboard →
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ── Breadcrumb & Top Verified Bar ── */}
       <div className="border-b border-[var(--hairline)] bg-[var(--surface-soft)] py-3">
         <div className="section-wrap flex flex-wrap items-center justify-between gap-3 text-xs">

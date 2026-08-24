@@ -393,6 +393,20 @@ export default function ExportProfileForm() {
         description: `Your application (Ref: ${data.profileId || "EXP"}) is under review by our admin team.`,
       });
 
+      if (typeof window !== "undefined") {
+        const userToStore = {
+          ...(data.data || payload),
+          id: data.profileId || "EXP",
+          slug: data.slug,
+          status: data.status || "pending",
+        };
+        localStorage.setItem("exporter_user", JSON.stringify(userToStore));
+        if (data.token) {
+          localStorage.setItem("exporter_token", data.token);
+        }
+        window.dispatchEvent(new Event("exporter_auth_change"));
+      }
+
       setSubmittedData({
         ...payload,
         id: data.profileId || "EXP-SUBMITTED",
@@ -543,16 +557,23 @@ export default function ExportProfileForm() {
           {/* Action buttons */}
           <div className="flex flex-col sm:flex-row gap-3 w-full justify-center">
             <Link
-              href="/exporter/login"
-              className="btn-primary flex-1 no-underline text-center justify-center text-xs sm:text-sm"
+              href="/exporter/profile"
+              className="btn-primary flex-1 no-underline text-center justify-center text-xs sm:text-sm font-bold flex items-center gap-1.5"
             >
-              Sign In to Exporter Portal
+              <User className="w-4 h-4" />
+              <span>Go to My Profile Portal</span>
+            </Link>
+            <Link
+              href="/exporter/profile?tab=edit"
+              className="btn-secondary flex-1 no-underline text-center justify-center text-xs sm:text-sm font-bold flex items-center gap-1.5"
+            >
+              <span>Edit Profile Details</span>
             </Link>
             <button
               onClick={resetForm}
-              className="btn-secondary flex-1 text-center justify-center cursor-pointer text-xs sm:text-sm"
+              className="px-4 py-2.5 rounded-xl border border-[var(--hairline)] bg-[var(--canvas)] text-xs font-semibold text-[var(--muted)] hover:text-[var(--ink)] cursor-pointer"
             >
-              Register Another Profile
+              New Profile
             </button>
           </div>
         </div>

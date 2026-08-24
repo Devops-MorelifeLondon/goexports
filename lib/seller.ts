@@ -34,8 +34,9 @@ export function slugifyCompanyName(name: string): string {
 /**
  * Fetch seller profile strictly from MongoDB `export_profiles` collection.
  * Matches by slug, custom id (EXP-...), MongoDB _id, or company name.
+ * By default, only approved or verified profiles are returned for public viewing.
  */
-export async function getSellerProfile(identifier: string): Promise<SellerProfile | null> {
+export async function getSellerProfile(identifier: string, allowPending: boolean = false): Promise<SellerProfile | null> {
   if (!identifier) return null;
   const cleanId = decodeURIComponent(identifier).trim().toLowerCase();
 
@@ -71,9 +72,9 @@ export async function getSellerProfile(identifier: string): Promise<SellerProfil
       return null;
     }
 
-    // Only approved/verified seller profiles are publicly live
-    const status = (doc.status || "").toLowerCase();
-    if (status !== "approved" && status !== "verified") {
+    // Only approved/verified seller profiles are publicly live unless explicitly allowed for the authenticated owner
+    const status = (doc.status || "pending").toLowerCase();
+    if (!allowPending && status !== "approved" && status !== "verified") {
       return null;
     }
 
@@ -94,7 +95,7 @@ export async function getSellerProfile(identifier: string): Promise<SellerProfil
       exportCapacity: doc.exportCapacity || "",
       certifications: Array.isArray(doc.certifications) ? doc.certifications : [],
       createdAt: doc.createdAt || "",
-      status: doc.status || "verified",
+      status: doc.status || "pending",
       selectedPackage: doc.selectedPackage || doc.package || "Verified Growth Pro",
     };
   } catch {

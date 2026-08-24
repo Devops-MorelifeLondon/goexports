@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import { getExportProfilesCollection } from "@/lib/mongodb";
 import { slugifyCompanyName } from "@/lib/seller";
 import { sendExporterWelcomeEmail, sendAdminNewExporterNotification } from "@/lib/email";
+import { createExporterToken, SESSION_COOKIE_NAME } from "@/lib/exporter-auth";
 
 export async function POST(req: Request) {
   try {
@@ -184,19 +185,41 @@ export async function POST(req: Request) {
     // Strip password from response for security
     const { password: _, ...safeData } = submissionData;
 
-    return NextResponse.json(
+    // Generate signed session token for automatic login
+    const token = createExporterToken({
+      id: submissionData.id,
+      email: submissionData.email,
+      slug: submissionData.slug,
+      companyName: submissionData.companyName,
+    });
+
+    const response = NextResponse.json(
       {
         success: true,
         message: "Your export profile has been created successfully! Your public storefront is now live.",
         profileId: submissionData.id,
         slug: submissionData.slug,
         profileUrl: `/${submissionData.slug}`,
+        dashboardUrl: "/exporter/profile",
+        token,
         dbSaved,
         mongoId,
         data: safeData,
       },
       { status: 200 }
     );
+
+    response.cookies.set({
+      name: SESSION_COOKIE_NAME,
+      value: token,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: 60 * 60 * 24 * 30, // 30 days
+    });
+
+    return response;
   } catch (error: any) {
     console.error("Export profile submission error:", error);
     return NextResponse.json(

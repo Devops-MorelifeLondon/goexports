@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   Eye,
   EyeOff,
@@ -12,16 +12,17 @@ import {
   ArrowRight,
   ShieldCheck,
   Building2,
-  Sparkles,
-  CheckCircle2,
   Globe2,
   TrendingUp,
   Loader2
 } from "lucide-react";
 import { toast } from "sonner";
 
-export default function ExporterLoginPage() {
+function ExporterLoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTarget = searchParams.get("redirect") || "/exporter/profile";
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -52,13 +53,24 @@ export default function ExporterLoginPage() {
         throw new Error(data.message || data.error || "Invalid login credentials");
       }
 
+      if (typeof window !== "undefined") {
+        if (data.seller) {
+          localStorage.setItem("exporter_user", JSON.stringify(data.seller));
+        }
+        if (data.token) {
+          localStorage.setItem("exporter_token", data.token);
+        }
+        window.dispatchEvent(new Event("exporter_auth_change"));
+      }
+
       toast.success("Welcome Back!", {
-        description: `Logged in as ${data.seller?.companyName || "Exporter"}. Redirecting to your storefront...`,
+        description: `Logged in as ${data.seller?.companyName || "Exporter"}. Redirecting to your portal...`,
       });
 
       setTimeout(() => {
-        router.push(data.profileUrl || `/${data.slug || data.seller?.id || "seller"}`);
-      }, 800);
+        router.push(redirectTarget);
+        router.refresh();
+      }, 600);
     } catch (err: any) {
       toast.error("Login Failed", {
         description: err.message || "Could not log into your exporter portal.",
@@ -68,6 +80,80 @@ export default function ExporterLoginPage() {
     }
   };
 
+  return (
+    <form onSubmit={handleLogin} className="space-y-4.5">
+      {/* Work Email */}
+      <div className="space-y-1.5">
+        <label className="block text-xs font-bold text-[var(--ink)]">
+          Work Email Address
+        </label>
+        <div className="relative">
+          <Mail className="w-4 h-4 text-[var(--muted)] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+          <input
+            type="email"
+            required
+            disabled={isLoading}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="exports@yourcompany.com"
+            className="w-full pl-10 pr-4 py-3 rounded-xl border border-[var(--hairline)] bg-[var(--canvas)] text-sm text-[var(--ink)] placeholder:text-[var(--muted-soft)] focus:outline-none focus:border-[var(--brand-ochre)] focus:ring-2 focus:ring-[var(--brand-ochre)]/20 transition-all disabled:opacity-50"
+          />
+        </div>
+      </div>
+
+      {/* Password */}
+      <div className="space-y-1.5">
+        <div className="flex items-center justify-between">
+          <label className="block text-xs font-bold text-[var(--ink)]">
+            Account Password
+          </label>
+        </div>
+        <div className="relative">
+          <Lock className="w-4 h-4 text-[var(--muted)] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+          <input
+            type={showPassword ? "text" : "password"}
+            required
+            disabled={isLoading}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Enter your account password"
+            className="w-full pl-10 pr-11 py-3 rounded-xl border border-[var(--hairline)] bg-[var(--canvas)] text-sm text-[var(--ink)] placeholder:text-[var(--muted-soft)] focus:outline-none focus:border-[var(--brand-ochre)] focus:ring-2 focus:ring-[var(--brand-ochre)]/20 transition-all disabled:opacity-50"
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--muted)] hover:text-[var(--ink)] border-none bg-transparent cursor-pointer p-1.5 transition-colors"
+            aria-label={showPassword ? "Hide password" : "Show password"}
+          >
+            {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+          </button>
+        </div>
+      </div>
+
+      {/* Submit Button */}
+      <button
+        type="submit"
+        disabled={isLoading}
+        className="w-full mt-2 py-3.5 rounded-xl border-none font-bold text-sm text-[var(--ink)] cursor-pointer transition-all flex items-center justify-center gap-2 shadow-md hover:opacity-95 active:scale-[0.99] disabled:opacity-50"
+        style={{ backgroundColor: "var(--brand-ochre)" }}
+      >
+        {isLoading ? (
+          <>
+            <Loader2 className="w-4 h-4 animate-spin" />
+            <span>Verifying Credentials...</span>
+          </>
+        ) : (
+          <>
+            <span>Sign In to Exporter Portal</span>
+            <ArrowRight className="w-4 h-4" />
+          </>
+        )}
+      </button>
+    </form>
+  );
+}
+
+export default function ExporterLoginPage() {
   return (
     <main
       className="min-h-screen py-10 sm:py-16 flex flex-col justify-center relative overflow-hidden"
@@ -125,75 +211,9 @@ export default function ExporterLoginPage() {
 
           {/* Form Container */}
           <div className="p-8 sm:p-10 pt-6">
-            <form onSubmit={handleLogin} className="space-y-4.5">
-              {/* Work Email */}
-              <div className="space-y-1.5">
-                <label className="block text-xs font-bold text-[var(--ink)]">
-                  Work Email Address
-                </label>
-                <div className="relative">
-                  <Mail className="w-4 h-4 text-[var(--muted)] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                  <input
-                    type="email"
-                    required
-                    disabled={isLoading}
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="exports@yourcompany.com"
-                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-[var(--hairline)] bg-[var(--canvas)] text-sm text-[var(--ink)] placeholder:text-[var(--muted-soft)] focus:outline-none focus:border-[var(--brand-ochre)] focus:ring-2 focus:ring-[var(--brand-ochre)]/20 transition-all disabled:opacity-50"
-                  />
-                </div>
-              </div>
-
-              {/* Password */}
-              <div className="space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <label className="block text-xs font-bold text-[var(--ink)]">
-                    Account Password
-                  </label>
-                </div>
-                <div className="relative">
-                  <Lock className="w-4 h-4 text-[var(--muted)] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    required
-                    disabled={isLoading}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Enter your account password"
-                    className="w-full pl-10 pr-11 py-3 rounded-xl border border-[var(--hairline)] bg-[var(--canvas)] text-sm text-[var(--ink)] placeholder:text-[var(--muted-soft)] focus:outline-none focus:border-[var(--brand-ochre)] focus:ring-2 focus:ring-[var(--brand-ochre)]/20 transition-all disabled:opacity-50"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--muted)] hover:text-[var(--ink)] border-none bg-transparent cursor-pointer p-1.5 transition-colors"
-                    aria-label={showPassword ? "Hide password" : "Show password"}
-                  >
-                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
-                </div>
-              </div>
-
-              {/* Submit Button */}
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="w-full mt-2 py-3.5 rounded-xl border-none font-bold text-sm text-[var(--ink)] cursor-pointer transition-all flex items-center justify-center gap-2 shadow-md hover:opacity-95 active:scale-[0.99] disabled:opacity-50"
-                style={{ backgroundColor: "var(--brand-ochre)" }}
-              >
-                {isLoading ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    <span>Verifying Credentials...</span>
-                  </>
-                ) : (
-                  <>
-                    <span>Sign In to Exporter Portal</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </>
-                )}
-              </button>
-            </form>
+            <Suspense fallback={<div className="py-8 text-center text-xs text-[var(--muted)]">Loading login portal...</div>}>
+              <ExporterLoginForm />
+            </Suspense>
 
             {/* Feature Highlights Strip */}
             <div className="mt-8 pt-6 border-t border-[var(--hairline)] grid grid-cols-3 gap-2 text-center">

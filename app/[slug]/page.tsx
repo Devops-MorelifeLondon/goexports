@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getIndustryBySlug, getAllIndustrySlugs, industries } from "@/data/industries";
 import { getSellerProfile } from "@/lib/seller";
+import { getExporterSessionFromRequest } from "@/lib/exporter-auth";
 import IndustryClient from "./client";
 import SellerProfileClient from "@/components/SellerProfileClient";
 import metadata from "@/data/industry-content-2.json";
@@ -269,7 +270,24 @@ export default async function DynamicSlugPage({ params }: { params: Promise<{ sl
   }
 
   // 2. If matching Exporter / Seller Profile
-  const seller = await getSellerProfile(slug);
+  let seller = await getSellerProfile(slug, false);
+
+  // If not approved for public, allow only the authenticated owner to preview their own profile
+  if (!seller) {
+    const session = await getExporterSessionFromRequest();
+    if (session) {
+      const pendingSeller = await getSellerProfile(slug, true);
+      if (
+        pendingSeller &&
+        (pendingSeller.email?.toLowerCase() === session.email?.toLowerCase() ||
+          pendingSeller.id === session.id ||
+          pendingSeller.slug === session.slug)
+      ) {
+        seller = pendingSeller;
+      }
+    }
+  }
+
   if (seller) {
     const sellerJsonLd = generateSellerJsonLd(seller);
 

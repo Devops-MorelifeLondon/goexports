@@ -9,6 +9,9 @@ import metadata from "@/data/industry-content-2.json";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://www.goexports.co.uk";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 // ─── Static params for SSG (Industries) ───
 export async function generateStaticParams() {
   return getAllIndustrySlugs().map((slug) => ({ slug }));

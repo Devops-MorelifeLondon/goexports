@@ -20,7 +20,8 @@ import {
   Check,
   User,
   TrendingUp,
-  Edit3
+  Edit3,
+  Lock
 } from "lucide-react";
 import { toast } from "sonner";
 import { SellerProfile } from "@/lib/seller";
@@ -127,6 +128,86 @@ export default function SellerProfileClient({ seller }: SellerProfileClientProps
     `Hello ${seller.companyName}, I found your export profile on Goexports and would like to inquire about your ${seller.productCategory} offerings.`
   );
   const whatsappUrl = `https://wa.me/${cleanPhone}?text=${whatsappMsg}`;
+
+  const isApproved =
+    (seller.status || "pending").toLowerCase() === "approved" ||
+    (seller.status || "").toLowerCase() === "verified";
+
+  if (!isApproved) {
+    return (
+      <div className="min-h-screen py-16 px-4 bg-[var(--canvas)] flex items-center justify-center">
+        <div className="max-w-xl w-full p-8 rounded-3xl border border-[var(--hairline)] bg-[var(--surface-card)] text-center shadow-lg space-y-6">
+          <div className="w-16 h-16 rounded-full bg-amber-100 border border-amber-300 text-amber-800 flex items-center justify-center mx-auto shadow-xs">
+            <Lock className="w-8 h-8 text-amber-700" />
+          </div>
+
+          <div className="space-y-2">
+            <span className="px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider bg-amber-100 text-amber-900 border border-amber-300 inline-block">
+              🔒 Profile Locked • Pending Verification
+            </span>
+            <h1 className="text-2xl font-extrabold text-[var(--ink)] tracking-tight">
+              {seller.companyName} is Currently Locked
+            </h1>
+            <p className="text-xs sm:text-sm text-[var(--muted)] leading-relaxed">
+              This exporter profile is currently undergoing compliance verification by the Goexports admin team. Once approved by our team, this public storefront will automatically unlock and go live to global buyers.
+            </p>
+          </div>
+
+          <div className="p-4 rounded-2xl bg-[var(--canvas)] border border-[var(--hairline)] text-left text-xs space-y-2">
+            <div className="flex justify-between border-b border-[var(--hairline)] pb-2">
+              <span className="text-[var(--muted)]">Exporter ID:</span>
+              <span className="font-mono font-bold text-[var(--ink)]">{seller.id}</span>
+            </div>
+            <div className="flex justify-between border-b border-[var(--hairline)] pb-2">
+              <span className="text-[var(--muted)]">Category:</span>
+              <span className="font-bold text-[var(--ink)]">{seller.productCategory}</span>
+            </div>
+            <div className="flex justify-between border-b border-[var(--hairline)] pb-2">
+              <span className="text-[var(--muted)]">Country / Region:</span>
+              <span className="font-bold text-[var(--ink)]">{seller.country} ({seller.postCode})</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-[var(--muted)]">Account Status:</span>
+              <span className="font-extrabold text-amber-700 uppercase bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
+                {seller.status || "Pending Verification"}
+              </span>
+            </div>
+          </div>
+
+          {isOwner ? (
+            <div className="space-y-3 pt-2">
+              <div className="p-3 rounded-xl bg-sky-50 border border-sky-200 text-sky-900 text-xs font-medium">
+                👋 You are logged in as the account owner (<strong>{seller.email}</strong>). You will receive an email notification as soon as your account is approved.
+              </div>
+              <div className="flex flex-col sm:flex-row gap-2 justify-center">
+                <Link
+                  href="/exporter/profile"
+                  className="px-5 py-2.5 rounded-xl font-bold text-xs bg-[var(--brand-ochre)] text-[var(--ink)] no-underline hover:opacity-90 transition-all shadow-xs"
+                >
+                  Go to Exporter Dashboard &rarr;
+                </Link>
+                <Link
+                  href="/exporter/profile?tab=edit"
+                  className="px-4 py-2.5 rounded-xl font-semibold text-xs bg-[var(--canvas)] text-[var(--ink)] border border-[var(--hairline)] no-underline hover:bg-[var(--surface-soft)] transition-colors"
+                >
+                  Edit Profile Details
+                </Link>
+              </div>
+            </div>
+          ) : (
+            <div className="pt-2">
+              <Link
+                href="/"
+                className="px-5 py-2.5 rounded-xl font-bold text-xs bg-[var(--ink)] text-white no-underline hover:bg-slate-800 transition-colors inline-block"
+              >
+                Return to Goexports Homepage
+              </Link>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen pb-24" style={{ backgroundColor: "var(--canvas)" }}>

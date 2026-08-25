@@ -1,5 +1,5 @@
-import { getExportProfilesCollection } from "./mongodb";
-import { ObjectId } from "mongodb";
+import { ExportProfile, connectToDatabase } from "./mongodb";
+import mongoose from "mongoose";
 
 export interface SellerProfile {
   id: string;
@@ -32,7 +32,7 @@ export function slugifyCompanyName(name: string): string {
 }
 
 /**
- * Fetch seller profile strictly from MongoDB `export_profiles` collection.
+ * Fetch seller profile strictly from MongoDB `export_profiles` collection via Mongoose.
  * Matches by slug, custom id (EXP-...), MongoDB _id, or company name.
  * By default, only approved or verified profiles are returned for public viewing.
  */
@@ -41,40 +41,60 @@ export async function getSellerProfile(identifier: string, allowPending: boolean
   const cleanId = decodeURIComponent(identifier).trim().toLowerCase();
 
   try {
-    const collection = await getExportProfilesCollection();
+    await connectToDatabase();
     let doc: any = null;
 
+    const activeFilter = {
+      isDeleted: { $ne: true },
+      status: { $nin: ["deleted", "removed", "inactive", "archived", "disabled"] },
+    };
+
     // 1. Match by slug
-    doc = await collection.findOne({ slug: cleanId });
+    doc = await ExportProfile.findOne({ slug: cleanId, ...activeFilter }).lean();
 
     // 2. Match by custom ID (e.g. EXP-xxxx)
     if (!doc) {
-      doc = await collection.findOne({ id: new RegExp(`^${cleanId}$`, "i") });
+      doc = await ExportProfile.findOne({ id: new RegExp(`^${cleanId}$`, "i"), ...activeFilter }).lean();
     }
 
     // 3. Match by 24-hex ObjectId
-    if (!doc && ObjectId.isValid(cleanId)) {
-      doc = await collection.findOne({ _id: new ObjectId(cleanId) });
+    if (!doc && mongoose.isValidObjectId(cleanId)) {
+      doc = await ExportProfile.findOne({ _id: new mongoose.Types.ObjectId(cleanId), ...activeFilter }).lean();
     }
 
     // 4. Match by case-insensitive company name
     if (!doc) {
       const nameWithSpaces = cleanId.replace(/-/g, " ");
-      doc = await collection.findOne({
-        $or: [
-          { companyName: new RegExp(`^${nameWithSpaces}$`, "i") },
-          { companyName: new RegExp(`^${cleanId}$`, "i") },
+      doc = await ExportProfile.findOne({
+        $and: [
+          activeFilter,
+          {
+            $or: [
+              { companyName: new RegExp(`^${nameWithSpaces}$`, "i") },
+              { companyName: new RegExp(`^${cleanId}$`, "i") },
+            ],
+          },
         ],
-      });
+      }).lean();
     }
 
     if (!doc) {
       return null;
     }
 
-    // Only approved/verified seller profiles are publicly live unless explicitly allowed for the authenticated owner
+    // Check deleted or inactive status
     const status = (doc.status || "pending").toLowerCase();
+    const isDeleted = doc.isDeleted === true || ["deleted", "removed", "inactive", "archived", "disabled"].includes(status);
+    if (isDeleted) {
+      return null;
+    }
+
+    // Only approved/verified seller profiles are publicly live unless explicitly allowed for the authenticated owner (pending status only)
     if (!allowPending && status !== "approved" && status !== "verified") {
+      return null;
+    }
+
+    if (allowPending && status !== "approved" && status !== "verified" && status !== "pending") {
       return null;
     }
 

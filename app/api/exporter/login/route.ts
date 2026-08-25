@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
-import { getExportProfilesCollection } from "@/lib/mongodb";
+import { ExportProfile, connectToDatabase } from "@/lib/mongodb";
 import { createExporterToken, SESSION_COOKIE_NAME } from "@/lib/exporter-auth";
 
 export async function POST(req: Request) {
@@ -18,11 +18,13 @@ export async function POST(req: Request) {
     const cleanEmail = email.trim().toLowerCase();
     const cleanPassword = password.trim();
 
-    // Check MongoDB
-    const collection = await getExportProfilesCollection();
-    const userDoc = await collection.findOne({
+    // Check MongoDB via Mongoose
+    await connectToDatabase();
+    const userDoc: any = await ExportProfile.findOne({
       email: cleanEmail,
-    });
+      isDeleted: { $ne: true },
+      status: { $nin: ["deleted", "removed", "inactive", "archived", "disabled"] },
+    }).lean();
 
     if (!userDoc) {
       return NextResponse.json(

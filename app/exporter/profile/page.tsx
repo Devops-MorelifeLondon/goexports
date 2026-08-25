@@ -1,9 +1,9 @@
 import { Suspense } from "react";
 import { Metadata } from "next";
+import mongoose from "mongoose";
 import { getExporterSessionFromRequest } from "@/lib/exporter-auth";
-import { getDb, getExportProfilesCollection } from "@/lib/mongodb";
+import { ExportProfile, SellerInquiry, connectToDatabase } from "@/lib/mongodb";
 import ExporterProfileDashboard from "@/components/ExporterProfileDashboard";
-import { ObjectId } from "mongodb";
 import { Loader2 } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -35,17 +35,22 @@ export default async function ExporterProfilePage() {
   try {
     const session = await getExporterSessionFromRequest();
     if (session) {
-      const collection = await getExportProfilesCollection();
+      await connectToDatabase();
       let userDoc: any = null;
 
+      const activeFilter = {
+        isDeleted: { $ne: true },
+        status: { $nin: ["deleted", "removed", "inactive", "archived", "disabled"] },
+      };
+
       if (session.id) {
-        userDoc = await collection.findOne({ id: session.id });
-        if (!userDoc && ObjectId.isValid(session.id)) {
-          userDoc = await collection.findOne({ _id: new ObjectId(session.id) });
+        userDoc = await ExportProfile.findOne({ id: session.id, ...activeFilter }).lean();
+        if (!userDoc && mongoose.isValidObjectId(session.id)) {
+          userDoc = await ExportProfile.findOne({ _id: new mongoose.Types.ObjectId(session.id), ...activeFilter }).lean();
         }
       }
       if (!userDoc && session.email) {
-        userDoc = await collection.findOne({ email: session.email.toLowerCase() });
+        userDoc = await ExportProfile.findOne({ email: session.email.toLowerCase(), ...activeFilter }).lean();
       }
 
       if (userDoc) {
@@ -53,21 +58,18 @@ export default async function ExporterProfilePage() {
         safeUser.id = userDoc.id || userDoc._id.toString();
         initialProfile = safeUser;
 
-        const db = await getDb();
-        const rawInquiries = await db
-          .collection("seller_inquiries")
-          .find({
-            $or: [
-              { sellerEmail: userDoc.email.toLowerCase() },
-              { sellerId: userDoc.id },
-              { sellerId: userDoc._id.toString() },
-            ],
-          })
+        const rawInquiries = await SellerInquiry.find({
+          $or: [
+            { sellerEmail: userDoc.email.toLowerCase() },
+            { sellerId: userDoc.id },
+            { sellerId: userDoc._id.toString() },
+          ],
+        })
           .sort({ receivedAt: -1, createdAt: -1 })
           .limit(50)
-          .toArray();
+          .lean();
 
-        initialInquiries = rawInquiries.map((inq) => ({
+        initialInquiries = rawInquiries.map((inq: any) => ({
           id: inq._id.toString(),
           buyerName: inq.buyerName,
           buyerEmail: inq.buyerEmail,

@@ -1,4 +1,4 @@
-import { getPackagesCollection } from "./mongodb";
+import { PackageModel, connectToDatabase } from "./mongodb";
 import { BUYER_PLANS } from "@/data/plans";
 
 export interface PackageDbModel {
@@ -25,7 +25,7 @@ export interface PackageDbModel {
  * Seed initial Find International Buyers Plans into MongoDB
  */
 export async function seedPackages(): Promise<{ success: boolean; count: number; packages: PackageDbModel[] }> {
-  const collection = await getPackagesCollection();
+  await connectToDatabase();
 
   const initialPackages: PackageDbModel[] = BUYER_PLANS.map((plan, index) => ({
     id: plan.id,
@@ -48,7 +48,7 @@ export async function seedPackages(): Promise<{ success: boolean; count: number;
   }));
 
   for (const pkg of initialPackages) {
-    await collection.updateOne(
+    await PackageModel.updateOne(
       { id: pkg.id },
       {
         $set: {
@@ -75,11 +75,10 @@ export async function seedPackages(): Promise<{ success: boolean; count: number;
  */
 export async function getAllPackages(): Promise<PackageDbModel[]> {
   try {
-    const collection = await getPackagesCollection();
-    const docs = await collection
-      .find({ isActive: { $ne: false } })
+    await connectToDatabase();
+    const docs = await PackageModel.find({ isActive: { $ne: false } })
       .sort({ sortOrder: 1 })
-      .toArray();
+      .lean();
 
     if (docs && docs.length > 0) {
       return docs.map((doc: any) => ({
@@ -136,10 +135,10 @@ export async function getPackageById(idOrSlug: string): Promise<PackageDbModel |
   if (!cleanId) return null;
 
   try {
-    const collection = await getPackagesCollection();
-    const doc: any = await collection.findOne({
+    await connectToDatabase();
+    const doc: any = await PackageModel.findOne({
       $or: [{ id: cleanId }, { slug: cleanId }, { name: new RegExp(`^${cleanId}$`, "i") }],
-    });
+    }).lean();
 
     if (doc) {
       return {

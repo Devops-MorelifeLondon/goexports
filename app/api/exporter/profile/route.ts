@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
-import { getDb, getExportProfilesCollection } from "@/lib/mongodb";
+import mongoose from "mongoose";
+import { ExportProfile, SellerInquiry, connectToDatabase } from "@/lib/mongodb";
 import { getExporterSessionFromRequest, createExporterToken, SESSION_COOKIE_NAME } from "@/lib/exporter-auth";
 import { slugifyCompanyName } from "@/lib/seller";
-import { ObjectId } from "mongodb";
 
 export async function GET(req: Request) {
   try {
@@ -14,18 +14,23 @@ export async function GET(req: Request) {
       );
     }
 
-    const collection = await getExportProfilesCollection();
+    await connectToDatabase();
     let userDoc: any = null;
 
-    // Search by custom id, email, or _id
+    const activeFilter = {
+      isDeleted: { $ne: true },
+      status: { $nin: ["deleted", "removed", "inactive", "archived", "disabled"] },
+    };
+
+    // Search by custom id, email, or ObjectId
     if (session.id) {
-      userDoc = await collection.findOne({ id: session.id });
-      if (!userDoc && ObjectId.isValid(session.id)) {
-        userDoc = await collection.findOne({ _id: new ObjectId(session.id) });
+      userDoc = await ExportProfile.findOne({ id: session.id, ...activeFilter }).lean();
+      if (!userDoc && mongoose.isValidObjectId(session.id)) {
+        userDoc = await ExportProfile.findOne({ _id: new mongoose.Types.ObjectId(session.id), ...activeFilter }).lean();
       }
     }
     if (!userDoc && session.email) {
-      userDoc = await collection.findOne({ email: session.email.toLowerCase() });
+      userDoc = await ExportProfile.findOne({ email: session.email.toLowerCase(), ...activeFilter }).lean();
     }
 
     if (!userDoc) {
@@ -41,21 +46,18 @@ export async function GET(req: Request) {
     // Fetch received buyer inquiries for this exporter
     let inquiries: any[] = [];
     try {
-      const db = await getDb();
-      const rawInquiries = await db
-        .collection("seller_inquiries")
-        .find({
-          $or: [
-            { sellerEmail: userDoc.email.toLowerCase() },
-            { sellerId: userDoc.id },
-            { sellerId: userDoc._id.toString() },
-          ],
-        })
+      const rawInquiries = await SellerInquiry.find({
+        $or: [
+          { sellerEmail: userDoc.email.toLowerCase() },
+          { sellerId: userDoc.id },
+          { sellerId: userDoc._id.toString() },
+        ],
+      })
         .sort({ receivedAt: -1, createdAt: -1 })
         .limit(50)
-        .toArray();
+        .lean();
 
-      inquiries = rawInquiries.map((inq) => ({
+      inquiries = rawInquiries.map((inq: any) => ({
         id: inq._id.toString(),
         buyerName: inq.buyerName,
         buyerEmail: inq.buyerEmail,
@@ -134,17 +136,22 @@ export async function PUT(req: Request) {
       );
     }
 
-    const collection = await getExportProfilesCollection();
+    await connectToDatabase();
     let userDoc: any = null;
 
+    const activeFilter = {
+      isDeleted: { $ne: true },
+      status: { $nin: ["deleted", "removed", "inactive", "archived", "disabled"] },
+    };
+
     if (session.id) {
-      userDoc = await collection.findOne({ id: session.id });
-      if (!userDoc && ObjectId.isValid(session.id)) {
-        userDoc = await collection.findOne({ _id: new ObjectId(session.id) });
+      userDoc = await ExportProfile.findOne({ id: session.id, ...activeFilter }).lean();
+      if (!userDoc && mongoose.isValidObjectId(session.id)) {
+        userDoc = await ExportProfile.findOne({ _id: new mongoose.Types.ObjectId(session.id), ...activeFilter }).lean();
       }
     }
     if (!userDoc && session.email) {
-      userDoc = await collection.findOne({ email: session.email.toLowerCase() });
+      userDoc = await ExportProfile.findOne({ email: session.email.toLowerCase(), ...activeFilter }).lean();
     }
 
     if (!userDoc) {
@@ -159,10 +166,10 @@ export async function PUT(req: Request) {
     const cleanCompanyName = companyName.trim();
     if (!updatedSlug || cleanCompanyName !== userDoc.companyName) {
       const baseSlug = slugifyCompanyName(cleanCompanyName) || `exporter-${Date.now().toString(36)}`;
-      const existing = await collection.findOne({
+      const existing = await ExportProfile.findOne({
         slug: baseSlug,
         _id: { $ne: userDoc._id },
-      });
+      }).lean();
       if (existing) {
         updatedSlug = `${baseSlug}-${Math.floor(1000 + Math.random() * 9000)}`;
       } else {
@@ -187,14 +194,9 @@ export async function PUT(req: Request) {
       updatedAt: new Date().toISOString(),
     };
 
-    await collection.updateOne(
-      { _id: userDoc._id },
-      {
-        $set: updatedData,
-      }
-    );
+    await ExportProfile.updateOne({ _id: userDoc._id }, { $set: updatedData });
 
-    const updatedDoc: any = await collection.findOne({ _id: userDoc._id });
+    const updatedDoc: any = await ExportProfile.findOne({ _id: userDoc._id }).lean();
     if (!updatedDoc) {
       return NextResponse.json(
         { error: "Error retrieving updated profile", message: "Failed to retrieve updated profile." },
@@ -238,6 +240,68 @@ export async function PUT(req: Request) {
     console.error("Exporter profile update error:", error);
     return NextResponse.json(
       { error: "Internal server error", message: error.message || "Failed to update profile." },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(req: Request) {
+  try {
+    const session = await getExporterSessionFromRequest(req);
+    if (!session) {
+      return NextResponse.json(
+        { error: "Unauthorized", message: "Please log in to delete your exporter profile." },
+        { status: 401 }
+      );
+    }
+
+    await connectToDatabase();
+    let userDoc: any = null;
+
+    if (session.id) {
+      userDoc = await ExportProfile.findOne({ id: session.id }).lean();
+      if (!userDoc && mongoose.isValidObjectId(session.id)) {
+        userDoc = await ExportProfile.findOne({ _id: new mongoose.Types.ObjectId(session.id) }).lean();
+      }
+    }
+    if (!userDoc && session.email) {
+      userDoc = await ExportProfile.findOne({ email: session.email.toLowerCase() }).lean();
+    }
+
+    if (!userDoc) {
+      return NextResponse.json(
+        { error: "Account not found", message: "Could not find profile to delete." },
+        { status: 404 }
+      );
+    }
+
+    // Delete profile permanently or mark as deleted
+    await ExportProfile.deleteOne({ _id: userDoc._id });
+
+    const response = NextResponse.json(
+      {
+        success: true,
+        message: "Your exporter profile has been deleted permanently.",
+      },
+      { status: 200 }
+    );
+
+    // Clear session cookie
+    response.cookies.set({
+      name: SESSION_COOKIE_NAME,
+      value: "",
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: 0,
+    });
+
+    return response;
+  } catch (error: any) {
+    console.error("Delete exporter profile error:", error);
+    return NextResponse.json(
+      { error: "Internal server error", message: error.message || "Failed to delete profile." },
       { status: 500 }
     );
   }

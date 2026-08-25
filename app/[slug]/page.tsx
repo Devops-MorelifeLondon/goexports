@@ -279,6 +279,9 @@ export default async function DynamicSlugPage({ params }: { params: Promise<{ sl
       const pendingSeller = await getSellerProfile(slug, true);
       if (
         pendingSeller &&
+        (pendingSeller.status?.toLowerCase() === "pending" ||
+          pendingSeller.status?.toLowerCase() === "approved" ||
+          pendingSeller.status?.toLowerCase() === "verified") &&
         (pendingSeller.email?.toLowerCase() === session.email?.toLowerCase() ||
           pendingSeller.id === session.id ||
           pendingSeller.slug === session.slug)

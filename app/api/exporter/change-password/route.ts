@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
-import { getExportProfilesCollection } from "@/lib/mongodb";
+import mongoose from "mongoose";
+import { ExportProfile, connectToDatabase } from "@/lib/mongodb";
 import { getExporterSessionFromRequest } from "@/lib/exporter-auth";
-import { ObjectId } from "mongodb";
 
 export async function POST(req: Request) {
   try {
@@ -31,17 +31,22 @@ export async function POST(req: Request) {
       );
     }
 
-    const collection = await getExportProfilesCollection();
+    await connectToDatabase();
     let userDoc: any = null;
 
+    const activeFilter = {
+      isDeleted: { $ne: true },
+      status: { $nin: ["deleted", "removed", "inactive", "archived", "disabled"] },
+    };
+
     if (session.id) {
-      userDoc = await collection.findOne({ id: session.id });
-      if (!userDoc && ObjectId.isValid(session.id)) {
-        userDoc = await collection.findOne({ _id: new ObjectId(session.id) });
+      userDoc = await ExportProfile.findOne({ id: session.id, ...activeFilter }).lean();
+      if (!userDoc && mongoose.isValidObjectId(session.id)) {
+        userDoc = await ExportProfile.findOne({ _id: new mongoose.Types.ObjectId(session.id), ...activeFilter }).lean();
       }
     }
     if (!userDoc && session.email) {
-      userDoc = await collection.findOne({ email: session.email.toLowerCase() });
+      userDoc = await ExportProfile.findOne({ email: session.email.toLowerCase(), ...activeFilter }).lean();
     }
 
     if (!userDoc) {
@@ -71,7 +76,7 @@ export async function POST(req: Request) {
     // Hash new password
     const hashedNewPassword = await bcrypt.hash(newPassword, 10);
 
-    await collection.updateOne(
+    await ExportProfile.updateOne(
       { _id: userDoc._id },
       {
         $set: {

@@ -182,6 +182,37 @@ export default function ExporterProfileDashboard({
   const [showPasswords, setShowPasswords] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
 
+  // Delete Profile State
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
+  const handleDeleteProfile = async () => {
+    setIsDeleting(true);
+    try {
+      const res = await fetch("/api/exporter/profile", { method: "DELETE" });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.message || "Failed to delete profile");
+      }
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("exporter_user");
+        localStorage.removeItem("exporter_token");
+      }
+      toast.success("Profile Deleted", {
+        description: "Your exporter profile has been deleted permanently.",
+      });
+      router.push("/");
+      router.refresh();
+    } catch (err: any) {
+      toast.error("Delete Failed", {
+        description: err.message || "Could not delete profile.",
+      });
+    } finally {
+      setIsDeleting(false);
+      setShowDeleteConfirm(false);
+    }
+  };
+
   // Populate edit form data when profile is loaded
   const syncFormDataWithProfile = (data: ExporterProfileData) => {
     const isCustomCat = !CATEGORY_OPTIONS.includes(data.productCategory);
@@ -1593,6 +1624,60 @@ export default function ExporterProfileDashboard({
               >
                 Sign out of all sessions →
               </button>
+            </div>
+
+            {/* Danger Zone: Delete Profile */}
+            <div className="p-6 sm:p-8 rounded-3xl border border-rose-200 bg-rose-50/50 space-y-4 shadow-sm">
+              <div className="border-b border-rose-200 pb-3">
+                <h3 className="text-base font-bold text-rose-900 flex items-center gap-2">
+                  <ShieldAlert className="w-5 h-5 text-rose-600" />
+                  <span>Delete Exporter Profile</span>
+                </h3>
+                <p className="text-xs text-rose-700 mt-1 m-0">
+                  Permanently delete your company profile, storefront listing, and account data. Only approved/active profiles will exist; deleted profiles are permanently removed.
+                </p>
+              </div>
+
+              {!showDeleteConfirm ? (
+                <button
+                  type="button"
+                  onClick={() => setShowDeleteConfirm(true)}
+                  className="px-4 py-2.5 rounded-xl font-bold text-xs text-rose-700 bg-rose-100 hover:bg-rose-200 border border-rose-300 transition-colors cursor-pointer"
+                >
+                  Delete Profile Permanently
+                </button>
+              ) : (
+                <div className="p-4 rounded-2xl bg-white border border-rose-300 space-y-3">
+                  <p className="text-xs font-bold text-rose-900 m-0">
+                    Are you sure you want to permanently delete your exporter profile ({profile.companyName})?
+                  </p>
+                  <div className="flex items-center gap-3">
+                    <button
+                      type="button"
+                      disabled={isDeleting}
+                      onClick={handleDeleteProfile}
+                      className="px-4 py-2 rounded-xl text-xs font-bold bg-rose-600 hover:bg-rose-700 text-white border-none cursor-pointer flex items-center gap-1.5 disabled:opacity-50"
+                    >
+                      {isDeleting ? (
+                        <>
+                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                          <span>Deleting...</span>
+                        </>
+                      ) : (
+                        <span>Confirm Permanent Deletion</span>
+                      )}
+                    </button>
+                    <button
+                      type="button"
+                      disabled={isDeleting}
+                      onClick={() => setShowDeleteConfirm(false)}
+                      className="px-4 py-2 rounded-xl text-xs font-semibold text-[var(--ink)] bg-[var(--canvas)] border border-[var(--hairline)] hover:bg-gray-100 cursor-pointer"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         )}

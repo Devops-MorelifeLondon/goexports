@@ -4,7 +4,7 @@ import {
   sendBuyerInquiryConfirmation,
   sendAdminSellerInquiryNotification,
 } from "@/lib/email";
-import { getDb } from "@/lib/mongodb";
+import { SellerInquiry, connectToDatabase } from "@/lib/mongodb";
 
 export async function POST(req: Request) {
   try {
@@ -50,10 +50,10 @@ export async function POST(req: Request) {
       buyerEmail: inquiryData.buyerEmail,
     });
 
-    // 1. Optionally persist inquiry in MongoDB
+    // 1. Persist inquiry in MongoDB via Mongoose
     try {
-      const db = await getDb();
-      await db.collection("seller_inquiries").insertOne({
+      await connectToDatabase();
+      await SellerInquiry.create({
         ...inquiryData,
         receivedAt: new Date(),
         ipAddress: req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip") || "unknown",
@@ -63,9 +63,6 @@ export async function POST(req: Request) {
     }
 
     // 2. Trigger Emails via Brevo API:
-    // a) To Exporter (RFQ lead)
-    // b) To Buyer (Confirmation copy)
-    // c) To Admin (Ops desk notification)
     try {
       await Promise.allSettled([
         sendSellerInquiryAlertToExporter(inquiryData),

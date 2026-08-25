@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
-import { getExportProfilesCollection } from "@/lib/mongodb";
+import { ExportProfile, connectToDatabase } from "@/lib/mongodb";
 import { slugifyCompanyName } from "@/lib/seller";
 import { sendExporterWelcomeEmail, sendAdminNewExporterNotification } from "@/lib/email";
 import { createExporterToken, SESSION_COOKIE_NAME } from "@/lib/exporter-auth";
@@ -74,8 +74,8 @@ export async function POST(req: Request) {
 
     // Check if slug exists in DB and disambiguate if needed
     try {
-      const collection = await getExportProfilesCollection();
-      const existing = await collection.findOne({ slug: baseSlug });
+      await connectToDatabase();
+      const existing = await ExportProfile.findOne({ slug: baseSlug }).lean();
       if (existing) {
         finalSlug = `${baseSlug}-${Math.floor(1000 + Math.random() * 9000)}`;
       }
@@ -103,6 +103,7 @@ export async function POST(req: Request) {
       selectedPackage: selectedPackage ? String(selectedPackage).trim() : "Verified Growth Pro",
       createdAt: new Date().toISOString(),
       status: "pending",
+      isDeleted: false,
     };
 
     console.log("=== [NEW EXPORT PROFILE SUBMITTED] ===", {
@@ -112,21 +113,21 @@ export async function POST(req: Request) {
       email: submissionData.email,
     });
 
-    // ── 1. Store in MongoDB Database ──
+    // ── 1. Store in MongoDB Database via Mongoose ──
     let dbSaved = false;
     let mongoId: string | null = null;
     try {
-      const collection = await getExportProfilesCollection();
-      const insertResult = await collection.insertOne({
+      await connectToDatabase();
+      const newDoc = await ExportProfile.create({
         ...submissionData,
         syncedToJotform: false,
         ipAddress: req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip") || "unknown",
         userAgent: req.headers.get("user-agent") || "unknown",
         receivedAt: new Date(),
       });
-      mongoId = insertResult.insertedId.toString();
+      mongoId = newDoc._id.toString();
       dbSaved = true;
-      console.log("=== [SAVED TO MONGODB] ===", { profileId: submissionData.id, slug: finalSlug, mongoId });
+      console.log("=== [SAVED TO MONGODB (MONGOOSE)] ===", { profileId: submissionData.id, slug: finalSlug, mongoId });
     } catch (mongoError: any) {
       console.warn("MongoDB storage notice:", mongoError.message);
     }

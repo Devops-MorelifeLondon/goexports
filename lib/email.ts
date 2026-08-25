@@ -142,8 +142,8 @@ export function getExporterWelcomeEmailTemplate(data: ExporterSubmissionEmailDat
   const content = `
     <!-- Status Hero Pill -->
     <div style="text-align: center; margin-bottom: 24px;">
-      <div style="display: inline-flex; align-items: center; background-color: #ecfdf5; color: #047857; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.75px; padding: 6px 16px; border-radius: 9999px; border: 1px solid #a7f3d0;">
-        ✓ Account Created & Storefront Live
+      <div style="display: inline-flex; align-items: center; background-color: #fef3c7; color: #92400e; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.75px; padding: 6px 16px; border-radius: 9999px; border: 1px solid #fde68a;">
+        ⏳ Account Created — Pending Admin Approval
       </div>
     </div>
 
@@ -153,22 +153,20 @@ export function getExporterWelcomeEmailTemplate(data: ExporterSubmissionEmailDat
     </h1>
     
     <p style="margin: 0 0 24px 0; font-size: 15px; line-height: 1.65; color: #475569; text-align: center;">
-      Your exporter account and dedicated digital storefront for <strong style="color: #09090b;">${data.companyName}</strong> have been created successfully on our global B2B trade network.
+      Thank you for registering <strong style="color: #09090b;">${data.companyName}</strong>. Your exporter account is currently in a <strong>pending state</strong> and will go live on our global B2B trade network after admin review and approval.
     </p>
 
-    <!-- Live Storefront Highlight Card -->
+    <!-- Reserved Storefront Highlight Card -->
     <div style="background: linear-gradient(180deg, #fffdf8 0%, #faf5e8 100%); border: 1px solid #fde68a; border-radius: 14px; padding: 22px 20px; text-align: center; margin-bottom: 28px;">
       <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.2px; color: #92400e; margin-bottom: 6px;">
-        Your Public Storefront Address:
+        Your Reserved Storefront Address:
       </div>
-      <div style="font-family: monospace, SFMono-Regular, Consolas; font-size: 14px; font-weight: 700; color: #0a0a0a; word-break: break-all; margin-bottom: 16px; background-color: #ffffff; padding: 8px 12px; border-radius: 8px; border: 1px solid #f0ece1; display: inline-block;">
+      <div style="font-family: monospace, SFMono-Regular, Consolas; font-size: 14px; font-weight: 700; color: #0a0a0a; word-break: break-all; margin-bottom: 12px; background-color: #ffffff; padding: 8px 12px; border-radius: 8px; border: 1px solid #f0ece1; display: inline-block;">
         ${profileUrl}
       </div>
-      <div>
-        <a href="${profileUrl}" target="_blank" style="background-color: #0a0a0a; color: #ffffff; text-decoration: none; padding: 13px 30px; font-size: 14px; font-weight: 700; border-radius: 10px; display: inline-block; box-shadow: 0 4px 14px rgba(10,10,10,0.18);">
-          View Your Public Storefront ↗
-        </a>
-      </div>
+      <p style="margin: 0; font-size: 13px; color: #78350f; line-height: 1.5; font-weight: 600;">
+        🔒 Your public storefront link will be automatically published and accessible to buyers as soon as the admin approves your account.
+      </p>
     </div>
 
     <!-- Summary Table -->
@@ -180,6 +178,12 @@ export function getExporterWelcomeEmailTemplate(data: ExporterSubmissionEmailDat
         <tr>
           <td style="padding: 11px 18px; border-bottom: 1px solid #f1f5f9; color: #64748b; font-weight: 600; width: 42%;">Reference ID:</td>
           <td style="padding: 11px 18px; border-bottom: 1px solid #f1f5f9; font-weight: 700; font-family: monospace; color: #09090b;">${data.id}</td>
+        </tr>
+        <tr>
+          <td style="padding: 11px 18px; border-bottom: 1px solid #f1f5f9; color: #64748b; font-weight: 600;">Account Status:</td>
+          <td style="padding: 11px 18px; border-bottom: 1px solid #f1f5f9; font-weight: 700; color: #d97706;">
+            ⏳ Pending Admin Approval
+          </td>
         </tr>
         <tr>
           <td style="padding: 11px 18px; border-bottom: 1px solid #f1f5f9; color: #64748b; font-weight: 600;">Selected Package:</td>
@@ -207,12 +211,13 @@ export function getExporterWelcomeEmailTemplate(data: ExporterSubmissionEmailDat
     <!-- Next Steps Roadmap -->
     <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 14px; padding: 20px 22px; margin-bottom: 28px;">
       <h3 style="font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; color: #09090b; margin: 0 0 12px 0;">
-        🚀 Next Steps for Your Business
+        🚀 Next Steps & Verification Process
       </h3>
       <ul style="margin: 0; padding-left: 18px; font-size: 13px; color: #475569; line-height: 1.75;">
-        <li style="margin-bottom: 6px;">Your profile is indexed for international procurement teams searching for <strong>${data.productCategory}</strong>.</li>
-        <li style="margin-bottom: 6px;">Direct buyer inquiries & RFQs will be delivered to <strong style="color: #09090b;">${data.email}</strong>.</li>
-        <li>Access your exporter dashboard anytime to update capacity, products, and trade leads.</li>
+        <li style="margin-bottom: 6px;">Our admin team is currently reviewing your company profile and product category details.</li>
+        <li style="margin-bottom: 6px;">Once approved, your storefront will be published for international buyers and indexed in trade searches.</li>
+        <li style="margin-bottom: 6px;">You will receive an automated confirmation email as soon as your account goes live.</li>
+        <li>You can sign in to your dashboard anytime to manage your profile and view application status.</li>
       </ul>
     </div>
 
@@ -226,7 +231,7 @@ export function getExporterWelcomeEmailTemplate(data: ExporterSubmissionEmailDat
     <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #fafafa; border: 1px solid #f4f4f5; border-radius: 12px; padding: 14px; text-align: center;">
       <tr>
         <td width="33%" style="font-size: 11px; font-weight: 700; color: #334155; padding: 4px;">
-          🛡️ Verified Profile
+          🛡️ Admin Review Process
         </td>
         <td width="33%" style="font-size: 11px; font-weight: 700; color: #334155; padding: 4px; border-left: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0;">
           🌐 0% Commission
@@ -483,7 +488,7 @@ export async function sendExporterWelcomeEmail(data: ExporterSubmissionEmailData
         email: data.email,
         name: data.fullName || data.companyName,
       },
-      email_subject: `Welcome to Goexports! Your Export Profile for ${data.companyName} is Live`,
+      email_subject: `Welcome to Goexports! Application Received for ${data.companyName} (Pending Admin Approval)`,
       htmlContent: html,
     });
   } catch (error: any) {

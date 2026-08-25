@@ -142,8 +142,8 @@ export async function POST(req: Request) {
       console.warn("Email dispatch notice (non-blocking):", emailErr.message);
     }
 
-    // ── 3. Submit to JotForm (Form ID: 262361486821056) ──
-    const formId = process.env.JOTFORM_EXPORT_PROFILE_ID || "262361486821056";
+    // ── 3. Submit to JotForm (Form ID: 262334223121038) ──
+    const formId = process.env.JOTFORM_EXPORT_PROFILE_ID || "262334223121038";
 
     const params = new URLSearchParams();
     params.append("q3_fullName", submissionData.fullName);
@@ -151,16 +151,15 @@ export async function POST(req: Request) {
     params.append("q5_typeA5", submissionData.email);
     params.append("q6_typeA6", submissionData.companyName);
     params.append("q7_typeA7", submissionData.country);
-    params.append("q8_typeA8", submissionData.productCategory);
+    params.append("q8_typeA8", submissionData.postCode);
     params.append("q9_typeA9", submissionData.website || "");
-    params.append("q10_typeA10", submissionData.postCode);
-    params.append("q11_typeA11", submissionData.companyProfile);
-    params.append("q12_typeA12", Array.isArray(submissionData.targetMarkets) ? submissionData.targetMarkets.join(", ") : submissionData.targetMarkets || "");
-    params.append("q13_typeA13", submissionData.yearEstablished || "");
-    params.append("q14_typeA14", submissionData.exportCapacity || "");
+    params.append("q10_typeA10", submissionData.yearEstablished || "");
+    params.append("q11_typeA11", submissionData.productCategory);
+    params.append("q12_typeA12", submissionData.exportCapacity || "");
+    params.append("q13_typeA13", Array.isArray(submissionData.targetMarkets) ? submissionData.targetMarkets.join(", ") : submissionData.targetMarkets || "");
+    params.append("q14_typeA14", submissionData.companyProfile);
     params.append("q15_typeA15", Array.isArray(submissionData.certifications) ? submissionData.certifications.join(", ") : submissionData.certifications || "");
-    params.append("q16_typeA16", submissionData.status || "pending");
-    params.append("q17_typeA17", submissionData.selectedPackage || "");
+    params.append("q16_plan", submissionData.selectedPackage || "");
     params.append("formID", formId);
     params.append("simple_spc", `${formId}-${formId}`);
 

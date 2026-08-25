@@ -50,6 +50,14 @@ export interface SellerInquiryEmailData {
   message: string;
 }
 
+export interface PasswordResetEmailData {
+  email: string;
+  fullName: string;
+  companyName: string;
+  resetUrl: string;
+  expiresInMinutes?: number;
+}
+
 function getPackageBadgeHtml(rawPackage?: string): string {
   const pkg = (rawPackage || "Free").toLowerCase();
   if (pkg.includes("enterprise")) {
@@ -859,7 +867,81 @@ export async function sendAdminSellerInquiryNotification(data: SellerInquiryEmai
 }
 
 // ─────────────────────────────────────────────────────────────
-// 4. BREVO SMTP DISPATCHER
+// 4. PASSWORD RESET EMAILS
+// ─────────────────────────────────────────────────────────────
+
+export function getForgotPasswordEmailTemplate(data: PasswordResetEmailData): string {
+  const expiresText = data.expiresInMinutes || 60;
+
+  const content = `
+    <!-- Status Hero Pill -->
+    <div style="text-align: center; margin-bottom: 24px;">
+      <div style="display: inline-flex; align-items: center; background-color: #fef3c7; color: #92400e; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.75px; padding: 6px 16px; border-radius: 9999px; border: 1px solid #fde68a;">
+        🔐 Password Reset Request
+      </div>
+    </div>
+
+    <h1 style="margin: 0 0 12px 0; color: #09090b; font-size: 22px; font-weight: 800; text-align: center; line-height: 1.35;">
+      Reset Password for ${data.companyName || "Your Exporter Account"}
+    </h1>
+    
+    <p style="margin: 0 0 24px 0; font-size: 15px; line-height: 1.65; color: #475569; text-align: center;">
+      Hello ${data.fullName || "Exporter"}, we received a request to reset the password for your account linked to <strong style="color: #09090b;">${data.email}</strong>.
+    </p>
+
+    <!-- Action Button Box -->
+    <div style="background: linear-gradient(180deg, #fffdf8 0%, #faf5e8 100%); border: 1px solid #fde68a; border-radius: 14px; padding: 24px 20px; text-align: center; margin-bottom: 28px;">
+      <p style="margin: 0 0 16px 0; font-size: 14px; color: #78350f; font-weight: 600; line-height: 1.5;">
+        Click the secure button below to choose a new password. This link is valid for <strong>${expiresText} minutes</strong>.
+      </p>
+      <div>
+        <a href="${data.resetUrl}" target="_blank" style="background-color: #e8b94a; color: #0a0a0a; text-decoration: none; padding: 14px 32px; font-size: 15px; font-weight: 800; border-radius: 10px; display: inline-block; box-shadow: 0 4px 12px rgba(232, 185, 74, 0.3);">
+          Reset Password Now &rarr;
+        </a>
+      </div>
+    </div>
+
+    <div style="border: 1px solid #e2e8f0; border-radius: 14px; overflow: hidden; margin-bottom: 28px;">
+      <div style="background-color: #f8fafc; padding: 12px 18px; border-bottom: 1px solid #e2e8f0; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; color: #334155;">
+        ⚠️ Did not request this change?
+      </div>
+      <div style="padding: 16px 18px; font-size: 13px; color: #475569; line-height: 1.6;">
+        If you did not ask to reset your password, you can safely ignore this email. Your current password will remain unchanged and your account stays completely secure.
+      </div>
+    </div>
+
+    <!-- Direct URL Box fallback -->
+    <div style="background-color: #fafafa; border: 1px solid #f4f4f5; border-radius: 12px; padding: 14px; text-align: center; font-size: 11px; color: #64748b; margin-bottom: 12px;">
+      If the button above does not work, copy and paste this link into your browser:
+      <div style="font-family: monospace; font-size: 11px; color: #0284c7; word-break: break-all; margin-top: 6px;">
+        ${data.resetUrl}
+      </div>
+    </div>
+  `;
+
+  return getEmailHtmlTemplate(content);
+}
+
+export async function sendPasswordResetEmail(data: PasswordResetEmailData) {
+  if (!data.email) return;
+  try {
+    const html = getForgotPasswordEmailTemplate(data);
+    return await sendBrevoEmailApi({
+      to_email: {
+        email: data.email,
+        name: data.fullName || data.companyName || "Exporter",
+      },
+      email_subject: `🔒 Password Reset Instructions - Goexports`,
+      htmlContent: html,
+    });
+  } catch (error: any) {
+    console.error(`[EmailNotice] Password reset email failed for ${data.email}:`, error.message);
+    throw error;
+  }
+}
+
+// ─────────────────────────────────────────────────────────────
+// 5. BREVO SMTP DISPATCHER
 // ─────────────────────────────────────────────────────────────
 
 export async function sendBrevoEmailApi(data: EmailData) {

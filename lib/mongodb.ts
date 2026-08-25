@@ -68,6 +68,8 @@ const ExportProfileSchema = new mongoose.Schema(
     status: { type: String, default: "pending", index: true },
     isDeleted: { type: Boolean, default: false, index: true },
     syncedToJotform: { type: Boolean, default: false },
+    resetPasswordToken: { type: String, default: null, index: true },
+    resetPasswordExpires: { type: Date, default: null },
     ipAddress: { type: String, default: "unknown" },
     userAgent: { type: String, default: "unknown" },
     createdAt: { type: String, default: () => new Date().toISOString() },

@@ -107,6 +107,12 @@ function ExporterLoginForm() {
           <label className="block text-xs font-bold text-[var(--ink)]">
             Account Password
           </label>
+          <Link
+            href="/exporter/forgot-password"
+            className="text-xs font-semibold text-[var(--muted)] hover:text-[var(--brand-ochre)] transition-colors no-underline"
+          >
+            Forgot Password?
+          </Link>
         </div>
         <div className="relative">
           <Lock className="w-4 h-4 text-[var(--muted)] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />

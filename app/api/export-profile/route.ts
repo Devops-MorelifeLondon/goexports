@@ -24,6 +24,7 @@ export async function POST(req: Request) {
       exportCapacity,
       certifications,
       selectedPackage,
+      registrationDate,
     } = body;
 
     // Server-side validation for required fields
@@ -101,6 +102,7 @@ export async function POST(req: Request) {
       exportCapacity: exportCapacity ? exportCapacity.trim() : "",
       certifications: Array.isArray(certifications) ? certifications : certifications ? [certifications] : [],
       selectedPackage: selectedPackage ? String(selectedPackage).trim() : "Verified Growth Pro",
+      registrationDate: registrationDate ? String(registrationDate).trim() : new Date().toISOString().split("T")[0],
       createdAt: new Date().toISOString(),
       status: "pending",
       isDeleted: false,
@@ -161,6 +163,7 @@ export async function POST(req: Request) {
     params.append("q14_typeA14", submissionData.companyProfile);
     params.append("q15_typeA15", Array.isArray(submissionData.certifications) ? submissionData.certifications.join(", ") : submissionData.certifications || "");
     params.append("q16_plan", submissionData.selectedPackage || "");
+    params.append("q18_registrationDate", submissionData.registrationDate);
     params.append("formID", formId);
     params.append("simple_spc", `${formId}-${formId}`);
 

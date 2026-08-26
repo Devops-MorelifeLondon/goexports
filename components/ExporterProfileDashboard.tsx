@@ -983,7 +983,7 @@ export default function ExporterProfileDashboard({
         {activeTab === "overview" && (
           <div className="space-y-8">
             {/* Top Quick Stats Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
               <div className="p-5 rounded-2xl border border-[var(--hairline)] bg-[var(--surface-card)] space-y-1.5 shadow-sm">
                 <div className="flex items-center justify-between text-xs text-[var(--muted)]">
                   <span className="font-semibold uppercase tracking-wider">Profile Completeness</span>
@@ -1025,6 +1025,21 @@ export default function ExporterProfileDashboard({
                 <p className="text-[11px] text-[var(--muted)] m-0 truncate">
                   Capacity: {profile.exportCapacity || "Not set"}
                 </p>
+              </div>
+              <div className="p-5 rounded-2xl border border-[var(--hairline)] bg-[var(--surface-card)] space-y-1.5 shadow-sm">
+                <div className="flex items-center justify-between text-xs text-[var(--muted)]">
+                  <span className="font-semibold uppercase tracking-wider">Products Listed</span>
+                  <Package className="w-4 h-4 text-indigo-600" />
+                </div>
+                <div className="text-2xl font-bold text-[var(--ink)]">
+                  {products.length}
+                </div>
+                <button
+                  onClick={() => handleTabChange("products")}
+                  className="text-[11px] font-semibold text-[var(--ink)] hover:underline border-none bg-transparent p-0 cursor-pointer text-left"
+                >
+                  Manage catalog →
+                </button>
               </div>
 
               <div className="p-5 rounded-2xl border border-[var(--hairline)] bg-[var(--surface-card)] space-y-1.5 shadow-sm">

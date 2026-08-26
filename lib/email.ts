@@ -721,7 +721,7 @@ export async function sendAdminConsultationAlertEmail(data: ConsultationLeadEmai
 }
 
 // ─────────────────────────────────────────────────────────────
-// 3. DIRECT BUYER RFQ / STOREFRONT INQUIRY EMAILS (app/api/seller-inquiry)
+// 3. DIRECT BUYER RFQ / STOREFRONT INQUIRY EMAILS (app/api/seller-inquiry & app/api/product-inquiry)
 // ─────────────────────────────────────────────────────────────
 
 export function getSellerInquiryAlertTemplate(data: SellerInquiryEmailData): string {
@@ -749,12 +749,12 @@ export function getSellerInquiryAlertTemplate(data: SellerInquiryEmailData): str
         </tr>
         <tr>
           <td style="padding: 10px 18px; border-bottom: 1px solid #f4f4f5; color: #71717a; font-weight: 600;">Buyer Email:</td>
-          <td style="padding: 10px 18px; border-bottom: 1px solid #f4f4f5; color: #0a0a0a;"><a href="mailto:${data.buyerEmail}" style="color: #0284c7; font-weight: 600; text-decoration: none;">${data.buyerEmail}</a></td>
+          <td style="padding: 10px 18px; border-bottom: 1px solid #f4f4f5; color: #0a0a0a;">${data.buyerEmail && !data.buyerEmail.endsWith("@inquiry.goexports") ? `<a href="mailto:${data.buyerEmail}" style="color: #0284c7; font-weight: 600; text-decoration: none;">${data.buyerEmail}</a>` : '<span style="color: #a1a1aa; font-style: italic;">Not provided</span>'}</td>
         </tr>
         ${data.buyerPhone ? `
         <tr>
           <td style="padding: 10px 18px; border-bottom: 1px solid #f4f4f5; color: #71717a; font-weight: 600;">Phone / WhatsApp:</td>
-          <td style="padding: 10px 18px; border-bottom: 1px solid #f4f4f5; color: #0a0a0a;">${data.buyerPhone}</td>
+          <td style="padding: 10px 18px; border-bottom: 1px solid #f4f4f5; color: #0a0a0a; font-weight: 600;">${data.buyerPhone}</td>
         </tr>` : ''}
         ${data.buyerCountry ? `
         <tr>
@@ -766,7 +766,7 @@ export function getSellerInquiryAlertTemplate(data: SellerInquiryEmailData): str
           <td style="padding: 10px 18px; border-bottom: 1px solid #f4f4f5; color: #0a0a0a;">${data.inquiryType || "Bulk Order / RFQ"}</td>
         </tr>
         <tr>
-          <td style="padding: 10px 18px; color: #71717a; font-weight: 600;">Estimated Quantity:</td>
+          <td style="padding: 10px 18px; color: #71717a; font-weight: 600;">Quantity Required:</td>
           <td style="padding: 10px 18px; font-weight: 700; color: #0a0a0a;">${data.quantity || "Not specified"}</td>
         </tr>
       </table>
@@ -781,10 +781,96 @@ export function getSellerInquiryAlertTemplate(data: SellerInquiryEmailData): str
       </p>
     </div>
 
+    ${data.buyerEmail && !data.buyerEmail.endsWith("@inquiry.goexports") ? `
     <div style="text-align: center;">
       <a href="mailto:${data.buyerEmail}?subject=Re: Trade Inquiry for ${encodeURIComponent(data.sellerCompanyName)}" style="display: inline-block; padding: 13px 30px; background-color: #0a0a0a; color: #ffffff; text-decoration: none; font-size: 14px; font-weight: 700; border-radius: 10px;">
         Reply to Buyer (${data.buyerEmail}) &rarr;
       </a>
+    </div>` : (data.buyerPhone ? `
+    <div style="text-align: center;">
+      <a href="https://wa.me/${data.buyerPhone.replace(/[^0-9]/g, '')}" target="_blank" style="display: inline-block; padding: 13px 30px; background-color: #25D366; color: #ffffff; text-decoration: none; font-size: 14px; font-weight: 700; border-radius: 10px;">
+        Contact Buyer on WhatsApp &rarr;
+      </a>
+    </div>` : '')}
+  `;
+
+  return getEmailHtmlTemplate(content);
+}
+
+export function getAdminSellerInquiryAlertTemplate(data: SellerInquiryEmailData): string {
+  const content = `
+    <div style="margin-bottom: 24px;">
+      <div style="display: inline-block; padding: 4px 12px; background-color: #0284c7; color: #ffffff; font-size: 11px; font-weight: 800; text-transform: uppercase; border-radius: 20px; margin-bottom: 12px;">
+        🛡️ Admin RFQ Notification
+      </div>
+      <h1 style="margin: 0 0 8px; font-size: 20px; font-weight: 800; color: #0a0a0a;">
+        New Buyer RFQ for ${data.sellerCompanyName}
+      </h1>
+      <p style="margin: 0; font-size: 14px; color: #52525b; line-height: 1.5;">
+        A new buyer procurement RFQ has been received and dispatched to the exporter.
+      </p>
+    </div>
+
+    <!-- Exporter (Seller) Details Card -->
+    <div style="border: 1px solid #e4e4e7; border-radius: 14px; overflow: hidden; margin-bottom: 18px;">
+      <div style="background-color: #f8fafc; padding: 10px 18px; border-bottom: 1px solid #e4e4e7; font-size: 11.5px; font-weight: 800; color: #0a0a0a; text-transform: uppercase; letter-spacing: 0.5px;">
+        🏢 Target Exporter (Seller) Information
+      </div>
+      <table width="100%" cellpadding="0" cellspacing="0" style="font-size: 13px; color: #3f3f46;">
+        <tr>
+          <td style="padding: 10px 18px; border-bottom: 1px solid #f4f4f5; color: #71717a; width: 38%; font-weight: 600;">Company Name:</td>
+          <td style="padding: 10px 18px; border-bottom: 1px solid #f4f4f5; font-weight: 700; color: #0a0a0a;">${data.sellerCompanyName}</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px 18px; color: #71717a; font-weight: 600;">Exporter Email:</td>
+          <td style="padding: 10px 18px; color: #0a0a0a;"><a href="mailto:${data.sellerEmail}" style="color: #0284c7; font-weight: 600; text-decoration: none;">${data.sellerEmail || "N/A"}</a></td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- Buyer Details Card -->
+    <div style="border: 1px solid #e4e4e7; border-radius: 14px; overflow: hidden; margin-bottom: 18px;">
+      <div style="background-color: #f8fafc; padding: 10px 18px; border-bottom: 1px solid #e4e4e7; font-size: 11.5px; font-weight: 800; color: #0a0a0a; text-transform: uppercase; letter-spacing: 0.5px;">
+        👤 Buyer Contact & Requirement
+      </div>
+      <table width="100%" cellpadding="0" cellspacing="0" style="font-size: 13px; color: #3f3f46;">
+        <tr>
+          <td style="padding: 10px 18px; border-bottom: 1px solid #f4f4f5; color: #71717a; width: 38%; font-weight: 600;">Buyer Name:</td>
+          <td style="padding: 10px 18px; border-bottom: 1px solid #f4f4f5; font-weight: 700; color: #0a0a0a;">${data.buyerName}</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px 18px; border-bottom: 1px solid #f4f4f5; color: #71717a; font-weight: 600;">Buyer Email:</td>
+          <td style="padding: 10px 18px; border-bottom: 1px solid #f4f4f5; color: #0a0a0a;">${data.buyerEmail && !data.buyerEmail.endsWith("@inquiry.goexports") ? `<a href="mailto:${data.buyerEmail}" style="color: #0284c7; font-weight: 600; text-decoration: none;">${data.buyerEmail}</a>` : '<span style="color: #a1a1aa; font-style: italic;">Not provided</span>'}</td>
+        </tr>
+        ${data.buyerPhone ? `
+        <tr>
+          <td style="padding: 10px 18px; border-bottom: 1px solid #f4f4f5; color: #71717a; font-weight: 600;">Phone / WhatsApp:</td>
+          <td style="padding: 10px 18px; border-bottom: 1px solid #f4f4f5; color: #0a0a0a; font-weight: 600;">${data.buyerPhone}</td>
+        </tr>` : ''}
+        ${data.buyerCountry ? `
+        <tr>
+          <td style="padding: 10px 18px; border-bottom: 1px solid #f4f4f5; color: #71717a; font-weight: 600;">Buyer Country:</td>
+          <td style="padding: 10px 18px; border-bottom: 1px solid #f4f4f5; color: #0a0a0a;">${data.buyerCountry}</td>
+        </tr>` : ''}
+        <tr>
+          <td style="padding: 10px 18px; border-bottom: 1px solid #f4f4f5; color: #71717a; font-weight: 600;">Inquiry / Product:</td>
+          <td style="padding: 10px 18px; border-bottom: 1px solid #f4f4f5; font-weight: 700; color: #0a0a0a;">${data.inquiryType || "Bulk Order / RFQ"}</td>
+        </tr>
+        <tr>
+          <td style="padding: 10px 18px; color: #71717a; font-weight: 600;">Quantity:</td>
+          <td style="padding: 10px 18px; font-weight: 700; color: #0a0a0a;">${data.quantity || "Not specified"}</td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- Inquiry Message -->
+    <div style="background-color: #fafafa; border: 1px solid #e4e4e7; border-radius: 12px; padding: 18px; margin-bottom: 24px;">
+      <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: #71717a; margin-bottom: 6px;">
+        Inquiry Message:
+      </div>
+      <p style="margin: 0; font-size: 13.5px; color: #18181b; line-height: 1.6; white-space: pre-line;">
+        ${data.message}
+      </p>
     </div>
   `;
 
@@ -823,28 +909,36 @@ export function getBuyerInquiryConfirmationTemplate(data: SellerInquiryEmailData
 }
 
 export async function sendSellerInquiryAlertToExporter(data: SellerInquiryEmailData) {
-  if (!data.sellerEmail) return;
+  if (!data.sellerEmail) {
+    console.warn(`[EmailNotice] Exporter RFQ alert skipped: No seller email provided for ${data.sellerCompanyName}`);
+    return;
+  }
   try {
     const html = getSellerInquiryAlertTemplate(data);
-    return await sendBrevoEmailApi({
+    const emailPayload: any = {
       to_email: {
         email: data.sellerEmail,
-        name: data.sellerCompanyName,
+        name: data.sellerCompanyName || "Exporter",
       },
       email_subject: `[New Buyer RFQ] Direct Inquiry from ${data.buyerName} - Goexports`,
       htmlContent: html,
-      reply_to: {
+    };
+
+    if (data.buyerEmail && data.buyerEmail.includes("@") && !data.buyerEmail.endsWith("@inquiry.goexports")) {
+      emailPayload.reply_to = {
         email: data.buyerEmail,
         name: data.buyerName,
-      },
-    });
+      };
+    }
+
+    return await sendBrevoEmailApi(emailPayload);
   } catch (error: any) {
     console.error(`[EmailNotice] Exporter RFQ alert failed for ${data.sellerEmail}:`, error.message);
   }
 }
 
 export async function sendBuyerInquiryConfirmation(data: SellerInquiryEmailData) {
-  if (!data.buyerEmail) return;
+  if (!data.buyerEmail || !data.buyerEmail.includes("@") || data.buyerEmail.endsWith("@inquiry.goexports")) return;
   try {
     const html = getBuyerInquiryConfirmationTemplate(data);
     return await sendBrevoEmailApi({
@@ -863,15 +957,29 @@ export async function sendBuyerInquiryConfirmation(data: SellerInquiryEmailData)
 export async function sendAdminSellerInquiryNotification(data: SellerInquiryEmailData) {
   try {
     const adminEmail = process.env.ADMIN_EMAIL || process.env.ADMIN_NOTIFY_EMAIL || "info@goexports.co.uk";
-    const html = getSellerInquiryAlertTemplate(data);
-    return await sendBrevoEmailApi({
+    const html = getAdminSellerInquiryAlertTemplate(data);
+    const emailPayload: any = {
       to_email: {
         email: adminEmail,
         name: "Goexports Trade Desk",
       },
-      email_subject: `[RFQ Copy] Buyer ${data.buyerName} -> Exporter ${data.sellerCompanyName}`,
+      email_subject: `[RFQ Alert] ${data.buyerName} -> ${data.sellerCompanyName} (${data.inquiryType || 'RFQ'})`,
       htmlContent: html,
-    });
+    };
+
+    if (data.buyerEmail && data.buyerEmail.includes("@") && !data.buyerEmail.endsWith("@inquiry.goexports")) {
+      emailPayload.reply_to = {
+        email: data.buyerEmail,
+        name: data.buyerName,
+      };
+    } else if (data.sellerEmail) {
+      emailPayload.reply_to = {
+        email: data.sellerEmail,
+        name: data.sellerCompanyName,
+      };
+    }
+
+    return await sendBrevoEmailApi(emailPayload);
   } catch (error: any) {
     console.error(`[EmailNotice] Admin RFQ copy email failed:`, error.message);
   }

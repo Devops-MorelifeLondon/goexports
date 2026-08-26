@@ -4,12 +4,12 @@ import {
   sendBuyerInquiryConfirmation,
   sendAdminSellerInquiryNotification,
 } from "@/lib/email";
-import { SellerInquiry, connectToDatabase } from "@/lib/mongodb";
+import { ExportProfile, SellerInquiry, connectToDatabase } from "@/lib/mongodb";
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const {
+    let {
       sellerId,
       sellerCompanyName,
       sellerEmail,
@@ -29,12 +29,32 @@ export async function POST(req: Request) {
       );
     }
 
+    await connectToDatabase();
+
+    // If seller email or company name is missing, attempt lookup from ExportProfile
+    if ((!sellerEmail || !sellerCompanyName) && sellerId) {
+      try {
+        const foundSeller = await ExportProfile.findOne({
+          $or: [{ id: sellerId }, { slug: sellerId }],
+        }).lean();
+        if (foundSeller) {
+          if (!sellerEmail) sellerEmail = (foundSeller as any).email;
+          if (!sellerCompanyName) sellerCompanyName = (foundSeller as any).companyName;
+        }
+      } catch (err: any) {
+        console.warn("Seller lookup fallback notice in seller-inquiry:", err.message);
+      }
+    }
+
+    const cleanSellerEmail = (sellerEmail || "").trim().toLowerCase();
+    const cleanBuyerEmail = buyerEmail.trim().toLowerCase();
+
     const inquiryData = {
       sellerId: sellerId || "UNKNOWN",
       sellerCompanyName: sellerCompanyName || "Goexports Exporter",
-      sellerEmail: sellerEmail || "",
+      sellerEmail: cleanSellerEmail,
       buyerName: buyerName.trim(),
-      buyerEmail: buyerEmail.trim().toLowerCase(),
+      buyerEmail: cleanBuyerEmail,
       buyerPhone: buyerPhone ? buyerPhone.trim() : "",
       buyerCountry: buyerCountry ? buyerCountry.trim() : "",
       inquiryType: inquiryType || "Bulk Order / RFQ",
@@ -52,7 +72,6 @@ export async function POST(req: Request) {
 
     // 1. Persist inquiry in MongoDB via Mongoose
     try {
-      await connectToDatabase();
       await SellerInquiry.create({
         ...inquiryData,
         receivedAt: new Date(),
@@ -62,16 +81,18 @@ export async function POST(req: Request) {
       console.warn("MongoDB inquiry save notice (non-blocking):", dbErr.message);
     }
 
-    // 2. Trigger Emails via Brevo API:
+    // 2. Trigger Emails to BOTH Admin and Seller (+ Buyer confirmation):
     try {
-      await Promise.allSettled([
+      const emailResults = await Promise.allSettled([
         sendSellerInquiryAlertToExporter(inquiryData),
-        sendBuyerInquiryConfirmation(inquiryData),
         sendAdminSellerInquiryNotification(inquiryData),
+        sendBuyerInquiryConfirmation(inquiryData),
       ]);
-      console.log("=== [RFQ EMAILS DISPATCHED] ===", {
-        toExporter: inquiryData.sellerEmail,
+      console.log("=== [RFQ EMAILS DISPATCHED TO ADMIN & SELLER] ===", {
+        toSeller: inquiryData.sellerEmail,
+        toAdmin: process.env.ADMIN_EMAIL || process.env.ADMIN_NOTIFY_EMAIL || "info@goexports.co.uk",
         toBuyer: inquiryData.buyerEmail,
+        statuses: emailResults.map((r) => r.status),
       });
     } catch (emailErr: any) {
       console.warn("RFQ email dispatch notice:", emailErr.message);

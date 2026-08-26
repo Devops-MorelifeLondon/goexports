@@ -56,7 +56,7 @@ export default async function ExporterProfilePage() {
       if (userDoc) {
         const { password: _, ...safeUser } = userDoc;
         safeUser.id = userDoc.id || userDoc._id.toString();
-        initialProfile = safeUser;
+        initialProfile = JSON.parse(JSON.stringify(safeUser));
 
         const rawInquiries = await SellerInquiry.find({
           $or: [

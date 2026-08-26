@@ -34,9 +34,29 @@ import {
   LayoutDashboard,
   ShieldAlert,
   Loader2,
-  ChevronRight
+  ChevronRight,
+  Package,
+  Plus,
+  Trash2,
+  UploadCloud,
+  ImageIcon,
+  X,
+  Tag,
+  Layers
 } from "lucide-react";
 import { toast } from "sonner";
+
+export interface ExporterProduct {
+  id: string;
+  title: string;
+  description?: string;
+  category?: string;
+  price?: string;
+  moq?: string;
+  imageUrl?: string;
+  imageKey?: string;
+  createdAt?: string;
+}
 
 export interface ExporterProfileData {
   id: string;
@@ -54,6 +74,7 @@ export interface ExporterProfileData {
   yearEstablished?: string;
   exportCapacity?: string;
   certifications: string[];
+  products?: ExporterProduct[];
   status?: string;
   selectedPackage?: string;
   createdAt?: string;
@@ -144,15 +165,33 @@ export default function ExporterProfileDashboard({
   const searchParams = useSearchParams();
   const initialTab = searchParams.get("tab") || "overview";
 
-  const [activeTab, setActiveTab] = useState<"overview" | "edit" | "inquiries" | "security">(
+  const [activeTab, setActiveTab] = useState<"overview" | "products" | "edit" | "inquiries" | "security">(
     (initialTab as any) || "overview"
   );
 
   const [profile, setProfile] = useState<ExporterProfileData | null>(initialProfile || null);
+  const [products, setProducts] = useState<ExporterProduct[]>(initialProfile?.products || []);
   const [inquiries, setInquiries] = useState<BuyerInquiry[]>(initialInquiries);
   const [isLoading, setIsLoading] = useState(!initialProfile);
   const [isCopied, setIsCopied] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  // Product Management State
+  const [isProductModalOpen, setIsProductModalOpen] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<ExporterProduct | null>(null);
+  const [productForm, setProductForm] = useState({
+    title: "",
+    description: "",
+    category: "",
+    customCategory: "",
+    price: "",
+    moq: "",
+    imageUrl: "",
+    imageKey: "",
+  });
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [isSavingProduct, setIsSavingProduct] = useState(false);
+  const [deletingProductId, setDeletingProductId] = useState<string | null>(null);
 
   // Edit Form State
   const [formData, setFormData] = useState({
@@ -260,6 +299,9 @@ export default function ExporterProfileDashboard({
       const data = await res.json();
       if (data.seller) {
         setProfile(data.seller);
+        if (Array.isArray(data.seller.products)) {
+          setProducts(data.seller.products);
+        }
         syncFormDataWithProfile(data.seller);
         if (typeof window !== "undefined") {
           localStorage.setItem("exporter_user", JSON.stringify(data.seller));
@@ -278,6 +320,206 @@ export default function ExporterProfileDashboard({
     }
   };
 
+  // Product Catalog Handlers
+  const handleOpenAddProduct = () => {
+    setEditingProduct(null);
+    const defaultCat = profile?.productCategory || CATEGORY_OPTIONS[0];
+    const isCustomCat = !CATEGORY_OPTIONS.includes(defaultCat);
+    setProductForm({
+      title: "",
+      description: "",
+      category: isCustomCat ? "Other (Specify Below)" : defaultCat,
+      customCategory: isCustomCat ? defaultCat : "",
+      price: "",
+      moq: "",
+      imageUrl: "",
+      imageKey: "",
+    });
+    setIsProductModalOpen(true);
+    setTimeout(() => {
+      const el = document.getElementById("product-form-card");
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 50);
+  };
+
+  const handleOpenEditProduct = (prod: ExporterProduct) => {
+    setEditingProduct(prod);
+    const rawCat = prod.category || profile?.productCategory || CATEGORY_OPTIONS[0];
+    const isCustomCat = !CATEGORY_OPTIONS.includes(rawCat);
+    setProductForm({
+      title: prod.title || "",
+      description: prod.description || "",
+      category: isCustomCat ? "Other (Specify Below)" : rawCat,
+      customCategory: isCustomCat ? rawCat : "",
+      price: prod.price || "",
+      moq: prod.moq || "",
+      imageUrl: prod.imageUrl || "",
+      imageKey: prod.imageKey || "",
+    });
+    setIsProductModalOpen(true);
+    setTimeout(() => {
+      const el = document.getElementById("product-form-card");
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 50);
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      toast.error("Invalid Image File", {
+        description: "Please select a valid image (PNG, JPG, WEBP).",
+      });
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("File Too Large", {
+        description: "Product image size must be 5MB or less.",
+      });
+      return;
+    }
+
+    setIsUploadingImage(true);
+    try {
+      const fd = new FormData();
+      fd.append("file", file);
+
+      const res = await fetch("/api/exporter/upload-image", {
+        method: "POST",
+        body: fd,
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.message || data.error || "Failed to upload image");
+      }
+
+      setProductForm((prev) => ({
+        ...prev,
+        imageUrl: data.url,
+        imageKey: data.fileId || "",
+      }));
+
+      toast.success("Image Uploaded Successfully!", {
+        description: "Product image thumbnail generated successfully.",
+      });
+    } catch (err: any) {
+      toast.error("Upload Failed", {
+        description: err.message || "An error occurred while uploading image.",
+      });
+    } finally {
+      setIsUploadingImage(false);
+    }
+  };
+
+  const handleSaveProduct = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!productForm.title.trim()) {
+      toast.error("Missing Product Title", {
+        description: "Please enter a title for your product.",
+      });
+      return;
+    }
+
+    const finalCategory =
+      productForm.category === "Other (Specify Below)"
+        ? productForm.customCategory.trim()
+        : productForm.category.trim();
+
+    if (!finalCategory) {
+      toast.error("Missing Category", {
+        description: "Please select or specify a category for your product.",
+      });
+      return;
+    }
+
+    setIsSavingProduct(true);
+
+    try {
+      const isEdit = !!editingProduct;
+      const url = "/api/exporter/products";
+      const method = isEdit ? "PUT" : "POST";
+      const payload = isEdit
+        ? { id: editingProduct.id, ...productForm, category: finalCategory }
+        : { ...productForm, category: finalCategory };
+
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.message || data.error || "Failed to save product");
+      }
+
+      toast.success(isEdit ? "Product Updated!" : "Product Added to Catalog!", {
+        description: `${productForm.title} is now visible on your storefront.`,
+      });
+
+      if (data.products) {
+        setProducts(data.products);
+        if (profile) {
+          setProfile({ ...profile, products: data.products });
+        }
+      }
+
+      setIsProductModalOpen(false);
+      setEditingProduct(null);
+      setProductForm({
+        title: "",
+        description: "",
+        category: "",
+        customCategory: "",
+        price: "",
+        moq: "",
+        imageUrl: "",
+        imageKey: "",
+      });
+    } catch (err: any) {
+      toast.error("Save Failed", {
+        description: err.message || "Could not save product.",
+      });
+    } finally {
+      setIsSavingProduct(false);
+    }
+  };
+
+  const handleDeleteProduct = async (productId: string) => {
+    setDeletingProductId(productId);
+    try {
+      const res = await fetch(`/api/exporter/products?id=${productId}`, {
+        method: "DELETE",
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.message || data.error || "Failed to delete product");
+      }
+
+      toast.success("Product Deleted", {
+        description: "The product was removed from your catalog.",
+      });
+
+      if (data.products) {
+        setProducts(data.products);
+        if (profile) {
+          setProfile({ ...profile, products: data.products });
+        }
+      }
+    } catch (err: any) {
+      toast.error("Delete Failed", {
+        description: err.message || "Could not delete product.",
+      });
+    } finally {
+      setDeletingProductId(null);
+    }
+  };
+
   useEffect(() => {
     if (!initialProfile) {
       loadProfile();
@@ -287,7 +529,7 @@ export default function ExporterProfileDashboard({
   }, []);
 
   // Update URL search params when tab changes
-  const handleTabChange = (tab: "overview" | "edit" | "inquiries" | "security") => {
+  const handleTabChange = (tab: "overview" | "products" | "edit" | "inquiries" | "security") => {
     setActiveTab(tab);
     if (typeof window !== "undefined") {
       const url = new URL(window.location.href);
@@ -672,6 +914,23 @@ export default function ExporterProfileDashboard({
             </button>
 
             <button
+              onClick={() => handleTabChange("products")}
+              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all border-none cursor-pointer flex items-center gap-2 shrink-0 ${
+                activeTab === "products"
+                  ? "bg-[var(--ink)] text-white shadow-sm"
+                  : "bg-transparent text-[var(--muted)] hover:text-[var(--ink)] hover:bg-[var(--canvas)]"
+              }`}
+            >
+              <Package className="w-4 h-4" />
+              <span>Manage Products</span>
+              {products.length > 0 && (
+                <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-[var(--brand-ochre)] text-[var(--ink)]">
+                  {products.length}
+                </span>
+              )}
+            </button>
+
+            <button
               onClick={() => handleTabChange("edit")}
               className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all border-none cursor-pointer flex items-center gap-2 shrink-0 ${
                 activeTab === "edit"
@@ -994,6 +1253,369 @@ export default function ExporterProfileDashboard({
                 </div>
               </div>
             </div>
+          </div>
+        )}
+
+        {/* ══════════════════════════════════════════
+            TAB: PRODUCT CATALOG & IMAGEKIT MANAGEMENT
+            ══════════════════════════════════════════ */}
+        {activeTab === "products" && (
+          <div className="space-y-6 max-w-6xl mx-auto">
+            {/* Header & Add Button */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 rounded-3xl border border-[var(--hairline)] bg-[var(--surface-card)] shadow-sm">
+              <div>
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[var(--brand-ochre)] text-[var(--ink)] mb-2">
+                  <Package className="w-3.5 h-3.5" />
+                  <span>Product Catalog</span>
+                </div>
+                <h2 className="text-2xl font-bold text-[var(--ink)] tracking-tight">
+                  Manage Exporter Product Catalog
+                </h2>
+                <p className="text-xs text-[var(--muted)] mt-1">
+                  Upload product images, specify bulk pricing & MOQs to display on your public storefront.
+                </p>
+              </div>
+
+              <button
+                onClick={handleOpenAddProduct}
+                className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-bold text-xs text-[var(--ink)] border-none cursor-pointer shadow-sm hover:opacity-95 transition-all shrink-0"
+                style={{ backgroundColor: "var(--brand-ochre)" }}
+              >
+                <Plus className="w-4 h-4" />
+                <span>Add New Product</span>
+              </button>
+            </div>
+
+            {/* In-Page Inline Form Card for Add / Edit Product (Not Popup) */}
+            {isProductModalOpen && (
+              <div id="product-form-card" className="p-6 sm:p-8 rounded-3xl border-2 border-[var(--brand-ochre)] bg-[var(--surface-card)] shadow-md space-y-6">
+                <div className="flex items-center justify-between border-b border-[var(--hairline)] pb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-2xl bg-[var(--brand-ochre)] text-[var(--ink)] flex items-center justify-center font-bold shadow-xs">
+                      <Package className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold text-[var(--ink)]">
+                        {editingProduct ? "Edit Product Listing" : "Add New Product"}
+                      </h3>
+                      <p className="text-xs text-[var(--muted)] mt-0.5">
+                        Fill out product specifications and upload product image.
+                      </p>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      setIsProductModalOpen(false);
+                      setEditingProduct(null);
+                    }}
+                    className="p-2 rounded-xl text-[var(--muted)] hover:text-[var(--ink)] hover:bg-[var(--canvas)] border-none bg-transparent cursor-pointer"
+                    title="Close form"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+
+                <form onSubmit={handleSaveProduct} className="space-y-4 text-xs">
+                  <div>
+                    <label className="block font-bold text-[var(--ink)] mb-1">
+                      Product Title / Name *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={productForm.title}
+                      onChange={(e) => setProductForm({ ...productForm, title: e.target.value })}
+                      placeholder="e.g. Premium Organic Basmati Rice 1121 XXL"
+                      className="w-full px-4 py-3 rounded-xl border border-[var(--hairline)] bg-[var(--canvas)] text-sm text-[var(--ink)] focus:outline-none focus:border-[var(--brand-ochre)]"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block font-bold text-[var(--ink)] mb-1">
+                        Product Category *
+                      </label>
+                      <select
+                        required
+                        value={productForm.category}
+                        onChange={(e) => setProductForm({ ...productForm, category: e.target.value })}
+                        className="w-full px-4 py-3 rounded-xl border border-[var(--hairline)] bg-[var(--canvas)] text-sm text-[var(--ink)] focus:outline-none focus:border-[var(--brand-ochre)]"
+                      >
+                        <option value="">Select Category...</option>
+                        {CATEGORY_OPTIONS.map((cat) => (
+                          <option key={cat} value={cat}>
+                            {cat}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block font-bold text-[var(--ink)] mb-1">
+                        FOB Price / Range
+                      </label>
+                      <input
+                        type="text"
+                        value={productForm.price}
+                        onChange={(e) => setProductForm({ ...productForm, price: e.target.value })}
+                        placeholder="e.g. $12.50 - $18.00 / Metric Ton"
+                        className="w-full px-4 py-3 rounded-xl border border-[var(--hairline)] bg-[var(--canvas)] text-sm text-[var(--ink)] focus:outline-none focus:border-[var(--brand-ochre)]"
+                      />
+                    </div>
+                  </div>
+
+                  {productForm.category === "Other (Specify Below)" && (
+                    <div>
+                      <label className="block font-bold text-[var(--ink)] mb-1">
+                        Specify Custom Category *
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={productForm.customCategory}
+                        onChange={(e) => setProductForm({ ...productForm, customCategory: e.target.value })}
+                        placeholder="e.g. Marine Hardware & Rigging"
+                        className="w-full px-4 py-3 rounded-xl border border-[var(--hairline)] bg-[var(--canvas)] text-sm text-[var(--ink)] focus:outline-none focus:border-[var(--brand-ochre)]"
+                      />
+                    </div>
+                  )}
+
+                  <div>
+                    <label className="block font-bold text-[var(--ink)] mb-1">
+                      Minimum Order Quantity (MOQ)
+                    </label>
+                    <input
+                      type="text"
+                      value={productForm.moq}
+                      onChange={(e) => setProductForm({ ...productForm, moq: e.target.value })}
+                      placeholder="e.g. 1 FCL (20ft Container) / 500 Pieces"
+                      className="w-full px-4 py-3 rounded-xl border border-[var(--hairline)] bg-[var(--canvas)] text-sm text-[var(--ink)] focus:outline-none focus:border-[var(--brand-ochre)]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block font-bold text-[var(--ink)] mb-1">
+                      Detailed Product Description
+                    </label>
+                    <textarea
+                      rows={3}
+                      value={productForm.description}
+                      onChange={(e) => setProductForm({ ...productForm, description: e.target.value })}
+                      placeholder="Describe specifications, grade, packaging types, shelf life, or origin..."
+                      className="w-full px-4 py-3 rounded-xl border border-[var(--hairline)] bg-[var(--canvas)] text-sm text-[var(--ink)] focus:outline-none focus:border-[var(--brand-ochre)] leading-relaxed"
+                    />
+                  </div>
+
+                  {/* ImageKit Upload Component */}
+                  <div className="space-y-2 pt-2 border-t border-[var(--hairline)]">
+                    <div className="flex items-center justify-between">
+                      <label className="block font-bold text-[var(--ink)]">
+                        Product Image
+                      </label>
+                    </div>
+
+                    {productForm.imageUrl ? (
+                      <div className="p-3 rounded-2xl border border-[var(--hairline)] bg-[var(--canvas)] flex items-center justify-between gap-4">
+                        <div className="flex items-center gap-3">
+                          <img
+                            src={productForm.imageUrl}
+                            alt="Uploaded product preview"
+                            className="w-16 h-16 rounded-xl object-cover border border-[var(--hairline)] bg-slate-100 shrink-0"
+                          />
+                          <div className="space-y-1">
+                            <span className="font-bold text-[var(--ink)] text-xs flex items-center gap-1">
+                              <Check className="w-3.5 h-3.5 text-emerald-600" />
+                              Image Uploaded Successfully
+                            </span>
+                          </div>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => setProductForm({ ...productForm, imageUrl: "", imageKey: "" })}
+                          className="px-3 py-1.5 rounded-xl text-xs font-semibold text-rose-700 bg-rose-50 border border-rose-200 hover:bg-rose-100 cursor-pointer"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="relative p-6 rounded-2xl border-2 border-dashed border-[var(--hairline)] bg-[var(--canvas)] hover:border-[var(--brand-ochre)] transition-colors text-center space-y-2">
+                        {isUploadingImage ? (
+                          <div className="py-4 space-y-2">
+                            <Loader2 className="w-8 h-8 text-[var(--brand-ochre)] animate-spin mx-auto" />
+                            <p className="font-bold text-[var(--ink)] text-xs">
+                              Uploading product image...
+                            </p>
+                            <p className="text-[10px] text-[var(--muted)]">
+                              Optimizing quality and generating high-speed thumbnails
+                            </p>
+                          </div>
+                        ) : (
+                          <>
+                            <div className="w-12 h-12 rounded-full bg-[var(--surface-card)] border border-[var(--hairline)] flex items-center justify-center mx-auto text-[var(--brand-ochre)] shadow-xs">
+                              <UploadCloud className="w-6 h-6" />
+                            </div>
+                            <div>
+                              <p className="font-bold text-[var(--ink)] text-xs m-0">
+                                Click to upload product image
+                              </p>
+                              <p className="text-[11px] text-[var(--muted)] m-0 mt-0.5">
+                                PNG, JPG, WEBP up to 5MB
+                              </p>
+                            </div>
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={handleImageUpload}
+                              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                            />
+                          </>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex items-center justify-end gap-3 pt-4 border-t border-[var(--hairline)]">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsProductModalOpen(false);
+                        setEditingProduct(null);
+                      }}
+                      className="px-4 py-2.5 rounded-xl font-bold text-xs text-[var(--muted)] bg-[var(--canvas)] border border-[var(--hairline)] cursor-pointer hover:text-[var(--ink)]"
+                    >
+                      Cancel
+                    </button>
+
+                    <button
+                      type="submit"
+                      disabled={isSavingProduct || isUploadingImage}
+                      className="px-6 py-2.5 rounded-xl font-bold text-xs text-[var(--ink)] border-none cursor-pointer flex items-center gap-2 shadow-sm disabled:opacity-50"
+                      style={{ backgroundColor: "var(--brand-ochre)" }}
+                    >
+                      {isSavingProduct ? (
+                        <>
+                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                          <span>Saving Product...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Save className="w-3.5 h-3.5" />
+                          <span>{editingProduct ? "Update Product" : "Save Product"}</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </form>
+              </div>
+            )}
+
+            {/* Products List Grid */}
+            {products.length === 0 ? (
+              <div className="p-12 rounded-3xl border border-[var(--hairline)] bg-[var(--surface-card)] text-center space-y-4 shadow-sm">
+                <div className="w-16 h-16 rounded-full bg-[var(--surface-soft)] border border-[var(--hairline)] flex items-center justify-center mx-auto text-[var(--muted)]">
+                  <Package className="w-8 h-8 text-[var(--brand-ochre)]" />
+                </div>
+                <h3 className="text-xl font-bold text-[var(--ink)]">No Products Added Yet</h3>
+                <p className="text-xs sm:text-sm text-[var(--muted)] max-w-md mx-auto leading-relaxed">
+                  Showcase your products with high-resolution images, MOQs, and FOB prices on your public storefront to attract international buyer RFQs.
+                </p>
+                <div className="pt-2">
+                  <button
+                    onClick={handleOpenAddProduct}
+                    className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-xs text-[var(--ink)] border-none cursor-pointer shadow-sm"
+                    style={{ backgroundColor: "var(--brand-ochre)" }}
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Add Your First Product</span>
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {products.map((prod) => (
+                  <div
+                    key={prod.id}
+                    className="group rounded-3xl border border-[var(--hairline)] bg-[var(--surface-card)] overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col justify-between"
+                  >
+                    <div>
+                      {/* Image Thumbnail */}
+                      <div className="relative aspect-4/3 bg-[var(--canvas)] border-b border-[var(--hairline)] overflow-hidden flex items-center justify-center">
+                        {prod.imageUrl ? (
+                          <img
+                            src={prod.imageUrl}
+                            alt={prod.title}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
+                        ) : (
+                          <div className="flex flex-col items-center justify-center text-[var(--muted)] space-y-2 p-4 text-center">
+                            <ImageIcon className="w-10 h-10 stroke-1 opacity-50" />
+                            <span className="text-[11px] font-semibold">No Image Uploaded</span>
+                          </div>
+                        )}
+
+                        {prod.category && (
+                          <span className="absolute top-3 left-3 px-2.5 py-1 rounded-lg text-[10px] font-extrabold uppercase tracking-wider bg-[var(--ink)] text-white shadow-xs">
+                            {prod.category}
+                          </span>
+                        )}
+
+                      </div>
+
+                      {/* Product Content */}
+                      <div className="p-5 space-y-3">
+                        <h3 className="text-base font-bold text-[var(--ink)] line-clamp-2 leading-snug">
+                          {prod.title}
+                        </h3>
+
+                        <div className="flex flex-wrap gap-2 text-xs">
+                          {prod.price && (
+                            <span className="px-2.5 py-1 rounded-xl font-bold bg-amber-50 text-amber-900 border border-amber-200">
+                              💰 {prod.price}
+                            </span>
+                          )}
+                          {prod.moq && (
+                            <span className="px-2.5 py-1 rounded-xl font-bold bg-sky-50 text-sky-900 border border-sky-200">
+                              📦 MOQ: {prod.moq}
+                            </span>
+                          )}
+                        </div>
+
+                        {prod.description && (
+                          <p className="text-xs text-[var(--muted)] line-clamp-3 leading-relaxed m-0 pt-1">
+                            {prod.description}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Card Footer Actions */}
+                    <div className="p-4 border-t border-[var(--hairline)] bg-[var(--canvas)] flex items-center justify-between gap-2">
+                      <button
+                        onClick={() => handleOpenEditProduct(prod)}
+                        className="flex-1 py-2 px-3 rounded-xl text-xs font-bold text-[var(--ink)] bg-[var(--surface-card)] border border-[var(--hairline)] hover:bg-[var(--surface-soft)] transition-colors cursor-pointer flex items-center justify-center gap-1.5"
+                      >
+                        <Edit3 className="w-3.5 h-3.5" />
+                        <span>Edit Listing</span>
+                      </button>
+
+                      <button
+                        onClick={() => handleDeleteProduct(prod.id)}
+                        disabled={deletingProductId === prod.id}
+                        className="py-2 px-3 rounded-xl text-xs font-semibold text-rose-700 bg-rose-50 border border-rose-200 hover:bg-rose-100 transition-colors cursor-pointer disabled:opacity-50 flex items-center gap-1"
+                      >
+                        {deletingProductId === prod.id ? (
+                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        ) : (
+                          <Trash2 className="w-3.5 h-3.5" />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
 

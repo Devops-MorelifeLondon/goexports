@@ -21,7 +21,12 @@ import {
   User,
   TrendingUp,
   Edit3,
-  Lock
+  Lock,
+  Package,
+  ImageIcon,
+  ArrowRight,
+  X,
+  Loader2
 } from "lucide-react";
 import { toast } from "sonner";
 import { SellerProfile } from "@/lib/seller";
@@ -30,9 +35,41 @@ interface SellerProfileClientProps {
   seller: SellerProfile;
 }
 
+const UNIT_OPTIONS = [
+  "Metric Tons (MT)",
+  "Kilograms (KG)",
+  "Pieces (Pcs)",
+  "Containers (20ft FCL)",
+  "Containers (40ft FCL)",
+  "Boxes",
+  "Cartons",
+  "Pairs",
+  "Sets / Packs",
+  "Pounds (Lbs)",
+  "Litres / Liquid Volume",
+  "Bags / Sells",
+  "Other Unit (Specify Below)",
+];
+
 export default function SellerProfileClient({ seller }: SellerProfileClientProps) {
   const [isCopied, setIsCopied] = useState(false);
   const [isOwner, setIsOwner] = useState(false);
+
+  // Dedicated Product Inquiry Modal State
+  const [selectedProductForInquiry, setSelectedProductForInquiry] = useState<any | null>(null);
+  const [isProductInquiryModalOpen, setIsProductInquiryModalOpen] = useState(false);
+  const [productInquiryForm, setProductInquiryForm] = useState({
+    fullName: "",
+    phone: "",
+    country: "",
+    quantity: "",
+    unit: "Metric Tons (MT)",
+    customUnit: "",
+    email: "",
+    message: "",
+  });
+  const [isSubmittingProductInquiry, setIsSubmittingProductInquiry] = useState(false);
+  const [productInquirySubmitted, setProductInquirySubmitted] = useState(false);
 
   useEffect(() => {
     try {
@@ -71,6 +108,109 @@ export default function SellerProfileClient({ seller }: SellerProfileClientProps
       });
       setTimeout(() => setIsCopied(false), 2500);
     }
+  };
+
+  const handleOpenProductInquiry = (prod: any) => {
+    setSelectedProductForInquiry(prod);
+    setProductInquiryForm({
+      fullName: "",
+      phone: "",
+      country: "",
+      quantity: "",
+      unit: "Metric Tons (MT)",
+      customUnit: "",
+      email: "", // OPTIONAL
+      message: `I am interested in bulk orders for "${prod.title}". Please send FOB price quote and specs.`,
+    });
+    setProductInquirySubmitted(false);
+    setIsProductInquiryModalOpen(true);
+  };
+
+  const handleProductInquirySubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!productInquiryForm.fullName.trim()) {
+      toast.error("Missing Full Name", {
+        description: "Please enter your full name.",
+      });
+      return;
+    }
+
+    if (!productInquiryForm.phone.trim()) {
+      toast.error("Missing Phone Number", {
+        description: "Please enter your phone or WhatsApp number.",
+      });
+      return;
+    }
+
+    if (!productInquiryForm.quantity.trim()) {
+      toast.error("Missing Quantity", {
+        description: "Please enter the required quantity.",
+      });
+      return;
+    }
+
+    const finalUnit =
+      productInquiryForm.unit === "Other Unit (Specify Below)"
+        ? productInquiryForm.customUnit.trim()
+        : productInquiryForm.unit;
+
+    if (!finalUnit) {
+      toast.error("Missing Search Unit", {
+        description: "Please select or specify a measurement unit.",
+      });
+      return;
+    }
+
+    setIsSubmittingProductInquiry(true);
+
+    try {
+      const response = await fetch("/api/product-inquiry", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          productId: selectedProductForInquiry?.id || "",
+          productTitle: selectedProductForInquiry?.title || "Product",
+          sellerId: seller.id,
+          sellerCompanyName: seller.companyName,
+          sellerEmail: seller.email,
+          fullName: productInquiryForm.fullName,
+          phone: productInquiryForm.phone,
+          country: productInquiryForm.country,
+          quantity: productInquiryForm.quantity,
+          unit: finalUnit,
+          email: productInquiryForm.email, // OPTIONAL
+          message: productInquiryForm.message,
+        }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || data.error || "Failed to submit product inquiry");
+      }
+
+      setProductInquirySubmitted(true);
+      toast.success("Product Inquiry Submitted!", {
+        description: `Your RFQ for ${selectedProductForInquiry?.title || "product"} was sent to ${seller.companyName}.`,
+      });
+    } catch (err: any) {
+      toast.error("Submission Failed", {
+        description: err.message || "Failed to send product inquiry. Please try again.",
+      });
+    } finally {
+      setIsSubmittingProductInquiry(false);
+    }
+  };
+
+  const handleInquireProduct = (productTitle: string) => {
+    setMessage(
+      `Hello ${seller.companyName}, I am interested in your "${productTitle}". Please provide FOB prices, MOQ details, and sample availability.`
+    );
+    const el = document.getElementById("inquiry-section");
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    toast.info("RFQ Form Pre-filled", {
+      description: `Inquiry pre-filled for product: "${productTitle}".`,
+    });
   };
 
   const handleInquirySubmit = async (e: React.FormEvent) => {
@@ -275,11 +415,11 @@ export default function SellerProfileClient({ seller }: SellerProfileClientProps
       </div>
 
       {/* ── Header Banner ── */}
-      <div className="border-b border-[var(--hairline)] bg-[var(--canvas)] py-8 sm:py-12">
+      <div className="border-b border-[var(--hairline)] bg-[var(--canvas)] py-6 sm:py-8">
         <div className="section-wrap">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
             {/* Company Main Info */}
-            <div className="lg:col-span-8 space-y-4">
+            <div className="lg:col-span-8 space-y-3">
               <div className="flex flex-wrap items-center gap-2">
                 <span className="px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-[var(--brand-ochre)] text-[var(--ink)]">
                   {seller.productCategory}
@@ -302,16 +442,41 @@ export default function SellerProfileClient({ seller }: SellerProfileClientProps
                 )}
               </div>
 
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-[var(--ink)] leading-tight">
+              <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-[var(--ink)] leading-tight">
                 {seller.companyName}
               </h1>
 
-              <div className="flex items-center gap-2 text-xs sm:text-sm text-[var(--muted)]">
-                <User className="w-4 h-4" />
-                <span>Primary Representative: <strong className="text-[var(--ink)]">{seller.fullName}</strong></span>
-                <span className="mx-1">•</span>
-                <span>Ref: <strong className="font-mono text-[var(--ink)]">{seller.id}</strong></span>
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs sm:text-sm text-[var(--muted)]">
+                <div className="flex items-center gap-1.5">
+                  <User className="w-3.5 h-3.5 text-[var(--muted)]" />
+                  <span>Primary Representative: <strong className="text-[var(--ink)]">{seller.fullName}</strong></span>
+                </div>
+                <span className="hidden sm:inline text-[var(--hairline)]">•</span>
+                <div>
+                  <span>Ref: <strong className="font-mono text-[var(--ink)]">{seller.id}</strong></span>
+                </div>
               </div>
+
+              {seller.companyProfile && (
+                <p className="text-xs sm:text-sm text-[var(--muted)] line-clamp-2 leading-relaxed pt-1 max-w-2xl">
+                  {seller.companyProfile}
+                </p>
+              )}
+
+              {((seller.targetMarkets && seller.targetMarkets.length > 0) || (seller.certifications && seller.certifications.length > 0)) && (
+                <div className="flex flex-wrap gap-1.5 pt-1">
+                  {seller.targetMarkets?.slice(0, 3).map((m) => (
+                    <span key={m} className="px-2 py-0.5 rounded-md text-[11px] font-medium bg-[var(--surface-soft)] border border-[var(--hairline)] text-[var(--body)]">
+                      🎯 {m}
+                    </span>
+                  ))}
+                  {seller.certifications?.slice(0, 3).map((c) => (
+                    <span key={c} className="px-2 py-0.5 rounded-md text-[11px] font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                      ✓ {c}
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Quick Action Card on Right */}
@@ -399,6 +564,98 @@ export default function SellerProfileClient({ seller }: SellerProfileClientProps
                 {seller.companyProfile}
               </div>
             </div>
+
+            {/* Products Catalog Section */}
+            {seller.products && seller.products.length > 0 && (
+              <div className="p-6 sm:p-8 rounded-2xl border border-[var(--hairline)] bg-[var(--surface-card)] space-y-6">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[var(--hairline)] pb-4">
+                  <div>
+                    <h2 className="text-xl font-bold text-[var(--ink)] flex items-center gap-2">
+                      <Package className="w-5 h-5 text-[var(--brand-ochre)]" />
+                      Featured Products & Export Offerings
+                    </h2>
+                    <p className="text-xs text-[var(--muted)] mt-0.5">
+                      Explore wholesale offerings, minimum order quantities, and custom export specifications from {seller.companyName}.
+                    </p>
+                  </div>
+
+                  <span className="px-3 py-1 rounded-full text-xs font-bold bg-[var(--brand-ochre)] text-[var(--ink)] shrink-0 self-start sm:self-auto">
+                    {seller.products.length} {seller.products.length === 1 ? "Product" : "Products"} Available
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  {seller.products.map((prod) => (
+                    <div
+                      key={prod.id}
+                      className="group rounded-2xl border border-[var(--hairline)] bg-[var(--canvas)] overflow-hidden shadow-2xs hover:border-[var(--brand-ochre)] transition-all flex flex-col justify-between"
+                    >
+                      <div>
+                        {/* Image */}
+                        <div className="relative aspect-16/10 bg-[var(--surface-soft)] overflow-hidden flex items-center justify-center border-b border-[var(--hairline)]">
+                          {prod.imageUrl ? (
+                            <img
+                              src={prod.imageUrl}
+                              alt={prod.title}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            />
+                          ) : (
+                            <div className="flex flex-col items-center justify-center text-[var(--muted)] p-4">
+                              <ImageIcon className="w-10 h-10 opacity-40 mb-1" />
+                              <span className="text-[11px] font-semibold">Product Spec Sheet</span>
+                            </div>
+                          )}
+
+                          {prod.category && (
+                            <span className="absolute top-3 left-3 px-2.5 py-1 rounded-lg text-[10px] font-extrabold uppercase tracking-wider bg-[var(--ink)] text-white shadow-xs">
+                              {prod.category}
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Text Content */}
+                        <div className="p-5 space-y-3">
+                          <h3 className="text-base font-bold text-[var(--ink)] line-clamp-2 leading-snug">
+                            {prod.title}
+                          </h3>
+
+                          <div className="flex flex-wrap gap-2 text-xs">
+                            {prod.price && (
+                              <span className="px-2.5 py-1 rounded-xl font-bold bg-amber-100/70 text-amber-900 border border-amber-200">
+                                💰 {prod.price}
+                              </span>
+                            )}
+                            {prod.moq && (
+                              <span className="px-2.5 py-1 rounded-xl font-bold bg-sky-100/70 text-sky-900 border border-sky-200">
+                                📦 MOQ: {prod.moq}
+                              </span>
+                            )}
+                          </div>
+
+                          {prod.description && (
+                            <p className="text-xs text-[var(--body)] line-clamp-3 leading-relaxed m-0">
+                              {prod.description}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Action Button */}
+                      <div className="p-4 border-t border-[var(--hairline)] bg-[var(--surface-card)]">
+                        <button
+                          onClick={() => handleOpenProductInquiry(prod)}
+                          className="w-full py-2.5 px-4 rounded-xl font-bold text-xs text-[var(--ink)] flex items-center justify-center gap-2 cursor-pointer transition-all hover:opacity-90 shadow-xs border-none"
+                          style={{ backgroundColor: "var(--brand-ochre)" }}
+                        >
+                          <Send className="w-3.5 h-3.5" />
+                          <span>Inquire About This Product</span>
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Target Markets (if selected) */}
             {seller.targetMarkets && seller.targetMarkets.length > 0 && (
@@ -665,6 +922,221 @@ export default function SellerProfileClient({ seller }: SellerProfileClientProps
           </div>
         </div>
       </div>
+
+      {/* ── SHORT & COMPACT PRODUCT INQUIRY MODAL DIALOG ── */}
+      {isProductInquiryModalOpen && selectedProductForInquiry && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs overflow-y-auto">
+          <div className="relative w-full max-w-md p-5 sm:p-6 rounded-2xl border border-[var(--hairline)] bg-[var(--surface-card)] shadow-2xl space-y-4 my-6 text-xs text-[var(--ink)]">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between border-b border-[var(--hairline)] pb-3">
+              <div className="flex items-center gap-2.5 min-w-0">
+                <div className="w-8 h-8 rounded-xl bg-[var(--brand-ochre)] text-[var(--ink)] flex items-center justify-center font-bold shrink-0">
+                  <Package className="w-4 h-4" />
+                </div>
+                <div className="min-w-0">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-[9px] font-extrabold uppercase tracking-wider px-1.5 py-0.5 rounded bg-[var(--ink)] text-white">
+                      RFQ
+                    </span>
+                    <span className="text-[10px] text-[var(--muted)] font-semibold truncate">
+                      {seller.companyName}
+                    </span>
+                  </div>
+                  <h3 className="text-sm font-bold text-[var(--ink)] truncate m-0">
+                    {selectedProductForInquiry.title}
+                  </h3>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setIsProductInquiryModalOpen(false)}
+                className="p-1.5 rounded-lg text-[var(--muted)] hover:text-[var(--ink)] hover:bg-[var(--canvas)] border-none bg-transparent cursor-pointer shrink-0"
+                title="Close modal"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            {productInquirySubmitted ? (
+              <div className="py-4 text-center space-y-3">
+                <div className="w-12 h-12 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto border border-emerald-300">
+                  <CheckCircle2 className="w-6 h-6" />
+                </div>
+                <div className="space-y-1">
+                  <h4 className="text-lg font-bold text-[var(--ink)]">Inquiry Sent!</h4>
+                  <p className="text-xs text-[var(--muted)] max-w-xs mx-auto leading-relaxed">
+                    RFQ for <strong>{selectedProductForInquiry.title}</strong> routed directly to {seller.companyName}.
+                  </p>
+                </div>
+                <div className="pt-1">
+                  <button
+                    onClick={() => setIsProductInquiryModalOpen(false)}
+                    className="px-5 py-2 rounded-xl font-bold text-xs text-[var(--ink)] border-none cursor-pointer"
+                    style={{ backgroundColor: "var(--brand-ochre)" }}
+                  >
+                    Done
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <form onSubmit={handleProductInquirySubmit} className="space-y-3">
+                {/* Row 1: Full Name & Phone */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  <div>
+                    <label className="block font-bold text-[var(--ink)] mb-1 text-[11px]">
+                      Full Name <span className="text-rose-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={productInquiryForm.fullName}
+                      onChange={(e) => setProductInquiryForm({ ...productInquiryForm, fullName: e.target.value })}
+                      placeholder="e.g. John Smith"
+                      className="w-full px-3 py-2 rounded-xl border border-[var(--hairline)] bg-[var(--canvas)] text-xs text-[var(--ink)] focus:outline-none focus:border-[var(--brand-ochre)]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block font-bold text-[var(--ink)] mb-1 text-[11px]">
+                      Phone / WhatsApp <span className="text-rose-500">*</span>
+                    </label>
+                    <input
+                      type="tel"
+                      required
+                      value={productInquiryForm.phone}
+                      onChange={(e) => setProductInquiryForm({ ...productInquiryForm, phone: e.target.value })}
+                      placeholder="e.g. +44 7911 123456"
+                      className="w-full px-3 py-2 rounded-xl border border-[var(--hairline)] bg-[var(--canvas)] text-xs text-[var(--ink)] focus:outline-none focus:border-[var(--brand-ochre)]"
+                    />
+                  </div>
+                </div>
+
+                {/* Row 2: Quantity & Unit */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  <div>
+                    <label className="block font-bold text-[var(--ink)] mb-1 text-[11px]">
+                      Quantity <span className="text-rose-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={productInquiryForm.quantity}
+                      onChange={(e) => setProductInquiryForm({ ...productInquiryForm, quantity: e.target.value })}
+                      placeholder="e.g. 500 / 1 FCL"
+                      className="w-full px-3 py-2 rounded-xl border border-[var(--hairline)] bg-[var(--canvas)] text-xs text-[var(--ink)] focus:outline-none focus:border-[var(--brand-ochre)]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block font-bold text-[var(--ink)] mb-1 text-[11px]">
+                      Unit <span className="text-rose-500">*</span>
+                    </label>
+                    <select
+                      required
+                      value={productInquiryForm.unit}
+                      onChange={(e) => setProductInquiryForm({ ...productInquiryForm, unit: e.target.value })}
+                      className="w-full px-2.5 py-2 rounded-xl border border-[var(--hairline)] bg-[var(--canvas)] text-xs text-[var(--ink)] focus:outline-none focus:border-[var(--brand-ochre)]"
+                    >
+                      {UNIT_OPTIONS.map((u) => (
+                        <option key={u} value={u}>
+                          {u}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                {productInquiryForm.unit === "Other Unit (Specify Below)" && (
+                  <div>
+                    <input
+                      type="text"
+                      required
+                      value={productInquiryForm.customUnit}
+                      onChange={(e) => setProductInquiryForm({ ...productInquiryForm, customUnit: e.target.value })}
+                      placeholder="Specify Custom Unit (e.g. Bales)"
+                      className="w-full px-3 py-2 rounded-xl border border-[var(--hairline)] bg-[var(--canvas)] text-xs text-[var(--ink)] focus:outline-none focus:border-[var(--brand-ochre)]"
+                    />
+                  </div>
+                )}
+
+                {/* Row 3: Country & Work Email */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  <div>
+                    <label className="block font-semibold text-[var(--muted)] mb-1 text-[11px]">
+                      Country <span className="text-[10px] font-normal">(Optional)</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={productInquiryForm.country}
+                      onChange={(e) => setProductInquiryForm({ ...productInquiryForm, country: e.target.value })}
+                      placeholder="e.g. United Kingdom"
+                      className="w-full px-3 py-2 rounded-xl border border-[var(--hairline)] bg-[var(--canvas)] text-xs text-[var(--ink)] focus:outline-none focus:border-[var(--brand-ochre)]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block font-semibold text-[var(--muted)] mb-1 text-[11px]">
+                      Work Email <span className="text-[10px] font-normal">(Optional)</span>
+                    </label>
+                    <input
+                      type="email"
+                      value={productInquiryForm.email}
+                      onChange={(e) => setProductInquiryForm({ ...productInquiryForm, email: e.target.value })}
+                      placeholder="e.g. buyer@company.com"
+                      className="w-full px-3 py-2 rounded-xl border border-[var(--hairline)] bg-[var(--canvas)] text-xs text-[var(--ink)] focus:outline-none focus:border-[var(--brand-ochre)]"
+                    />
+                  </div>
+                </div>
+
+                {/* Notes / Specs (Optional) */}
+                <div>
+                  <label className="block font-semibold text-[var(--muted)] mb-1 text-[11px]">
+                    Notes / Specs <span className="text-[10px] font-normal">(Optional)</span>
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={productInquiryForm.message}
+                    onChange={(e) => setProductInquiryForm({ ...productInquiryForm, message: e.target.value })}
+                    placeholder="Destination port, packaging details..."
+                    className="w-full px-3 py-2 rounded-xl border border-[var(--hairline)] bg-[var(--canvas)] text-xs text-[var(--ink)] focus:outline-none focus:border-[var(--brand-ochre)] leading-snug"
+                  />
+                </div>
+
+                {/* Footer Buttons */}
+                <div className="pt-2 flex items-center justify-end gap-2 border-t border-[var(--hairline)]">
+                  <button
+                    type="button"
+                    onClick={() => setIsProductInquiryModalOpen(false)}
+                    className="px-3.5 py-1.5 rounded-xl font-bold text-xs text-[var(--muted)] bg-[var(--canvas)] border border-[var(--hairline)] cursor-pointer hover:text-[var(--ink)]"
+                  >
+                    Cancel
+                  </button>
+
+                  <button
+                    type="submit"
+                    disabled={isSubmittingProductInquiry}
+                    className="px-5 py-1.5 rounded-xl font-bold text-xs text-[var(--ink)] border-none cursor-pointer flex items-center gap-1.5 shadow-sm disabled:opacity-50"
+                    style={{ backgroundColor: "var(--brand-ochre)" }}
+                  >
+                    {isSubmittingProductInquiry ? (
+                      <>
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        <span>Sending...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Send className="w-3.5 h-3.5" />
+                        <span>Submit RFQ</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

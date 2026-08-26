@@ -1,6 +1,18 @@
 import { ExportProfile, connectToDatabase } from "./mongodb";
 import mongoose from "mongoose";
 
+export interface SellerProduct {
+  id: string;
+  title: string;
+  description?: string;
+  category?: string;
+  price?: string;
+  moq?: string;
+  imageUrl?: string;
+  imageKey?: string;
+  createdAt?: string;
+}
+
 export interface SellerProfile {
   id: string;
   slug: string;
@@ -17,6 +29,7 @@ export interface SellerProfile {
   yearEstablished?: string;
   exportCapacity?: string;
   certifications: string[];
+  products?: SellerProduct[];
   createdAt?: string;
   status?: string;
   selectedPackage?: string;
@@ -114,6 +127,7 @@ export async function getSellerProfile(identifier: string, allowPending: boolean
       yearEstablished: doc.yearEstablished || "",
       exportCapacity: doc.exportCapacity || "",
       certifications: Array.isArray(doc.certifications) ? doc.certifications : [],
+      products: Array.isArray(doc.products) ? doc.products : [],
       createdAt: doc.createdAt || "",
       status: doc.status || "pending",
       selectedPackage: doc.selectedPackage || doc.package || "Verified Growth Pro",

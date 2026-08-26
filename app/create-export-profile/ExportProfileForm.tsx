@@ -569,12 +569,6 @@ export default function ExportProfileForm() {
             >
               <span>Edit Profile Details</span>
             </Link>
-            <button
-              onClick={resetForm}
-              className="px-4 py-2.5 rounded-xl border border-[var(--hairline)] bg-[var(--canvas)] text-xs font-semibold text-[var(--muted)] hover:text-[var(--ink)] cursor-pointer"
-            >
-              New Profile
-            </button>
           </div>
         </div>
       </div>

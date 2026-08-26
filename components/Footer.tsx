@@ -209,32 +209,18 @@ export default function Footer() {
                 <div className="w-8 h-0.5 rounded mb-4" style={{ backgroundColor: "var(--hairline)" }} />
                 <ul className="space-y-2 list-none p-0 m-0">
                   {column.items.slice(0, 4).map((item, j) => (
-                    <>
-                      <li key={j}>
-                        <a
-                          href={`/${column.slug}`}
-                          className="no-underline transition-colors flex items-center gap-1.5"
-                          style={{ fontSize: "13px", color: "var(--muted)" }}
-                          onMouseEnter={(e) => (e.currentTarget.style.color = "var(--ink)")}
-                          onMouseLeave={(e) => (e.currentTarget.style.color = "var(--muted)")}
-                        >
-                          <span style={{ color: "var(--muted-soft)" }}>›</span>
-                          {item}
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          href={`/${column.slug}`}
-                          className="no-underline transition-colors flex items-center gap-1.5"
-                          style={{ fontSize: "13px", color: "var(--muted-soft)" }}
-                          onMouseEnter={(e) => (e.currentTarget.style.color = "var(--ink)")}
-                          onMouseLeave={(e) => (e.currentTarget.style.color = "var(--muted-soft)")}
-                        >
-                          <span>›</span>
-                          View More...
-                        </a>
-                      </li>
-                    </>
+                    <li key={`${column.slug}-${j}`}>
+                      <a
+                        href={`/${column.slug}`}
+                        className="no-underline transition-colors flex items-center gap-1.5"
+                        style={{ fontSize: "13px", color: "var(--muted)" }}
+                        onMouseEnter={(e) => (e.currentTarget.style.color = "var(--ink)")}
+                        onMouseLeave={(e) => (e.currentTarget.style.color = "var(--muted)")}
+                      >
+                        <span style={{ color: "var(--muted-soft)" }}>›</span>
+                        {item}
+                      </a>
+                    </li>
                   ))}
                 </ul>
               </div>

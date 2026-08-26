@@ -64,6 +64,22 @@ const ExportProfileSchema = new mongoose.Schema(
     yearEstablished: { type: String, default: "" },
     exportCapacity: { type: String, default: "" },
     certifications: { type: [String], default: [] },
+    products: {
+      type: [
+        {
+          id: { type: String, required: true },
+          title: { type: String, required: true },
+          description: { type: String, default: "" },
+          category: { type: String, default: "" },
+          price: { type: String, default: "" },
+          moq: { type: String, default: "" },
+          imageUrl: { type: String, default: "" },
+          imageKey: { type: String, default: "" },
+          createdAt: { type: String, default: () => new Date().toISOString() },
+        },
+      ],
+      default: [],
+    },
     selectedPackage: { type: String, default: "Verified Growth Pro" },
     status: { type: String, default: "pending", index: true },
     isDeleted: { type: Boolean, default: false, index: true },
@@ -121,6 +137,27 @@ const SellerInquirySchema = new mongoose.Schema(
   { collection: "seller_inquiries", timestamps: false, strict: false }
 );
 
+// ── ProductInquiry Schema (Dedicated Model for Product Inquiries) ──
+const ProductInquirySchema = new mongoose.Schema(
+  {
+    productId: { type: String, default: "", index: true },
+    productTitle: { type: String, required: true },
+    sellerId: { type: String, default: "", index: true },
+    sellerCompanyName: { type: String, default: "" },
+    sellerEmail: { type: String, default: "", index: true },
+    fullName: { type: String, required: true },
+    phone: { type: String, required: true },
+    country: { type: String, default: "" },
+    quantity: { type: String, required: true },
+    unit: { type: String, required: true },
+    email: { type: String, default: "" }, // OPTIONAL
+    message: { type: String, default: "" },
+    receivedAt: { type: Date, default: Date.now },
+    createdAt: { type: String, default: () => new Date().toISOString() },
+  },
+  { collection: "product_inquiries", timestamps: false, strict: false }
+);
+
 export const ExportProfile =
   mongoose.models.ExportProfile || mongoose.model("ExportProfile", ExportProfileSchema);
 
@@ -129,6 +166,9 @@ export const PackageModel =
 
 export const SellerInquiry =
   mongoose.models.SellerInquiry || mongoose.model("SellerInquiry", SellerInquirySchema);
+
+export const ProductInquiry =
+  mongoose.models.ProductInquiry || mongoose.model("ProductInquiry", ProductInquirySchema);
 
 // Helper function to return native DB connection if needed
 export async function getDatabase() {

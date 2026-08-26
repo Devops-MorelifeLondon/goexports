@@ -7,7 +7,10 @@ import {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { fullName, phone, email, company, country, productCategory } = body;
+    const { fullName, phone, email, company, country, productCategory, inquiryDate } = body;
+
+    // Use provided inquiryDate or default to current ISO date string (YYYY-MM-DD)
+    const effectiveInquiryDate = inquiryDate || new Date().toISOString().split("T")[0];
 
     console.log("=== [NEW CONSULTATION / JOTFORM SUBMISSION] ===", {
       fullName,
@@ -16,6 +19,7 @@ export async function POST(req: Request) {
       company,
       country,
       productCategory,
+      inquiryDate: effectiveInquiryDate,
     });
 
     const formId = "260778155209059";
@@ -30,6 +34,7 @@ export async function POST(req: Request) {
       params.append("q8_country", country);
     }
     params.append("q7_productCategory", productCategory || "");
+    params.append("q9_inquiryDate", effectiveInquiryDate);
     params.append("formID", formId);
 
     try {
@@ -60,6 +65,7 @@ export async function POST(req: Request) {
       company: company || "",
       country: country || "",
       productCategory: productCategory || "General Trade",
+      inquiryDate: effectiveInquiryDate,
     };
 
     try {

@@ -10,9 +10,12 @@ interface FormData {
   company: string;
   country: string;
   productCategory: string;
+  inquiryDate: string;
 }
 
 export default function GetInTouchForm() {
+  const getCurrentDate = () => new Date().toISOString().split("T")[0];
+
   const [formData, setFormData] = useState<FormData>({
     fullName: "",
     email: "",
@@ -20,6 +23,7 @@ export default function GetInTouchForm() {
     company: "",
     country: "",
     productCategory: "",
+    inquiryDate: getCurrentDate(),
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -49,7 +53,7 @@ export default function GetInTouchForm() {
       });
 
       setSubmitted(true);
-      setFormData({ fullName: "", email: "", phone: "", company: "", country: "", productCategory: "" });
+      setFormData({ fullName: "", email: "", phone: "", company: "", country: "", productCategory: "", inquiryDate: getCurrentDate() });
       setTimeout(() => setSubmitted(false), 5000);
     } catch (err: any) {
       console.error("Submission error:", err);
@@ -68,6 +72,7 @@ export default function GetInTouchForm() {
     { name: "email", label: "Email Address", type: "email", placeholder: "john@company.com", fullWidth: true },
     { name: "company", label: "Company", type: "text", placeholder: "Your company name", fullWidth: false },
     { name: "country", label: "Country", type: "text", placeholder: "e.g. United Kingdom", fullWidth: false },
+    { name: "inquiryDate", label: "Inquiry Date", type: "date", placeholder: "YYYY-MM-DD", fullWidth: true },
   ];
 
   return (

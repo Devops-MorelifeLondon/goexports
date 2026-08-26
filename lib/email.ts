@@ -35,6 +35,7 @@ export interface ConsultationLeadEmailData {
   company: string;
   country?: string;
   productCategory: string;
+  inquiryDate?: string;
 }
 
 export interface SellerInquiryEmailData {
@@ -607,9 +608,14 @@ export function getConsultationLeadConfirmationTemplate(data: ConsultationLeadEm
           <td style="padding: 10px 18px; border-bottom: 1px solid #f4f4f5; color: #0a0a0a;">${data.country}</td>
         </tr>` : ''}
         <tr>
-          <td style="padding: 10px 18px; color: #71717a; font-weight: 600;">Phone:</td>
-          <td style="padding: 10px 18px; color: #0a0a0a;">${data.phone}</td>
+          <td style="padding: 10px 18px; border-bottom: 1px solid #f4f4f5; color: #71717a; font-weight: 600;">Phone:</td>
+          <td style="padding: 10px 18px; border-bottom: 1px solid #f4f4f5; color: #0a0a0a;">${data.phone}</td>
         </tr>
+        ${data.inquiryDate ? `
+        <tr>
+          <td style="padding: 10px 18px; color: #71717a; font-weight: 600;">Inquiry Date:</td>
+          <td style="padding: 10px 18px; color: #0a0a0a;">${data.inquiryDate}</td>
+        </tr>` : ''}
       </table>
     </div>
 
@@ -665,8 +671,13 @@ export function getAdminConsultationAlertTemplate(data: ConsultationLeadEmailDat
         </tr>
         ${data.country ? `
         <tr>
-          <td style="padding: 10px 18px; color: #71717a; font-weight: 600;">Destination Country:</td>
-          <td style="padding: 10px 18px; color: #0a0a0a;">${data.country}</td>
+          <td style="padding: 10px 18px; border-bottom: 1px solid #f4f4f5; color: #71717a; font-weight: 600;">Destination Country:</td>
+          <td style="padding: 10px 18px; border-bottom: 1px solid #f4f4f5; color: #0a0a0a;">${data.country}</td>
+        </tr>` : ''}
+        ${data.inquiryDate ? `
+        <tr>
+          <td style="padding: 10px 18px; color: #71717a; font-weight: 600;">Inquiry Date:</td>
+          <td style="padding: 10px 18px; color: #0a0a0a;">${data.inquiryDate}</td>
         </tr>` : ''}
       </table>
     </div>

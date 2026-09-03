@@ -177,6 +177,31 @@ const CallingPersonSchema = new mongoose.Schema(
   { collection: "calling_persons", timestamps: false, strict: false }
 );
 
+// ── GetInTouch / Consultation Inquiry Schema ──
+const GetInTouchSchema = new mongoose.Schema(
+  {
+    fullName: { type: String, required: true },
+    phone: { type: String, required: true },
+    email: { type: String, required: true, index: true },
+    company: { type: String, default: "" },
+    country: { type: String, default: "" },
+    productCategory: { type: String, default: "" },
+    inquiryDate: { type: String, default: () => new Date().toISOString().split("T")[0] },
+    status: { type: String, default: "pending", index: true },
+    priority: { type: String, default: "medium" },
+    adminNotes: { type: String, default: "" },
+    assignedTo: { type: String, default: "" },
+    source: { type: String, default: "Get In Touch" },
+    syncedToJotform: { type: Boolean, default: false },
+    ipAddress: { type: String, default: "unknown" },
+    userAgent: { type: String, default: "unknown" },
+    receivedAt: { type: Date, default: Date.now },
+    createdAt: { type: String, default: () => new Date().toISOString() },
+    updatedAt: { type: String, default: () => new Date().toISOString() },
+  },
+  { collection: "get_in_touch_inquiries", timestamps: false, strict: false }
+);
+
 export const ExportProfile =
   mongoose.models.ExportProfile || mongoose.model("ExportProfile", ExportProfileSchema);
 
@@ -191,6 +216,11 @@ export const ProductInquiry =
 
 export const CallingPerson =
   mongoose.models.CallingPerson || mongoose.model("CallingPerson", CallingPersonSchema);
+
+export const GetInTouchInquiry =
+  mongoose.models.GetInTouchInquiry || mongoose.model("GetInTouchInquiry", GetInTouchSchema);
+
+export const GetInTouch = GetInTouchInquiry;
 
 // Helper function to return native DB connection if needed
 export async function getDatabase() {
@@ -213,6 +243,11 @@ export async function getPackagesCollection() {
 export async function getCallingPersonsCollection() {
   await connectToDatabase();
   return CallingPerson.collection;
+}
+
+export async function getGetInTouchCollection() {
+  await connectToDatabase();
+  return GetInTouchInquiry.collection;
 }
 
 export default connectToDatabase;

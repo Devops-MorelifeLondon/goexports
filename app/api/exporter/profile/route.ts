@@ -43,31 +43,50 @@ export async function GET(req: Request) {
     const { password: _, ...safeUser } = userDoc;
     safeUser.id = userDoc.id || userDoc._id.toString();
 
-    // Fetch received buyer inquiries for this exporter
+    // Fetch received buyer inquiries and assigned leads for this exporter
     let inquiries: any[] = [];
     try {
-      const rawInquiries = await SellerInquiry.find({
-        $or: [
-          { sellerEmail: userDoc.email.toLowerCase() },
-          { sellerId: userDoc.id },
-          { sellerId: userDoc._id.toString() },
-        ],
-      })
+      const queryOr: any[] = [
+        { sellerEmail: userDoc.email.toLowerCase() },
+        { sellerId: userDoc.id },
+        { sellerId: userDoc._id.toString() },
+        { assignedTo: userDoc.id },
+        { assignedTo: userDoc._id.toString() },
+      ];
+      if (userDoc.companyName) {
+        queryOr.push({ assignedCompany: userDoc.companyName });
+        queryOr.push({ sellerCompanyName: userDoc.companyName });
+      }
+
+      const rawInquiries = await SellerInquiry.find({ $or: queryOr })
         .sort({ receivedAt: -1, createdAt: -1 })
-        .limit(50)
+        .limit(100)
         .lean();
 
-      inquiries = rawInquiries.map((inq: any) => ({
-        id: inq._id.toString(),
-        buyerName: inq.buyerName,
-        buyerEmail: inq.buyerEmail,
-        buyerPhone: inq.buyerPhone || "",
-        buyerCountry: inq.buyerCountry || "",
-        inquiryType: inq.inquiryType || "Bulk Order / RFQ",
-        quantity: inq.quantity || "",
-        message: inq.message || "",
-        createdAt: inq.createdAt || inq.receivedAt || new Date().toISOString(),
-      }));
+      inquiries = rawInquiries.map((inq: any) => {
+        const isAssigned =
+          (inq.assignedTo && (inq.assignedTo === userDoc.id || inq.assignedTo === userDoc._id?.toString())) ||
+          (inq.assignedCompany && userDoc.companyName && inq.assignedCompany.toLowerCase() === userDoc.companyName.toLowerCase());
+
+        return {
+          id: inq._id.toString(),
+          buyerName: inq.buyerName,
+          buyerEmail: inq.buyerEmail,
+          buyerPhone: inq.buyerPhone || "",
+          buyerCountry: inq.buyerCountry || "",
+          inquiryType: inq.inquiryType || "Bulk Order / RFQ",
+          quantity: inq.quantity || "",
+          engagementMode: inq.engagementMode || "",
+          status: inq.status || "To be Called",
+          callingDate: inq.callingDate || "",
+          callingPerson: inq.callingPerson || "",
+          assignedTo: inq.assignedTo || "",
+          assignedCompany: inq.assignedCompany || "",
+          message: inq.message || "",
+          createdAt: inq.createdAt || inq.receivedAt || new Date().toISOString(),
+          isAssigned: !!isAssigned,
+        };
+      });
     } catch (inqErr: any) {
       console.warn("Could not fetch seller inquiries:", inqErr.message);
     }
@@ -113,6 +132,8 @@ export async function PUT(req: Request) {
       yearEstablished,
       exportCapacity,
       certifications,
+      logoUrl,
+      logoKey,
     } = body;
 
     // Validate required fields
@@ -191,6 +212,8 @@ export async function PUT(req: Request) {
       yearEstablished: yearEstablished ? String(yearEstablished).trim() : "",
       exportCapacity: exportCapacity ? exportCapacity.trim() : "",
       certifications: Array.isArray(certifications) ? certifications : [],
+      logoUrl: typeof logoUrl === "string" ? logoUrl.trim() : userDoc.logoUrl || "",
+      logoKey: typeof logoKey === "string" ? logoKey.trim() : userDoc.logoKey || "",
       updatedAt: new Date().toISOString(),
     };
 

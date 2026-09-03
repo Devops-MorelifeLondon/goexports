@@ -58,28 +58,47 @@ export default async function ExporterProfilePage() {
         safeUser.id = userDoc.id || userDoc._id.toString();
         initialProfile = JSON.parse(JSON.stringify(safeUser));
 
-        const rawInquiries = await SellerInquiry.find({
-          $or: [
-            { sellerEmail: userDoc.email.toLowerCase() },
-            { sellerId: userDoc.id },
-            { sellerId: userDoc._id.toString() },
-          ],
-        })
+        const queryOr: any[] = [
+          { sellerEmail: userDoc.email.toLowerCase() },
+          { sellerId: userDoc.id },
+          { sellerId: userDoc._id.toString() },
+          { assignedTo: userDoc.id },
+          { assignedTo: userDoc._id.toString() },
+        ];
+        if (userDoc.companyName) {
+          queryOr.push({ assignedCompany: userDoc.companyName });
+          queryOr.push({ sellerCompanyName: userDoc.companyName });
+        }
+
+        const rawInquiries = await SellerInquiry.find({ $or: queryOr })
           .sort({ receivedAt: -1, createdAt: -1 })
-          .limit(50)
+          .limit(100)
           .lean();
 
-        initialInquiries = rawInquiries.map((inq: any) => ({
-          id: inq._id.toString(),
-          buyerName: inq.buyerName,
-          buyerEmail: inq.buyerEmail,
-          buyerPhone: inq.buyerPhone || "",
-          buyerCountry: inq.buyerCountry || "",
-          inquiryType: inq.inquiryType || "Bulk Order / RFQ",
-          quantity: inq.quantity || "",
-          message: inq.message || "",
-          createdAt: inq.createdAt || inq.receivedAt || new Date().toISOString(),
-        }));
+        initialInquiries = rawInquiries.map((inq: any) => {
+          const isAssigned =
+            (inq.assignedTo && (inq.assignedTo === userDoc.id || inq.assignedTo === userDoc._id?.toString())) ||
+            (inq.assignedCompany && userDoc.companyName && inq.assignedCompany.toLowerCase() === userDoc.companyName.toLowerCase());
+
+          return {
+            id: inq._id.toString(),
+            buyerName: inq.buyerName,
+            buyerEmail: inq.buyerEmail,
+            buyerPhone: inq.buyerPhone || "",
+            buyerCountry: inq.buyerCountry || "",
+            inquiryType: inq.inquiryType || "Bulk Order / RFQ",
+            quantity: inq.quantity || "",
+            engagementMode: inq.engagementMode || "",
+            status: inq.status || "To be Called",
+            callingDate: inq.callingDate || "",
+            callingPerson: inq.callingPerson || "",
+            assignedTo: inq.assignedTo || "",
+            assignedCompany: inq.assignedCompany || "",
+            message: inq.message || "",
+            createdAt: inq.createdAt || inq.receivedAt || new Date().toISOString(),
+            isAssigned: !!isAssigned,
+          };
+        });
       }
     }
   } catch (err: any) {

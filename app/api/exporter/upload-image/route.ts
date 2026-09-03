@@ -29,10 +29,14 @@ export async function POST(req: Request) {
       );
     }
 
+    const uploadType = (formData.get("type") as string) || "product";
+    const folder = uploadType === "logo" ? "/logos" : "/products";
+    const defaultPrefix = uploadType === "logo" ? "logo" : "product";
+
     // Check file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
       return NextResponse.json(
-        { error: "File too large", message: "Product image size must be less than 5MB." },
+        { error: "File too large", message: "Image size must be less than 5MB." },
         { status: 400 }
       );
     }
@@ -53,8 +57,8 @@ export async function POST(req: Request) {
         const authHeader = `Basic ${Buffer.from(`${privateKey}:`).toString("base64")}`;
         const ikFormData = new FormData();
         ikFormData.append("file", base64File);
-        ikFormData.append("fileName", file.name || `product_${Date.now()}.jpg`);
-        ikFormData.append("folder", "/products");
+        ikFormData.append("fileName", file.name || `${defaultPrefix}_${Date.now()}.jpg`);
+        ikFormData.append("folder", folder);
         ikFormData.append("useUniqueFileName", "true");
 
         const ikRes = await fetch("https://upload.imagekit.io/api/v1/files/upload", {
@@ -67,7 +71,7 @@ export async function POST(req: Request) {
 
         if (ikRes.ok) {
           const ikData = await ikRes.json();
-          imageUrl = ikData.url || `${urlEndpoint}/products/${ikData.name}`;
+          imageUrl = ikData.url || `${urlEndpoint}${folder}/${ikData.name}`;
           fileId = ikData.fileId || fileId;
         } else {
           const errText = await ikRes.text();
@@ -89,7 +93,7 @@ export async function POST(req: Request) {
       url: imageUrl,
       fileId,
       thumbnailUrl: imageUrl,
-      message: "Product image uploaded successfully",
+      message: `${uploadType === "logo" ? "Company logo" : "Product image"} uploaded successfully via ImageKit`,
     });
   } catch (error: any) {
     console.error("Image upload error:", error);

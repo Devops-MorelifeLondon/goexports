@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useTransition } from "react";
+import { useState, useEffect, useTransition, useMemo } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
@@ -42,7 +42,15 @@ import {
   ImageIcon,
   X,
   Tag,
-  Layers
+  Layers,
+  UserCheck,
+  Radio,
+  PhoneCall,
+  Filter,
+  Search,
+  ChevronLeft,
+  ArrowUpDown,
+  SlidersHorizontal,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -55,6 +63,7 @@ export interface ExporterProduct {
   moq?: string;
   imageUrl?: string;
   imageKey?: string;
+  images?: string[];
   createdAt?: string;
 }
 
@@ -74,6 +83,8 @@ export interface ExporterProfileData {
   yearEstablished?: string;
   exportCapacity?: string;
   certifications: string[];
+  logoUrl?: string;
+  logoKey?: string;
   products?: ExporterProduct[];
   status?: string;
   selectedPackage?: string;
@@ -89,8 +100,15 @@ export interface BuyerInquiry {
   buyerCountry?: string;
   inquiryType: string;
   quantity?: string;
+  engagementMode?: string;
+  status?: string;
+  callingDate?: string;
+  callingPerson?: string;
+  assignedTo?: string;
+  assignedCompany?: string;
   message: string;
   createdAt: string;
+  isAssigned?: boolean;
 }
 
 const CATEGORY_OPTIONS = [
@@ -172,9 +190,65 @@ export default function ExporterProfileDashboard({
   const [profile, setProfile] = useState<ExporterProfileData | null>(initialProfile || null);
   const [products, setProducts] = useState<ExporterProduct[]>(initialProfile?.products || []);
   const [inquiries, setInquiries] = useState<BuyerInquiry[]>(initialInquiries);
+  // Inquiry Search, Filters, Sorting & Pagination State
+  const [inquirySearchQuery, setInquirySearchQuery] = useState("");
+  const [inquiryStatusFilter, setInquiryStatusFilter] = useState("all");
+  const [inquiryEngagementFilter, setInquiryEngagementFilter] = useState("all");
+  const [inquirySortOrder, setInquirySortOrder] = useState<"latest" | "oldest">("latest");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [leadsPerPage, setLeadsPerPage] = useState(6);
+
   const [isLoading, setIsLoading] = useState(!initialProfile);
   const [isCopied, setIsCopied] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  const filteredAndSortedInquiries = useMemo(() => {
+    let list = inquiries.filter((inq) => {
+      // Status filter
+      if (inquiryStatusFilter !== "all" && (inq.status || "To be Called") !== inquiryStatusFilter) return false;
+
+      // Engagement mode filter
+      if (inquiryEngagementFilter !== "all" && (inq.engagementMode || "") !== inquiryEngagementFilter) return false;
+
+      // Search query
+      if (inquirySearchQuery.trim()) {
+        const q = inquirySearchQuery.toLowerCase();
+        const matches =
+          inq.buyerName?.toLowerCase().includes(q) ||
+          inq.buyerEmail?.toLowerCase().includes(q) ||
+          inq.buyerPhone?.toLowerCase().includes(q) ||
+          inq.buyerCountry?.toLowerCase().includes(q) ||
+          inq.inquiryType?.toLowerCase().includes(q) ||
+          inq.engagementMode?.toLowerCase().includes(q) ||
+          inq.status?.toLowerCase().includes(q) ||
+          inq.callingPerson?.toLowerCase().includes(q) ||
+          inq.message?.toLowerCase().includes(q);
+        if (!matches) return false;
+      }
+
+      return true;
+    });
+
+    // Default sort: Latest to Oldest
+    list.sort((a, b) => {
+      const dateA = new Date(a.createdAt).getTime() || 0;
+      const dateB = new Date(b.createdAt).getTime() || 0;
+      return inquirySortOrder === "latest" ? dateB - dateA : dateA - dateB;
+    });
+
+    return list;
+  }, [inquiries, inquiryStatusFilter, inquiryEngagementFilter, inquirySearchQuery, inquirySortOrder]);
+
+  const totalPages = Math.ceil(filteredAndSortedInquiries.length / leadsPerPage) || 1;
+  const paginatedInquiries = filteredAndSortedInquiries.slice(
+    (currentPage - 1) * leadsPerPage,
+    currentPage * leadsPerPage
+  );
+
+  // Reset to page 1 whenever filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [inquirySearchQuery, inquiryStatusFilter, inquiryEngagementFilter, inquirySortOrder, leadsPerPage]);
 
   // Product Management State
   const [isProductModalOpen, setIsProductModalOpen] = useState(false);
@@ -188,6 +262,7 @@ export default function ExporterProfileDashboard({
     moq: "",
     imageUrl: "",
     imageKey: "",
+    images: [] as string[],
   });
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [isSavingProduct, setIsSavingProduct] = useState(false);
@@ -209,8 +284,11 @@ export default function ExporterProfileDashboard({
     yearEstablished: "",
     exportCapacity: "",
     certifications: [] as string[],
+    logoUrl: initialProfile?.logoUrl || "",
+    logoKey: initialProfile?.logoKey || "",
   });
 
+  const [isUploadingLogo, setIsUploadingLogo] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
@@ -270,6 +348,8 @@ export default function ExporterProfileDashboard({
       yearEstablished: data.yearEstablished || "",
       exportCapacity: data.exportCapacity || "",
       certifications: Array.isArray(data.certifications) ? data.certifications : [],
+      logoUrl: data.logoUrl || "",
+      logoKey: data.logoKey || "",
     });
   };
 
@@ -334,6 +414,7 @@ export default function ExporterProfileDashboard({
       moq: "",
       imageUrl: "",
       imageKey: "",
+      images: [],
     });
     setIsProductModalOpen(true);
     setTimeout(() => {
@@ -346,6 +427,10 @@ export default function ExporterProfileDashboard({
     setEditingProduct(prod);
     const rawCat = prod.category || profile?.productCategory || CATEGORY_OPTIONS[0];
     const isCustomCat = !CATEGORY_OPTIONS.includes(rawCat);
+    const existingImages = Array.isArray(prod.images) && prod.images.length > 0
+      ? prod.images
+      : prod.imageUrl ? [prod.imageUrl] : [];
+
     setProductForm({
       title: prod.title || "",
       description: prod.description || "",
@@ -353,8 +438,9 @@ export default function ExporterProfileDashboard({
       customCategory: isCustomCat ? rawCat : "",
       price: prod.price || "",
       moq: prod.moq || "",
-      imageUrl: prod.imageUrl || "",
+      imageUrl: prod.imageUrl || existingImages[0] || "",
       imageKey: prod.imageKey || "",
+      images: existingImages,
     });
     setIsProductModalOpen(true);
     setTimeout(() => {
@@ -364,27 +450,130 @@ export default function ExporterProfileDashboard({
   };
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    const fileList = Array.from(files);
+    for (const file of fileList) {
+      if (!file.type.startsWith("image/")) {
+        toast.error("Invalid Image File", {
+          description: `${file.name} is not a valid image file.`,
+        });
+        return;
+      }
+
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error("File Too Large", {
+          description: `${file.name} exceeds the 5MB size limit.`,
+        });
+        return;
+      }
+    }
+
+    setIsUploadingImage(true);
+    const uploadedUrls: string[] = [];
+    let firstFileId = "";
+
+    try {
+      for (const file of fileList) {
+        const fd = new FormData();
+        fd.append("file", file);
+        fd.append("type", "product");
+
+        const res = await fetch("/api/exporter/upload-image", {
+          method: "POST",
+          body: fd,
+        });
+
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.message || data.error || `Failed to upload ${file.name}`);
+        }
+
+        if (data.url) {
+          uploadedUrls.push(data.url);
+          if (!firstFileId && data.fileId) firstFileId = data.fileId;
+        }
+      }
+
+      setProductForm((prev) => {
+        const prevImgs = Array.isArray(prev.images) ? prev.images : (prev.imageUrl ? [prev.imageUrl] : []);
+        const combined = [...prevImgs, ...uploadedUrls];
+        return {
+          ...prev,
+          images: combined,
+          imageUrl: prev.imageUrl || combined[0] || "",
+          imageKey: prev.imageKey || firstFileId,
+        };
+      });
+
+      toast.success(
+        fileList.length === 1 ? "Product Image Uploaded!" : `${fileList.length} Images Uploaded Successfully!`,
+        {
+          description: "Photos are uploaded via ImageKit and added to your product gallery.",
+        }
+      );
+    } catch (err: any) {
+      toast.error("Upload Failed", {
+        description: err.message || "An error occurred while uploading product image(s).",
+      });
+    } finally {
+      setIsUploadingImage(false);
+      e.target.value = "";
+    }
+  };
+
+  const handleSetPrimaryProductImage = (imgUrl: string) => {
+    setProductForm((prev) => {
+      const filtered = prev.images.filter((img) => img !== imgUrl);
+      return {
+        ...prev,
+        imageUrl: imgUrl,
+        images: [imgUrl, ...filtered],
+      };
+    });
+    toast.success("Primary Cover Image Updated", {
+      description: "This photo will be displayed as the main catalog image.",
+    });
+  };
+
+  const handleRemoveProductImage = (indexToRemove: number) => {
+    setProductForm((prev) => {
+      const updatedImages = prev.images.filter((_, idx) => idx !== indexToRemove);
+      const newPrimary = updatedImages.length > 0
+        ? (prev.imageUrl === prev.images[indexToRemove] ? updatedImages[0] : prev.imageUrl)
+        : "";
+      return {
+        ...prev,
+        images: updatedImages,
+        imageUrl: newPrimary,
+      };
+    });
+  };
+
+  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     if (!file.type.startsWith("image/")) {
       toast.error("Invalid Image File", {
-        description: "Please select a valid image (PNG, JPG, WEBP).",
+        description: "Please select a valid image file (PNG, JPG, WEBP, SVG).",
       });
       return;
     }
 
     if (file.size > 5 * 1024 * 1024) {
       toast.error("File Too Large", {
-        description: "Product image size must be 5MB or less.",
+        description: "Company logo file size must be 5MB or less.",
       });
       return;
     }
 
-    setIsUploadingImage(true);
+    setIsUploadingLogo(true);
     try {
       const fd = new FormData();
       fd.append("file", file);
+      fd.append("type", "logo");
 
       const res = await fetch("/api/exporter/upload-image", {
         method: "POST",
@@ -393,24 +582,32 @@ export default function ExporterProfileDashboard({
 
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.message || data.error || "Failed to upload image");
+        throw new Error(data.message || data.error || "Failed to upload company logo");
       }
 
-      setProductForm((prev) => ({
+      setFormData((prev) => ({
         ...prev,
-        imageUrl: data.url,
-        imageKey: data.fileId || "",
+        logoUrl: data.url,
+        logoKey: data.fileId || "",
       }));
 
-      toast.success("Image Uploaded Successfully!", {
-        description: "Product image thumbnail generated successfully.",
+      if (profile) {
+        setProfile({
+          ...profile,
+          logoUrl: data.url,
+          logoKey: data.fileId || "",
+        });
+      }
+
+      toast.success("Logo Uploaded Successfully!", {
+        description: "Company logo uploaded via ImageKit. Click 'Save Changes' to update profile.",
       });
     } catch (err: any) {
-      toast.error("Upload Failed", {
-        description: err.message || "An error occurred while uploading image.",
+      toast.error("Logo Upload Failed", {
+        description: err.message || "An error occurred while uploading company logo.",
       });
     } finally {
-      setIsUploadingImage(false);
+      setIsUploadingLogo(false);
     }
   };
 
@@ -440,11 +637,21 @@ export default function ExporterProfileDashboard({
 
     try {
       const isEdit = !!editingProduct;
-      const url = "/api/exporter/products";
+      const url = isEdit
+        ? `/api/exporter/products?id=${editingProduct.id}`
+        : "/api/exporter/products";
       const method = isEdit ? "PUT" : "POST";
-      const payload = isEdit
-        ? { id: editingProduct.id, ...productForm, category: finalCategory }
-        : { ...productForm, category: finalCategory };
+
+      const payload = {
+        title: productForm.title.trim(),
+        description: productForm.description.trim(),
+        category: finalCategory,
+        price: productForm.price.trim(),
+        moq: productForm.moq.trim(),
+        imageUrl: productForm.imageUrl.trim() || (productForm.images[0] || ""),
+        imageKey: productForm.imageKey.trim(),
+        images: productForm.images,
+      };
 
       const res = await fetch(url, {
         method,
@@ -479,6 +686,7 @@ export default function ExporterProfileDashboard({
         moq: "",
         imageUrl: "",
         imageKey: "",
+        images: [],
       });
     } catch (err: any) {
       toast.error("Save Failed", {
@@ -637,6 +845,8 @@ export default function ExporterProfileDashboard({
         yearEstablished: formData.yearEstablished,
         exportCapacity: formData.exportCapacity,
         certifications: formData.certifications,
+        logoUrl: formData.logoUrl,
+        logoKey: formData.logoKey,
       };
 
       const res = await fetch("/api/exporter/profile", {
@@ -793,11 +1003,23 @@ export default function ExporterProfileDashboard({
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             {/* Left: Avatar & Company Info */}
             <div className="flex items-start sm:items-center gap-4">
-              <div
-                className="w-16 h-16 rounded-2xl flex items-center justify-center text-xl font-extrabold text-[var(--ink)] border border-[var(--hairline)] shadow-sm shrink-0"
-                style={{ backgroundColor: "var(--brand-ochre)" }}
-              >
-                {profile.companyName ? profile.companyName.slice(0, 2).toUpperCase() : "EX"}
+              <div className="relative shrink-0">
+                {profile.logoUrl ? (
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white border border-[var(--hairline)] p-1.5 shadow-sm flex items-center justify-center overflow-hidden">
+                    <img
+                      src={profile.logoUrl}
+                      alt={profile.companyName}
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+                ) : (
+                  <div
+                    className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl flex items-center justify-center text-xl font-extrabold text-[var(--ink)] border border-[var(--hairline)] shadow-sm shrink-0"
+                    style={{ backgroundColor: "var(--brand-ochre)" }}
+                  >
+                    {profile.companyName ? profile.companyName.slice(0, 2).toUpperCase() : "EX"}
+                  </div>
+                )}
               </div>
 
               <div className="space-y-1.5">
@@ -952,7 +1174,7 @@ export default function ExporterProfileDashboard({
               }`}
             >
               <Inbox className="w-4 h-4" />
-              <span>Buyer RFQs & Inquiries</span>
+              <span>Buyer RFQs & Leads</span>
               {inquiries.length > 0 && (
                 <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-[var(--brand-ochre)] text-[var(--ink)]">
                   {inquiries.length}
@@ -1044,7 +1266,7 @@ export default function ExporterProfileDashboard({
 
               <div className="p-5 rounded-2xl border border-[var(--hairline)] bg-[var(--surface-card)] space-y-1.5 shadow-sm">
                 <div className="flex items-center justify-between text-xs text-[var(--muted)]">
-                  <span className="font-semibold uppercase tracking-wider">Buyer Inquiries</span>
+                  <span className="font-semibold uppercase tracking-wider">Buyer Leads & RFQs</span>
                   <Inbox className="w-4 h-4 text-amber-600" />
                 </div>
                 <div className="text-2xl font-bold text-[var(--ink)]">{inquiries.length}</div>
@@ -1422,72 +1644,127 @@ export default function ExporterProfileDashboard({
                     />
                   </div>
 
-                  {/* ImageKit Upload Component */}
-                  <div className="space-y-2 pt-2 border-t border-[var(--hairline)]">
+                  {/* Amazon-Style Product Photo Boxes */}
+                  <div className="space-y-3 pt-3 border-t border-[var(--hairline)]">
                     <div className="flex items-center justify-between">
-                      <label className="block font-bold text-[var(--ink)]">
-                        Product Image
-                      </label>
+                      <div>
+                        <label className="block font-bold text-[var(--ink)] text-sm">
+                          Product Photos
+                        </label>
+                        <p className="text-[11px] text-[var(--muted)] m-0 mt-0.5">
+                          Add up to 9 photos · First photo is the cover image · PNG, JPG, WEBP up to 5MB each
+                        </p>
+                      </div>
+                      {isUploadingImage && (
+                        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-700">
+                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                          <span className="text-xs font-bold">Uploading...</span>
+                        </div>
+                      )}
                     </div>
 
-                    {productForm.imageUrl ? (
-                      <div className="p-3 rounded-2xl border border-[var(--hairline)] bg-[var(--canvas)] flex items-center justify-between gap-4">
-                        <div className="flex items-center gap-3">
-                          <img
-                            src={productForm.imageUrl}
-                            alt="Uploaded product preview"
-                            className="w-16 h-16 rounded-xl object-cover border border-[var(--hairline)] bg-slate-100 shrink-0"
-                          />
-                          <div className="space-y-1">
-                            <span className="font-bold text-[var(--ink)] text-xs flex items-center gap-1">
-                              <Check className="w-3.5 h-3.5 text-emerald-600" />
-                              Image Uploaded Successfully
+                    {/* Photo Slot Grid */}
+                    <div className="grid grid-cols-3 sm:grid-cols-5 gap-2.5">
+                      {/* Filled image slots */}
+                      {productForm.images.map((imgUrl, idx) => {
+                        const isPrimary = (productForm.imageUrl === imgUrl) || (!productForm.imageUrl && idx === 0);
+                        return (
+                          <div
+                            key={idx}
+                            className={`relative group aspect-square rounded-xl border-2 overflow-hidden bg-slate-50 transition-all ${
+                              isPrimary
+                                ? "border-amber-400 ring-2 ring-amber-400/30"
+                                : "border-[var(--hairline)] hover:border-[var(--brand-ochre)]"
+                            }`}
+                          >
+                            <img
+                              src={imgUrl}
+                              alt={`Product photo ${idx + 1}`}
+                              className="w-full h-full object-contain"
+                            />
+
+                            {/* Hover overlay */}
+                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-[10px] flex flex-col items-center justify-center gap-1.5">
+                              {!isPrimary && (
+                                <button
+                                  type="button"
+                                  onClick={() => handleSetPrimaryProductImage(imgUrl)}
+                                  className="px-2 py-1 rounded-lg text-[9px] font-extrabold bg-amber-400 text-[var(--ink)] cursor-pointer hover:bg-amber-300 transition-colors shadow-sm"
+                                >
+                                  ⭐ Set Cover
+                                </button>
+                              )}
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveProductImage(idx)}
+                                className="px-2 py-1 rounded-lg text-[9px] font-extrabold bg-rose-500 text-white cursor-pointer hover:bg-rose-600 transition-colors shadow-sm"
+                              >
+                                Remove
+                              </button>
+                            </div>
+
+                            {/* Badges */}
+                            {isPrimary && (
+                              <span className="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded text-[8px] font-extrabold uppercase tracking-wide bg-amber-400 text-[var(--ink)] shadow-xs leading-none">
+                                Cover
+                              </span>
+                            )}
+                            <span className="absolute bottom-1.5 right-1.5 w-4 h-4 rounded-full bg-black/50 text-white text-[9px] font-bold flex items-center justify-center leading-none">
+                              {idx + 1}
                             </span>
                           </div>
-                        </div>
+                        );
+                      })}
 
-                        <button
-                          type="button"
-                          onClick={() => setProductForm({ ...productForm, imageUrl: "", imageKey: "" })}
-                          className="px-3 py-1.5 rounded-xl text-xs font-semibold text-rose-700 bg-rose-50 border border-rose-200 hover:bg-rose-100 cursor-pointer"
-                        >
-                          Remove
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="relative p-6 rounded-2xl border-2 border-dashed border-[var(--hairline)] bg-[var(--canvas)] hover:border-[var(--brand-ochre)] transition-colors text-center space-y-2">
-                        {isUploadingImage ? (
-                          <div className="py-4 space-y-2">
-                            <Loader2 className="w-8 h-8 text-[var(--brand-ochre)] animate-spin mx-auto" />
-                            <p className="font-bold text-[var(--ink)] text-xs">
-                              Uploading product image...
-                            </p>
-                            <p className="text-[10px] text-[var(--muted)]">
-                              Optimizing quality and generating high-speed thumbnails
-                            </p>
-                          </div>
-                        ) : (
-                          <>
-                            <div className="w-12 h-12 rounded-full bg-[var(--surface-card)] border border-[var(--hairline)] flex items-center justify-center mx-auto text-[var(--brand-ochre)] shadow-xs">
-                              <UploadCloud className="w-6 h-6" />
-                            </div>
-                            <div>
-                              <p className="font-bold text-[var(--ink)] text-xs m-0">
-                                Click to upload product image
-                              </p>
-                              <p className="text-[11px] text-[var(--muted)] m-0 mt-0.5">
-                                PNG, JPG, WEBP up to 5MB
-                              </p>
-                            </div>
+                      {/* Add-Photo slot boxes (fill up to 9 total) */}
+                      {productForm.images.length < 9 && (
+                        <div className="relative aspect-square">
+                          <div
+                            className={`w-full h-full rounded-xl border-2 border-dashed transition-all flex flex-col items-center justify-center gap-1 cursor-pointer text-center ${
+                              isUploadingImage
+                                ? "border-amber-300 bg-amber-50 cursor-wait"
+                                : "border-[var(--hairline)] bg-[var(--canvas)] hover:border-[var(--brand-ochre)] hover:bg-amber-50/40"
+                            }`}
+                          >
+                            {isUploadingImage ? (
+                              <Loader2 className="w-5 h-5 text-amber-500 animate-spin" />
+                            ) : (
+                              <>
+                                <div className="w-7 h-7 rounded-full bg-[var(--surface-card)] border border-[var(--hairline)] flex items-center justify-center text-[var(--muted)]">
+                                  <UploadCloud className="w-3.5 h-3.5" />
+                                </div>
+                                <span className="text-[9px] font-bold text-[var(--muted)] leading-tight px-1">
+                                  {productForm.images.length === 0 ? "Add Cover Photo" : "Add Photo"}
+                                </span>
+                              </>
+                            )}
                             <input
                               type="file"
                               accept="image/*"
+                              multiple
+                              disabled={isUploadingImage}
                               onChange={handleImageUpload}
-                              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                              className="absolute inset-0 w-full h-full opacity-0 disabled:cursor-not-allowed cursor-pointer"
                             />
-                          </>
-                        )}
-                      </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Empty placeholder boxes to fill the row visually */}
+                      {Array.from({
+                        length: Math.max(0, Math.min(4, 9 - productForm.images.length - 1))
+                      }).map((_, i) => (
+                        <div
+                          key={`empty-${i}`}
+                          className="aspect-square rounded-xl border-2 border-dashed border-[var(--hairline)]/50 bg-[var(--canvas)]/50"
+                        />
+                      ))}
+                    </div>
+
+                    {productForm.images.length > 0 && (
+                      <p className="text-[11px] text-[var(--muted)]">
+                        <span className="font-bold text-[var(--ink)]">{productForm.images.length}</span> of 9 photos added · Hover a photo to set cover or remove
+                      </p>
                     )}
                   </div>
 
@@ -1607,18 +1884,29 @@ export default function ExporterProfileDashboard({
 
                     {/* Card Footer Actions */}
                     <div className="p-4 border-t border-[var(--hairline)] bg-[var(--canvas)] flex items-center justify-between gap-2">
+                      <Link
+                        href={`/${profile.slug || profile.id}/products/${prod.id}`}
+                        target="_blank"
+                        className="py-2 px-3 rounded-xl text-xs font-bold text-[var(--ink)] bg-[var(--surface-card)] border border-[var(--hairline)] hover:bg-[var(--surface-soft)] transition-colors no-underline flex items-center justify-center gap-1 shadow-2xs"
+                        title="View Live Dedicated Product Page"
+                      >
+                        <ExternalLink className="w-3.5 h-3.5 text-[var(--muted)]" />
+                        <span>Live Page</span>
+                      </Link>
+
                       <button
                         onClick={() => handleOpenEditProduct(prod)}
                         className="flex-1 py-2 px-3 rounded-xl text-xs font-bold text-[var(--ink)] bg-[var(--surface-card)] border border-[var(--hairline)] hover:bg-[var(--surface-soft)] transition-colors cursor-pointer flex items-center justify-center gap-1.5"
                       >
                         <Edit3 className="w-3.5 h-3.5" />
-                        <span>Edit Listing</span>
+                        <span>Edit</span>
                       </button>
 
                       <button
                         onClick={() => handleDeleteProduct(prod.id)}
                         disabled={deletingProductId === prod.id}
                         className="py-2 px-3 rounded-xl text-xs font-semibold text-rose-700 bg-rose-50 border border-rose-200 hover:bg-rose-100 transition-colors cursor-pointer disabled:opacity-50 flex items-center gap-1"
+                        title="Delete Product"
                       >
                         {deletingProductId === prod.id ? (
                           <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -1640,6 +1928,133 @@ export default function ExporterProfileDashboard({
         {activeTab === "edit" && (
           <div className="max-w-4xl mx-auto">
             <form onSubmit={handleSaveProfile} className="space-y-8">
+              {/* Card 0: Brand Identity & Logo Upload Card */}
+              <div className="p-6 sm:p-8 rounded-3xl border border-[var(--hairline)] bg-[var(--surface-card)] space-y-6 shadow-sm">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[var(--hairline)] pb-4">
+                  <div>
+                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[var(--brand-ochre)] text-[var(--ink)] mb-2">
+                      <ImageIcon className="w-3.5 h-3.5" />
+                      Company Branding
+                    </div>
+                    <h2 className="text-xl font-bold text-[var(--ink)]">
+                      Company Brand Logo
+                    </h2>
+                    <p className="text-xs text-[var(--muted)] mt-1">
+                      Upload your official company logo using ImageKit to appear on your verified public storefront and buyer inquiry cards.
+                    </p>
+                  </div>
+                  {formData.logoUrl && (
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 self-start sm:self-auto">
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      Logo Active
+                    </span>
+                  )}
+                </div>
+
+                <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
+                  {/* Logo Preview Avatar */}
+                  <div className="relative group shrink-0">
+                    <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-3xl border-2 border-dashed border-[var(--hairline)] bg-[var(--canvas)] flex items-center justify-center overflow-hidden p-2 shadow-xs group-hover:border-[var(--brand-ochre)] transition-colors">
+                      {formData.logoUrl ? (
+                        <img
+                          src={formData.logoUrl}
+                          alt="Company Logo"
+                          className="w-full h-full object-contain"
+                        />
+                      ) : (
+                        <div className="text-center p-3 text-[var(--muted)] flex flex-col items-center gap-1.5">
+                          <Building2 className="w-8 h-8 opacity-40" />
+                          <span className="text-[10px] font-semibold">No Logo Uploaded</span>
+                        </div>
+                      )}
+                    </div>
+
+                    {formData.logoUrl && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setFormData((prev) => ({ ...prev, logoUrl: "", logoKey: "" }));
+                          if (profile) {
+                            setProfile({ ...profile, logoUrl: "", logoKey: "" });
+                          }
+                        }}
+                        className="absolute -top-2 -right-2 w-7 h-7 rounded-full bg-rose-600 hover:bg-rose-700 text-white flex items-center justify-center shadow-md border-2 border-white cursor-pointer transition-colors"
+                        title="Remove Logo"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Upload Controls */}
+                  <div className="flex-1 space-y-4 w-full">
+                    <div>
+                      <label className="block text-xs font-bold text-[var(--ink)] mb-1.5">
+                        Upload Logo via ImageKit
+                      </label>
+                      <div className="flex flex-wrap items-center gap-3">
+                        <label className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-xs cursor-pointer shadow-xs transition-all ${
+                          isUploadingLogo
+                            ? "bg-[var(--surface-soft)] text-[var(--muted)] cursor-not-allowed"
+                            : "bg-[var(--brand-ochre)] text-[var(--ink)] hover:opacity-90"
+                        }`}>
+                          {isUploadingLogo ? (
+                            <>
+                              <Loader2 className="w-4 h-4 animate-spin text-[var(--ink)]" />
+                              <span>Uploading to ImageKit...</span>
+                            </>
+                          ) : (
+                            <>
+                              <UploadCloud className="w-4 h-4" />
+                              <span>{formData.logoUrl ? "Replace Logo via ImageKit" : "Upload Logo via ImageKit"}</span>
+                            </>
+                          )}
+                          <input
+                            type="file"
+                            accept="image/png,image/jpeg,image/webp,image/svg+xml,image/gif"
+                            disabled={isUploadingLogo}
+                            onChange={handleLogoUpload}
+                            className="hidden"
+                          />
+                        </label>
+
+                        {formData.logoUrl && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setFormData((prev) => ({ ...prev, logoUrl: "", logoKey: "" }));
+                              if (profile) {
+                                setProfile({ ...profile, logoUrl: "", logoKey: "" });
+                              }
+                            }}
+                            className="px-3.5 py-2.5 rounded-xl text-xs font-semibold text-rose-700 bg-rose-50 border border-rose-200 hover:bg-rose-100 cursor-pointer transition-colors"
+                          >
+                            Remove Logo
+                          </button>
+                        )}
+                      </div>
+                      <p className="text-[11px] text-[var(--muted)] mt-2">
+                        Supported formats: PNG, JPG, WEBP, SVG. Max file size: 5MB. Transparent PNG recommended for best presentation.
+                      </p>
+                    </div>
+
+                    {/* Direct Image URL input */}
+                    <div className="pt-2 border-t border-[var(--hairline)]">
+                      <label className="block text-xs font-semibold text-[var(--muted)] mb-1">
+                        Or enter direct Image / CDN URL:
+                      </label>
+                      <input
+                        type="url"
+                        value={formData.logoUrl}
+                        onChange={(e) => setFormData({ ...formData, logoUrl: e.target.value })}
+                        placeholder="https://ik.imagekit.io/goexports/logos/company-logo.png"
+                        className="w-full px-3.5 py-2 rounded-xl border border-[var(--hairline)] bg-[var(--canvas)] text-xs text-[var(--ink)] focus:outline-none focus:border-[var(--brand-ochre)]"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               {/* Card 1: Representative & Contact Information */}
               <div className="p-6 sm:p-8 rounded-3xl border border-[var(--hairline)] bg-[var(--surface-card)] space-y-6 shadow-sm">
                 <div>
@@ -2011,58 +2426,191 @@ export default function ExporterProfileDashboard({
         )}
 
         {/* ══════════════════════════════════════════
-            TAB 3: BUYER RFQs & INQUIRIES
+            TAB 3: BUYER RFQs & LEADS
             ══════════════════════════════════════════ */}
         {activeTab === "inquiries" && (
-          <div className="space-y-6 max-w-4xl mx-auto">
+          <div className="space-y-6 max-w-5xl mx-auto">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
                 <h2 className="text-2xl font-bold text-[var(--ink)] flex items-center gap-2">
                   <Inbox className="w-6 h-6 text-[var(--brand-ochre)]" />
-                  Buyer Inquiries & Direct RFQs
+                  Buyer Inquiries & Leads
                 </h2>
                 <p className="text-xs text-[var(--muted)] mt-1">
-                  Direct inquiries received from international buyers visiting your Goexports storefront.
+                  Direct RFQs and buyer inquiries received for your export products.
                 </p>
               </div>
 
               <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-[var(--surface-card)] border border-[var(--hairline)] text-[var(--ink)]">
                 <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
-                <span>0% Commission • 100% Direct</span>
+                <span>0% Commission • 100% Direct Contact</span>
               </div>
             </div>
 
-            {inquiries.length === 0 ? (
+            {/* Filter & Search Toolbar */}
+            <div className="p-4 sm:p-5 rounded-2xl border border-[var(--hairline)] bg-[var(--surface-card)] shadow-xs space-y-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                {/* Search Bar */}
+                <div className="relative">
+                  <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[var(--muted)]" />
+                  <input
+                    type="text"
+                    value={inquirySearchQuery}
+                    onChange={(e) => setInquirySearchQuery(e.target.value)}
+                    placeholder="Search name, country, specs..."
+                    className="w-full rounded-xl border border-[var(--hairline)] bg-[var(--canvas)] py-2 pl-9 pr-3 text-xs text-[var(--ink)] outline-none focus:border-[var(--brand-ochre)]"
+                  />
+                  {inquirySearchQuery && (
+                    <button
+                      onClick={() => setInquirySearchQuery("")}
+                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-[var(--muted)] hover:text-[var(--ink)] border-none bg-transparent cursor-pointer"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
+
+                {/* Status Filter */}
+                <div>
+                  <select
+                    value={inquiryStatusFilter}
+                    onChange={(e) => setInquiryStatusFilter(e.target.value)}
+                    className="w-full rounded-xl border border-[var(--hairline)] bg-[var(--canvas)] py-2 px-3 text-xs text-[var(--ink)] outline-none focus:border-[var(--brand-ochre)]"
+                  >
+                    <option value="all">All Lead Statuses</option>
+                    <option value="Direct Qualified">Direct Qualified</option>
+                    <option value="On Call Qualified">On Call Qualified</option>
+                    <option value="To be Called">To be Called</option>
+                    <option value="Future Reference">Future Reference</option>
+                    <option value="Dead">Dead</option>
+                  </select>
+                </div>
+
+                {/* Engagement Mode Filter */}
+                <div>
+                  <select
+                    value={inquiryEngagementFilter}
+                    onChange={(e) => setInquiryEngagementFilter(e.target.value)}
+                    className="w-full rounded-xl border border-[var(--hairline)] bg-[var(--canvas)] py-2 px-3 text-xs text-[var(--ink)] outline-none focus:border-[var(--brand-ochre)]"
+                  >
+                    <option value="all">All Engagement Modes</option>
+                    <option value="Phone Call">Phone Call</option>
+                    <option value="WhatsApp">WhatsApp</option>
+                    <option value="Email">Email</option>
+                    <option value="Video Call">Video Call</option>
+                    <option value="In-Person">In-Person</option>
+                    <option value="RFQ Form">RFQ Form</option>
+                    <option value="Direct Inquiry">Direct Inquiry</option>
+                  </select>
+                </div>
+
+                {/* Sort Order (Default: Latest to Oldest) */}
+                <div className="flex items-center gap-2">
+                  <div className="relative flex-1">
+                    <select
+                      value={inquirySortOrder}
+                      onChange={(e) => setInquirySortOrder(e.target.value as "latest" | "oldest")}
+                      className="w-full rounded-xl border border-[var(--hairline)] bg-[var(--canvas)] py-2 px-3 text-xs font-semibold text-[var(--ink)] outline-none focus:border-[var(--brand-ochre)]"
+                    >
+                      <option value="latest">Sort: Latest to Oldest</option>
+                      <option value="oldest">Sort: Oldest to Latest</option>
+                    </select>
+                  </div>
+
+                  {(inquirySearchQuery || inquiryStatusFilter !== "all" || inquiryEngagementFilter !== "all" || inquirySortOrder !== "latest") && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setInquirySearchQuery("");
+                        setInquiryStatusFilter("all");
+                        setInquiryEngagementFilter("all");
+                        setInquirySortOrder("latest");
+                      }}
+                      className="p-2 rounded-xl text-xs font-semibold text-rose-700 bg-rose-50 border border-rose-200 hover:bg-rose-100 cursor-pointer"
+                      title="Reset all filters"
+                    >
+                      <RotateCcw className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Filter Active summary */}
+              <div className="flex items-center justify-between text-xs text-[var(--muted)] pt-1 border-t border-[var(--hairline)]">
+                <span>
+                  Showing <strong>{filteredAndSortedInquiries.length}</strong> of {inquiries.length} total leads
+                </span>
+
+                <div className="flex items-center gap-2 text-xs">
+                  <span>Per page:</span>
+                  <select
+                    value={leadsPerPage}
+                    onChange={(e) => setLeadsPerPage(Number(e.target.value))}
+                    className="rounded-lg border border-[var(--hairline)] bg-[var(--canvas)] py-0.5 px-2 text-xs font-semibold text-[var(--ink)]"
+                  >
+                    <option value={5}>5</option>
+                    <option value={6}>6</option>
+                    <option value={10}>10</option>
+                    <option value={20}>20</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {filteredAndSortedInquiries.length === 0 ? (
               <div className="p-12 rounded-3xl border border-[var(--hairline)] bg-[var(--surface-card)] text-center space-y-4 shadow-sm">
                 <div className="w-16 h-16 rounded-full bg-[var(--surface-soft)] border border-[var(--hairline)] flex items-center justify-center mx-auto text-[var(--muted)]">
                   <Inbox className="w-8 h-8" />
                 </div>
-                <h3 className="text-xl font-bold text-[var(--ink)]">No Buyer Inquiries Yet</h3>
+                <h3 className="text-xl font-bold text-[var(--ink)]">
+                  {inquirySearchQuery || inquiryStatusFilter !== "all" || inquiryEngagementFilter !== "all"
+                    ? "No Matching Leads Found"
+                    : "No Buyer Leads Yet"}
+                </h3>
                 <p className="text-xs sm:text-sm text-[var(--muted)] max-w-md mx-auto leading-relaxed">
-                  As international buyers discover your exporter profile, their inquiries, quotation requests, and sample requests will appear here instantly.
+                  {inquirySearchQuery || inquiryStatusFilter !== "all" || inquiryEngagementFilter !== "all"
+                    ? "Try adjusting your search terms or clearing active filters to see all buyer leads."
+                    : "As international buyers discover your exporter profile, inquiries, quotation requests, and sample requests will appear here instantly."}
                 </p>
                 <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
-                  <Link
-                    href={`/${storefrontSlug}`}
-                    target="_blank"
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-xs text-[var(--ink)] no-underline shadow-sm"
-                    style={{ backgroundColor: "var(--brand-ochre)" }}
-                  >
-                    <span>View Public Storefront</span>
-                    <ExternalLink className="w-3.5 h-3.5" />
-                  </Link>
-                  <button
-                    onClick={() => handleTabChange("edit")}
-                    className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl font-bold text-xs text-[var(--ink)] bg-[var(--canvas)] border border-[var(--hairline)] cursor-pointer"
-                  >
-                    <Edit3 className="w-3.5 h-3.5" />
-                    <span>Optimize Profile</span>
-                  </button>
+                  {(inquirySearchQuery || inquiryStatusFilter !== "all" || inquiryEngagementFilter !== "all") ? (
+                    <button
+                      onClick={() => {
+                        setInquirySearchQuery("");
+                        setInquiryStatusFilter("all");
+                        setInquiryEngagementFilter("all");
+                        setInquirySortOrder("latest");
+                      }}
+                      className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl font-bold text-xs text-[var(--ink)] bg-[var(--brand-ochre)] border-none cursor-pointer shadow-sm"
+                    >
+                      <RotateCcw className="w-3.5 h-3.5" />
+                      <span>Clear All Filters</span>
+                    </button>
+                  ) : (
+                    <>
+                      <Link
+                        href={`/${storefrontSlug}`}
+                        target="_blank"
+                        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-xs text-[var(--ink)] no-underline shadow-sm"
+                        style={{ backgroundColor: "var(--brand-ochre)" }}
+                      >
+                        <span>View Public Storefront</span>
+                        <ExternalLink className="w-3.5 h-3.5" />
+                      </Link>
+                      <button
+                        onClick={() => handleTabChange("edit")}
+                        className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl font-bold text-xs text-[var(--ink)] bg-[var(--canvas)] border border-[var(--hairline)] cursor-pointer"
+                      >
+                        <Edit3 className="w-3.5 h-3.5" />
+                        <span>Optimize Profile</span>
+                      </button>
+                    </>
+                  )}
                 </div>
               </div>
             ) : (
               <div className="space-y-4">
-                {inquiries.map((inq) => {
+                {paginatedInquiries.map((inq) => {
                   const cleanBuyerPhone = (inq.buyerPhone || "").replace(/[^0-9]/g, "");
                   const mailtoUrl = `mailto:${inq.buyerEmail}?subject=${encodeURIComponent(
                     `Re: Inquiry for ${profile.companyName} on Goexports`
@@ -2072,23 +2620,27 @@ export default function ExporterProfileDashboard({
                         `Hello ${inq.buyerName}, thank you for your inquiry on Goexports regarding ${profile.companyName}.`
                       )}`
                     : null;
+                  const phoneCallUrl = cleanBuyerPhone ? `tel:${inq.buyerPhone}` : null;
 
                   return (
                     <div
                       key={inq.id}
                       className="p-6 rounded-3xl border border-[var(--hairline)] bg-[var(--surface-card)] space-y-4 shadow-sm hover:border-[var(--brand-ochre)] transition-colors"
                     >
+                      {/* Card Header */}
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[var(--hairline)] pb-3">
-                        <div>
-                          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-[var(--brand-ochre)] text-[var(--ink)] mr-2">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-[var(--brand-ochre)] text-[var(--ink)]">
                             {inq.inquiryType || "RFQ"}
                           </span>
+
                           <span className="text-base font-bold text-[var(--ink)]">
                             {inq.buyerName}
                           </span>
                           {inq.buyerCountry && (
-                            <span className="text-xs text-[var(--muted)] ml-2">
-                              • {inq.buyerCountry}
+                            <span className="text-xs font-semibold text-[var(--muted)] flex items-center gap-1">
+                              <MapPin className="w-3 h-3 text-[var(--muted)]" />
+                              {inq.buyerCountry}
                             </span>
                           )}
                         </div>
@@ -2099,38 +2651,79 @@ export default function ExporterProfileDashboard({
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+                      {/* Metadata Badges strip (Engagement Mode, Status, Caller) */}
+                      {(inq.engagementMode || inq.status || inq.callingPerson || inq.callingDate) && (
+                        <div className="flex flex-wrap items-center gap-2 pt-0.5">
+                          {inq.engagementMode && (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-[11px] font-bold bg-[#faf5e8] text-[#0a0a0a] border border-[#e5e5e5]">
+                              <Radio className="w-3 h-3 text-amber-600" />
+                              <span>Mode: {inq.engagementMode}</span>
+                            </span>
+                          )}
+
+                          {inq.status && (
+                            <span className="inline-flex items-center px-2.5 py-1 rounded-xl text-[11px] font-bold bg-blue-50 text-blue-800 border border-blue-200">
+                              {inq.status}
+                            </span>
+                          )}
+
+                          {inq.callingPerson && (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-[11px] font-medium bg-[var(--surface-soft)] text-[var(--ink)] border border-[var(--hairline)]">
+                              <User className="w-3 h-3 text-[var(--muted)]" />
+                              <span>Caller: <strong className="font-bold">{inq.callingPerson}</strong></span>
+                            </span>
+                          )}
+
+                          {inq.callingDate && (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-[11px] font-medium bg-[var(--surface-soft)] text-[var(--muted)] border border-[var(--hairline)]">
+                              <Calendar className="w-3 h-3" />
+                              <span>Call Date: <strong className="text-[var(--ink)]">{inq.callingDate}</strong></span>
+                            </span>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Contact & RFQ Grid */}
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs bg-[var(--canvas)]/60 p-3.5 rounded-2xl border border-[var(--hairline)]">
                         <div>
-                          <span className="text-[var(--muted)] block">Work Email:</span>
-                          <span className="font-semibold text-[var(--ink)]">{inq.buyerEmail}</span>
+                          <span className="text-[var(--muted)] block text-[11px]">Work Email:</span>
+                          <a
+                            href={`mailto:${inq.buyerEmail}`}
+                            className="font-bold text-[var(--ink)] hover:underline truncate block"
+                          >
+                            {inq.buyerEmail || "Not provided"}
+                          </a>
                         </div>
                         <div>
-                          <span className="text-[var(--muted)] block">Phone / WhatsApp:</span>
-                          <span className="font-semibold text-[var(--ink)]">
+                          <span className="text-[var(--muted)] block text-[11px]">Phone / WhatsApp:</span>
+                          <span className="font-bold text-[var(--ink)]">
                             {inq.buyerPhone || "Not provided"}
                           </span>
                         </div>
                         <div>
-                          <span className="text-[var(--muted)] block">Requested Quantity:</span>
-                          <span className="font-semibold text-[var(--ink)]">
+                          <span className="text-[var(--muted)] block text-[11px]">Requested Quantity:</span>
+                          <span className="font-bold text-[var(--ink)]">
                             {inq.quantity || "Not specified"}
                           </span>
                         </div>
                       </div>
 
+                      {/* Message / Requirement Description */}
                       <div className="p-4 rounded-2xl bg-[var(--canvas)] border border-[var(--hairline)] text-xs text-[var(--body)] leading-relaxed whitespace-pre-line">
-                        {inq.message}
+                        {inq.message || "No additional message provided."}
                       </div>
 
+                      {/* Action buttons */}
                       <div className="flex flex-wrap items-center gap-2 pt-1">
-                        <a
-                          href={mailtoUrl}
-                          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-[var(--ink)] no-underline shadow-2xs"
-                          style={{ backgroundColor: "var(--brand-ochre)" }}
-                        >
-                          <Mail className="w-3.5 h-3.5" />
-                          <span>Reply via Email</span>
-                        </a>
+                        {phoneCallUrl && (
+                          <a
+                            href={phoneCallUrl}
+                            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-[var(--ink)] bg-[var(--canvas)] border border-[var(--hairline)] hover:bg-[var(--surface-soft)] no-underline transition-colors shadow-2xs"
+                          >
+                            <Phone className="w-3.5 h-3.5 text-emerald-600" />
+                            <span>Call Buyer</span>
+                          </a>
+                        )}
 
                         {whatsappUrl && (
                           <a
@@ -2140,13 +2733,71 @@ export default function ExporterProfileDashboard({
                             className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 no-underline transition-colors shadow-2xs"
                           >
                             <MessageCircle className="w-3.5 h-3.5" />
-                            <span>Reply on WhatsApp</span>
+                            <span>WhatsApp</span>
                           </a>
                         )}
+
+                        <a
+                          href={mailtoUrl}
+                          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-[var(--ink)] no-underline shadow-2xs"
+                          style={{ backgroundColor: "var(--brand-ochre)" }}
+                        >
+                          <Mail className="w-3.5 h-3.5" />
+                          <span>Reply via Email</span>
+                        </a>
                       </div>
                     </div>
                   );
                 })}
+
+                {/* Pagination Controls */}
+                {totalPages > 1 && (
+                  <div className="p-4 rounded-2xl border border-[var(--hairline)] bg-[var(--surface-card)] flex flex-col sm:flex-row items-center justify-between gap-4 mt-6">
+                    <div className="text-xs text-[var(--muted)]">
+                      Showing{" "}
+                      <strong>{(currentPage - 1) * leadsPerPage + 1}</strong> -{" "}
+                      <strong>{Math.min(currentPage * leadsPerPage, filteredAndSortedInquiries.length)}</strong> of{" "}
+                      <strong>{filteredAndSortedInquiries.length}</strong> leads
+                    </div>
+
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        type="button"
+                        disabled={currentPage === 1}
+                        onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                        className="px-3 py-1.5 rounded-xl text-xs font-bold text-[var(--ink)] bg-[var(--canvas)] border border-[var(--hairline)] hover:bg-[var(--surface-soft)] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer flex items-center gap-1"
+                      >
+                        <ChevronLeft className="w-3.5 h-3.5" />
+                        <span>Previous</span>
+                      </button>
+
+                      {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
+                        <button
+                          key={pageNum}
+                          type="button"
+                          onClick={() => setCurrentPage(pageNum)}
+                          className={`w-8 h-8 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                            currentPage === pageNum
+                              ? "bg-[var(--ink)] text-white shadow-xs"
+                              : "bg-[var(--canvas)] text-[var(--muted)] border border-[var(--hairline)] hover:text-[var(--ink)]"
+                          }`}
+                        >
+                          {pageNum}
+                        </button>
+                      ))}
+
+                      <button
+                        type="button"
+                        disabled={currentPage === totalPages}
+                        onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                        className="px-3 py-1.5 rounded-xl text-xs font-bold text-[var(--ink)] bg-[var(--canvas)] border border-[var(--hairline)] hover:bg-[var(--surface-soft)] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer flex items-center gap-1"
+                      >
+                        <span>Next</span>
+                        <ChevronRight className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </div>

@@ -43,7 +43,7 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { title, description, category, price, moq, imageUrl, imageKey } = body;
+    const { title, description, category, price, moq, imageUrl, imageKey, images } = body;
 
     if (!title || typeof title !== "string" || !title.trim()) {
       return NextResponse.json(
@@ -52,6 +52,12 @@ export async function POST(req: Request) {
       );
     }
 
+    const cleanImages = Array.isArray(images)
+      ? images.filter((img: any) => typeof img === "string" && img.trim()).map((img: string) => img.trim())
+      : imageUrl ? [imageUrl.trim()] : [];
+
+    const primaryImageUrl = imageUrl ? imageUrl.trim() : (cleanImages[0] || "");
+
     const newProduct = {
       id: `PROD-${Date.now().toString(36).toUpperCase()}-${Math.floor(100 + Math.random() * 900)}`,
       title: title.trim(),
@@ -59,8 +65,9 @@ export async function POST(req: Request) {
       category: category ? category.trim() : userDoc.productCategory || "",
       price: price ? price.trim() : "",
       moq: moq ? moq.trim() : "",
-      imageUrl: imageUrl ? imageUrl.trim() : "",
+      imageUrl: primaryImageUrl,
       imageKey: imageKey ? imageKey.trim() : "",
+      images: cleanImages,
       createdAt: new Date().toISOString(),
     };
 
@@ -76,6 +83,7 @@ export async function POST(req: Request) {
       exporterId: userDoc.id,
       productId: newProduct.id,
       title: newProduct.title,
+      imagesCount: cleanImages.length,
       imageUrl: newProduct.imageUrl ? "Uploaded to ImageKit" : "None",
     });
 
@@ -111,7 +119,7 @@ export async function PUT(req: Request) {
     }
 
     const body = await req.json();
-    const { id, title, description, category, price, moq, imageUrl, imageKey } = body;
+    const { id, title, description, category, price, moq, imageUrl, imageKey, images } = body;
 
     if (!id) {
       return NextResponse.json({ error: "Missing product ID" }, { status: 400 });
@@ -128,6 +136,19 @@ export async function PUT(req: Request) {
       return NextResponse.json({ error: "Product not found in your catalog" }, { status: 404 });
     }
 
+    let updatedImages = existingProducts[prodIdx].images || [];
+    if (Array.isArray(images)) {
+      updatedImages = images.filter((img: any) => typeof img === "string" && img.trim()).map((img: string) => img.trim());
+    } else if (imageUrl) {
+      if (!updatedImages.includes(imageUrl.trim())) {
+        updatedImages = [imageUrl.trim(), ...updatedImages];
+      }
+    }
+
+    const primaryImg = imageUrl !== undefined && imageUrl.trim()
+      ? imageUrl.trim()
+      : (updatedImages[0] || existingProducts[prodIdx].imageUrl || "");
+
     existingProducts[prodIdx] = {
       ...existingProducts[prodIdx],
       title: title.trim(),
@@ -135,8 +156,9 @@ export async function PUT(req: Request) {
       category: category ? category.trim() : existingProducts[prodIdx].category || "",
       price: price ? price.trim() : "",
       moq: moq ? moq.trim() : "",
-      imageUrl: imageUrl !== undefined ? imageUrl.trim() : existingProducts[prodIdx].imageUrl || "",
+      imageUrl: primaryImg,
       imageKey: imageKey !== undefined ? imageKey.trim() : existingProducts[prodIdx].imageKey || "",
+      images: updatedImages,
       updatedAt: new Date().toISOString(),
     };
 

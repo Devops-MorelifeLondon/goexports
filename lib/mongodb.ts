@@ -64,6 +64,8 @@ const ExportProfileSchema = new mongoose.Schema(
     yearEstablished: { type: String, default: "" },
     exportCapacity: { type: String, default: "" },
     certifications: { type: [String], default: [] },
+    logoUrl: { type: String, default: "" },
+    logoKey: { type: String, default: "" },
     products: {
       type: [
         {
@@ -75,6 +77,7 @@ const ExportProfileSchema = new mongoose.Schema(
           moq: { type: String, default: "" },
           imageUrl: { type: String, default: "" },
           imageKey: { type: String, default: "" },
+          images: { type: [String], default: [] },
           createdAt: { type: String, default: () => new Date().toISOString() },
         },
       ],
@@ -131,6 +134,7 @@ const SellerInquirySchema = new mongoose.Schema(
     inquiryType: { type: String, default: "Bulk Order / RFQ" },
     quantity: { type: String, default: "" },
     message: { type: String, required: true },
+    engagementMode: { type: String, default: "" },
     receivedAt: { type: Date, default: Date.now },
     createdAt: { type: String, default: () => new Date().toISOString() },
   },
@@ -158,6 +162,21 @@ const ProductInquirySchema = new mongoose.Schema(
   { collection: "product_inquiries", timestamps: false, strict: false }
 );
 
+// ── CallingPerson Schema ──
+const CallingPersonSchema = new mongoose.Schema(
+  {
+    id: { type: String, required: true, index: true },
+    name: { type: String, required: true },
+    email: { type: String, default: "" },
+    phone: { type: String, default: "" },
+    role: { type: String, default: "Sales & Calling Executive" },
+    isActive: { type: Boolean, default: true },
+    createdAt: { type: String, default: () => new Date().toISOString() },
+    updatedAt: { type: String, default: () => new Date().toISOString() },
+  },
+  { collection: "calling_persons", timestamps: false, strict: false }
+);
+
 export const ExportProfile =
   mongoose.models.ExportProfile || mongoose.model("ExportProfile", ExportProfileSchema);
 
@@ -169,6 +188,9 @@ export const SellerInquiry =
 
 export const ProductInquiry =
   mongoose.models.ProductInquiry || mongoose.model("ProductInquiry", ProductInquirySchema);
+
+export const CallingPerson =
+  mongoose.models.CallingPerson || mongoose.model("CallingPerson", CallingPersonSchema);
 
 // Helper function to return native DB connection if needed
 export async function getDatabase() {
@@ -186,6 +208,11 @@ export async function getExportProfilesCollection() {
 export async function getPackagesCollection() {
   await connectToDatabase();
   return PackageModel.collection;
+}
+
+export async function getCallingPersonsCollection() {
+  await connectToDatabase();
+  return CallingPerson.collection;
 }
 
 export default connectToDatabase;

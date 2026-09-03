@@ -10,6 +10,7 @@ export interface SellerProduct {
   moq?: string;
   imageUrl?: string;
   imageKey?: string;
+  images?: string[];
   createdAt?: string;
 }
 
@@ -29,6 +30,8 @@ export interface SellerProfile {
   yearEstablished?: string;
   exportCapacity?: string;
   certifications: string[];
+  logoUrl?: string;
+  logoKey?: string;
   products?: SellerProduct[];
   createdAt?: string;
   status?: string;
@@ -127,11 +130,78 @@ export async function getSellerProfile(identifier: string, allowPending: boolean
       yearEstablished: doc.yearEstablished || "",
       exportCapacity: doc.exportCapacity || "",
       certifications: Array.isArray(doc.certifications) ? doc.certifications : [],
+      logoUrl: doc.logoUrl || "",
+      logoKey: doc.logoKey || "",
       products: Array.isArray(doc.products) ? doc.products : [],
       createdAt: doc.createdAt || "",
       status: doc.status || "pending",
       selectedPackage: doc.selectedPackage || doc.package || "Verified Growth Pro",
     };
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Locate a specific product belonging to a seller profile.
+ */
+export async function getSellerAndProduct(
+  sellerIdentifier: string,
+  productIdentifier: string,
+  allowPending: boolean = false
+): Promise<{ seller: SellerProfile; product: SellerProduct; otherProducts: SellerProduct[] } | null> {
+  if (!sellerIdentifier || !productIdentifier) return null;
+
+  const seller = await getSellerProfile(sellerIdentifier, allowPending);
+  if (!seller || !Array.isArray(seller.products) || seller.products.length === 0) {
+    return null;
+  }
+
+  const cleanProdId = decodeURIComponent(productIdentifier).trim().toLowerCase();
+  const product = seller.products.find(
+    (p) =>
+      p.id.toLowerCase() === cleanProdId ||
+      slugifyCompanyName(p.title) === cleanProdId
+  );
+
+  if (!product) {
+    return null;
+  }
+
+  const otherProducts = seller.products.filter((p) => p.id !== product.id);
+
+  return { seller, product, otherProducts };
+}
+
+/**
+ * Locate a product across all seller profiles by its unique ID.
+ */
+export async function getProductById(
+  productId: string,
+  allowPending: boolean = false
+): Promise<{ seller: SellerProfile; product: SellerProduct; otherProducts: SellerProduct[] } | null> {
+  if (!productId) return null;
+  const cleanId = decodeURIComponent(productId).trim();
+
+  try {
+    await connectToDatabase();
+    const activeFilter = {
+      isDeleted: { $ne: true },
+      status: { $nin: ["deleted", "removed", "inactive", "archived", "disabled"] },
+      "products.id": cleanId,
+    };
+
+    const doc: any = await ExportProfile.findOne(activeFilter).lean();
+    if (!doc) return null;
+
+    const seller = await getSellerProfile(doc.slug || doc.id, allowPending);
+    if (!seller || !seller.products) return null;
+
+    const product = seller.products.find((p) => p.id === cleanId);
+    if (!product) return null;
+
+    const otherProducts = seller.products.filter((p) => p.id !== product.id);
+    return { seller, product, otherProducts };
   } catch {
     return null;
   }

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { connectToDatabase, GetInTouchInquiry } from "@/lib/mongodb";
 import {
   sendConsultationLeadConfirmationEmail,
   sendAdminConsultationAlertEmail,
@@ -12,7 +13,13 @@ export async function POST(req: Request) {
     // Use provided inquiryDate or default to current ISO date string (YYYY-MM-DD)
     const effectiveInquiryDate = inquiryDate || new Date().toISOString().split("T")[0];
 
-    console.log("=== [NEW CONSULTATION / JOTFORM SUBMISSION] ===", {
+    const ipAddress =
+      req.headers.get("x-forwarded-for") ||
+      req.headers.get("x-real-ip") ||
+      "unknown";
+    const userAgent = req.headers.get("user-agent") || "unknown";
+
+    console.log("=== [NEW GET IN TOUCH / CONSULTATION SUBMISSION] ===", {
       fullName,
       phone,
       email,
@@ -22,9 +29,35 @@ export async function POST(req: Request) {
       inquiryDate: effectiveInquiryDate,
     });
 
+    // 1. Connect to Database and Persist in MongoDB
+    let savedInquiry: any = null;
+    try {
+      await connectToDatabase();
+      savedInquiry = await GetInTouchInquiry.create({
+        fullName: fullName ? fullName.trim() : "Valued Exporter",
+        phone: phone ? phone.trim() : "",
+        email: email ? email.trim().toLowerCase() : "",
+        company: company ? company.trim() : "",
+        country: country ? country.trim() : "",
+        productCategory: productCategory ? productCategory.trim() : "",
+        inquiryDate: effectiveInquiryDate,
+        status: "pending",
+        source: "Get In Touch",
+        syncedToJotform: false,
+        ipAddress,
+        userAgent,
+        receivedAt: new Date(),
+        createdAt: new Date().toISOString(),
+      });
+      console.log("=== [GET IN TOUCH SAVED TO MONGODB] ===", { id: savedInquiry._id });
+    } catch (dbError: any) {
+      console.error("MongoDB GetInTouch save error (non-blocking):", dbError.message);
+    }
+
     const formId = "260778155209059";
 
-    // 1. Submit to JotForm
+    // 2. Submit to JotForm
+    let jotformSynced = false;
     const params = new URLSearchParams();
     params.append("q3_fullName", fullName || "");
     params.append("q5_typeA5", phone || "");
@@ -50,14 +83,28 @@ export async function POST(req: Request) {
         }
       );
 
-      if (!jotformResponse.ok) {
+      if (jotformResponse.ok) {
+        jotformSynced = true;
+      } else {
         console.warn("JotForm submission status:", jotformResponse.status, jotformResponse.statusText);
       }
     } catch (jotError: any) {
       console.warn("JotForm error (non-blocking):", jotError.message);
     }
 
-    // 2. Trigger automated confirmation and admin alert emails
+    // Update syncedToJotform flag in database if successfully synced
+    if (savedInquiry && jotformSynced) {
+      try {
+        await GetInTouchInquiry.findByIdAndUpdate(savedInquiry._id, {
+          syncedToJotform: true,
+          updatedAt: new Date().toISOString(),
+        });
+      } catch (updateErr: any) {
+        console.warn("JotForm sync flag update warning:", updateErr.message);
+      }
+    }
+
+    // 3. Trigger automated confirmation and admin alert emails
     const leadData = {
       fullName: fullName || "Valued Exporter",
       phone: phone || "",
@@ -78,9 +125,27 @@ export async function POST(req: Request) {
       console.warn("Consultation email dispatch notice:", emailError.message);
     }
 
-    return NextResponse.json({ success: true, message: "Consultation request received successfully." });
+    return NextResponse.json({
+      success: true,
+      inquiryId: savedInquiry ? savedInquiry._id.toString() : undefined,
+      message: "Consultation request received successfully.",
+    });
   } catch (error: any) {
     console.error("Consultation submission error:", error);
+    return NextResponse.json(
+      { error: "Internal server error", details: error.message },
+      { status: 500 }
+    );
+  }
+}
+
+export async function GET() {
+  try {
+    await connectToDatabase();
+    const inquiries = await GetInTouchInquiry.find({}).sort({ receivedAt: -1 }).limit(100).lean();
+    return NextResponse.json({ success: true, count: inquiries.length, data: inquiries });
+  } catch (error: any) {
+    console.error("Error fetching GetInTouch inquiries:", error);
     return NextResponse.json(
       { error: "Internal server error", details: error.message },
       { status: 500 }

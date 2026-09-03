@@ -420,31 +420,44 @@ export default function SellerProfileClient({ seller }: SellerProfileClientProps
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
             {/* Company Main Info */}
             <div className="lg:col-span-8 space-y-3">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-[var(--brand-ochre)] text-[var(--ink)]">
-                  {seller.productCategory}
-                </span>
-                <span className="px-3 py-1 rounded-full text-xs font-medium bg-[var(--surface-soft)] border border-[var(--hairline)] text-[var(--body)] flex items-center gap-1">
-                  <MapPin className="w-3.5 h-3.5 text-[var(--muted)]" />
-                  {seller.country} {seller.postCode ? `(${seller.postCode})` : ""}
-                </span>
-                {seller.yearEstablished && (
-                  <span className="px-3 py-1 rounded-full text-xs font-medium bg-[var(--surface-soft)] border border-[var(--hairline)] text-[var(--body)] flex items-center gap-1">
-                    <Calendar className="w-3.5 h-3.5 text-[var(--muted)]" />
-                    Est. {seller.yearEstablished}
-                  </span>
+              <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+                {seller.logoUrl && (
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white border border-[var(--hairline)] p-1.5 shadow-sm flex items-center justify-center overflow-hidden shrink-0">
+                    <img
+                      src={seller.logoUrl}
+                      alt={seller.companyName}
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
                 )}
-                {seller.exportCapacity && (
-                  <span className="px-3 py-1 rounded-full text-xs font-medium bg-[var(--surface-soft)] border border-[var(--hairline)] text-[var(--body)] flex items-center gap-1">
-                    <TrendingUp className="w-3.5 h-3.5 text-[var(--muted)]" />
-                    Capacity: {seller.exportCapacity}
-                  </span>
-                )}
-              </div>
+                <div className="space-y-2">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-[var(--brand-ochre)] text-[var(--ink)]">
+                      {seller.productCategory}
+                    </span>
+                    <span className="px-3 py-1 rounded-full text-xs font-medium bg-[var(--surface-soft)] border border-[var(--hairline)] text-[var(--body)] flex items-center gap-1">
+                      <MapPin className="w-3.5 h-3.5 text-[var(--muted)]" />
+                      {seller.country} {seller.postCode ? `(${seller.postCode})` : ""}
+                    </span>
+                    {seller.yearEstablished && (
+                      <span className="px-3 py-1 rounded-full text-xs font-medium bg-[var(--surface-soft)] border border-[var(--hairline)] text-[var(--body)] flex items-center gap-1">
+                        <Calendar className="w-3.5 h-3.5 text-[var(--muted)]" />
+                        Est. {seller.yearEstablished}
+                      </span>
+                    )}
+                    {seller.exportCapacity && (
+                      <span className="px-3 py-1 rounded-full text-xs font-medium bg-[var(--surface-soft)] border border-[var(--hairline)] text-[var(--body)] flex items-center gap-1">
+                        <TrendingUp className="w-3.5 h-3.5 text-[var(--muted)]" />
+                        Capacity: {seller.exportCapacity}
+                      </span>
+                    )}
+                  </div>
 
-              <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-[var(--ink)] leading-tight">
-                {seller.companyName}
-              </h1>
+                  <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-[var(--ink)] leading-tight">
+                    {seller.companyName}
+                  </h1>
+                </div>
+              </div>
 
               <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs sm:text-sm text-[var(--muted)]">
                 <div className="flex items-center gap-1.5">
@@ -592,10 +605,13 @@ export default function SellerProfileClient({ seller }: SellerProfileClientProps
                     >
                       <div>
                         {/* Image */}
-                        <div className="relative aspect-16/10 bg-[var(--surface-soft)] overflow-hidden flex items-center justify-center border-b border-[var(--hairline)]">
-                          {prod.imageUrl ? (
+                        <Link
+                          href={`/${seller.slug || seller.id}/products/${prod.id}`}
+                          className="relative aspect-16/10 bg-[var(--surface-soft)] overflow-hidden flex items-center justify-center border-b border-[var(--hairline)] block"
+                        >
+                          {prod.imageUrl || (prod.images && prod.images[0]) ? (
                             <img
-                              src={prod.imageUrl}
+                              src={prod.imageUrl || (prod.images && prod.images[0])}
                               alt={prod.title}
                               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                             />
@@ -611,13 +627,22 @@ export default function SellerProfileClient({ seller }: SellerProfileClientProps
                               {prod.category}
                             </span>
                           )}
-                        </div>
+
+                          {prod.images && prod.images.length > 1 && (
+                            <span className="absolute bottom-2 right-2 px-2 py-0.5 rounded-md text-[10px] font-bold bg-black/60 text-white backdrop-blur-xs shadow-xs">
+                              📷 {prod.images.length} Photos
+                            </span>
+                          )}
+                        </Link>
 
                         {/* Text Content */}
                         <div className="p-5 space-y-3">
-                          <h3 className="text-base font-bold text-[var(--ink)] line-clamp-2 leading-snug">
+                          <Link
+                            href={`/${seller.slug || seller.id}/products/${prod.id}`}
+                            className="text-base font-bold text-[var(--ink)] group-hover:text-[var(--brand-ochre)] transition-colors line-clamp-2 leading-snug no-underline block"
+                          >
                             {prod.title}
-                          </h3>
+                          </Link>
 
                           <div className="flex flex-wrap gap-2 text-xs">
                             {prod.price && (
@@ -640,15 +665,23 @@ export default function SellerProfileClient({ seller }: SellerProfileClientProps
                         </div>
                       </div>
 
-                      {/* Action Button */}
-                      <div className="p-4 border-t border-[var(--hairline)] bg-[var(--surface-card)]">
+                      {/* Action Buttons */}
+                      <div className="p-4 border-t border-[var(--hairline)] bg-[var(--surface-card)] flex items-center gap-2">
+                        <Link
+                          href={`/${seller.slug || seller.id}/products/${prod.id}`}
+                          className="flex-1 py-2.5 px-3 rounded-xl font-bold text-xs text-[var(--ink)] bg-[var(--canvas)] border border-[var(--hairline)] hover:bg-[var(--surface-soft)] flex items-center justify-center gap-1.5 no-underline transition-colors shadow-2xs"
+                        >
+                          <span>View Product Page</span>
+                          <ExternalLink className="w-3 h-3 text-[var(--muted)]" />
+                        </Link>
+
                         <button
                           onClick={() => handleOpenProductInquiry(prod)}
-                          className="w-full py-2.5 px-4 rounded-xl font-bold text-xs text-[var(--ink)] flex items-center justify-center gap-2 cursor-pointer transition-all hover:opacity-90 shadow-xs border-none"
+                          className="py-2.5 px-3.5 rounded-xl font-bold text-xs text-[var(--ink)] flex items-center justify-center gap-1.5 cursor-pointer transition-all hover:opacity-90 shadow-xs border-none shrink-0"
                           style={{ backgroundColor: "var(--brand-ochre)" }}
                         >
                           <Send className="w-3.5 h-3.5" />
-                          <span>Inquire About This Product</span>
+                          <span>Quick RFQ</span>
                         </button>
                       </div>
                     </div>

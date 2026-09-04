@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   CheckCircle2,
@@ -24,6 +24,27 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { BUYER_PLANS, BuyerPlan } from "@/data/plans";
+
+export interface PackageItem {
+  id: string;
+  slug?: string;
+  name: string;
+  tagline: string;
+  price: number | string;
+  priceDisplay?: string;
+  currency: string;
+  period: string;
+  leads: number | string;
+  leadsLabel: string;
+  featured: boolean;
+  badge?: string;
+  features: string[];
+  isActive?: boolean;
+}
+
+interface ExportProfileFormProps {
+  initialPlans?: PackageItem[];
+}
 
 interface ExportProfileFormData {
   fullName: string;
@@ -126,7 +147,19 @@ const COMMON_COUNTRIES = [
   "Other",
 ];
 
-export default function ExportProfileForm() {
+export default function ExportProfileForm({ initialPlans }: ExportProfileFormProps = {}) {
+  const [plans, setPlans] = useState<PackageItem[]>(
+    initialPlans && initialPlans.length > 0 ? initialPlans : BUYER_PLANS
+  );
+  const [loadingPlans, setLoadingPlans] = useState(!initialPlans || initialPlans.length === 0);
+
+  // Determine initial selected package from initial plans or BUYER_PLANS
+  const defaultSelected = (() => {
+    const list = initialPlans && initialPlans.length > 0 ? initialPlans : BUYER_PLANS;
+    const featured = list.find((p) => p.featured);
+    return featured ? featured.name : list[0]?.name || "Growth";
+  })();
+
   const [formData, setFormData] = useState<ExportProfileFormData>({
     fullName: "",
     phone: "",
@@ -144,8 +177,59 @@ export default function ExportProfileForm() {
     yearEstablished: "",
     exportCapacity: "",
     certifications: [],
-    selectedPackage: "Verified Growth Pro",
+    selectedPackage: defaultSelected,
   });
+
+  // Client-side fetch from DB API endpoint to ensure latest plans
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadDbPackages() {
+      try {
+        const response = await fetch("/api/packages", {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+          cache: "no-store",
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success && Array.isArray(data.packages) && data.packages.length > 0) {
+            if (isMounted) {
+              setPlans(data.packages);
+
+              // Validate/update selectedPackage if not matching any active package
+              setFormData((prev) => {
+                const hasMatch = data.packages.some(
+                  (p: PackageItem) =>
+                    p.name.toLowerCase() === prev.selectedPackage.toLowerCase() ||
+                    p.id.toLowerCase() === prev.selectedPackage.toLowerCase() ||
+                    (p.slug && p.slug.toLowerCase() === prev.selectedPackage.toLowerCase())
+                );
+                if (!hasMatch) {
+                  const featured = data.packages.find((p: PackageItem) => p.featured) || data.packages[0];
+                  return { ...prev, selectedPackage: featured?.name || prev.selectedPackage };
+                }
+                return prev;
+              });
+            }
+          }
+        }
+      } catch (err) {
+        console.warn("Could not fetch packages from API:", err);
+      } finally {
+        if (isMounted) {
+          setLoadingPlans(false);
+        }
+      }
+    }
+
+    loadDbPackages();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const [errors, setErrors] = useState<FormErrors>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
@@ -438,6 +522,8 @@ export default function ExportProfileForm() {
   };
 
   const resetForm = () => {
+    const featured = plans.find((p) => p.featured);
+    const defaultPkg = featured ? featured.name : plans[0]?.name || "Growth";
     setFormData({
       fullName: "",
       phone: "",
@@ -455,7 +541,7 @@ export default function ExportProfileForm() {
       yearEstablished: "",
       exportCapacity: "",
       certifications: [],
-      selectedPackage: "Verified Growth Pro",
+      selectedPackage: defaultPkg,
     });
     setErrors({});
     setTouched({});
@@ -1260,92 +1346,128 @@ export default function ExportProfileForm() {
             Choose your sourcing plan. You can upgrade or modify your package anytime in your exporter dashboard.
           </p>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
-            {BUYER_PLANS.map((plan) => {
-              const isSelected = formData.selectedPackage === plan.name || formData.selectedPackage === plan.id;
-              return (
+          {loadingPlans && plans.length === 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+              {[1, 2, 3, 4].map((n) => (
                 <div
-                  key={plan.id}
-                  onClick={() => setFormData((prev) => ({ ...prev, selectedPackage: plan.name }))}
-                  className={`relative rounded-2xl p-4.5 cursor-pointer transition-all duration-200 flex flex-col justify-between ${
-                    isSelected
-                      ? "bg-[var(--canvas)] border-2 border-[var(--brand-ochre)] shadow-md ring-2 ring-[var(--brand-ochre)]/20"
-                      : "bg-[var(--canvas)] border border-[var(--hairline)] hover:border-[var(--muted)] hover:shadow-sm opacity-90 hover:opacity-100"
-                  }`}
+                  key={n}
+                  className="animate-pulse rounded-2xl p-4.5 border border-[var(--hairline)] bg-[var(--canvas)] flex flex-col justify-between h-64"
                 >
-                  {/* Badge */}
-                  {plan.badge && (
-                    <div className="absolute -top-2.5 right-3 px-2.5 py-0.5 rounded-full text-[9.5px] font-bold uppercase tracking-wider bg-[var(--brand-ochre)] text-[var(--ink)] shadow-xs">
-                      {plan.badge}
-                    </div>
-                  )}
-
                   <div>
-                    {/* Header */}
-                    <div className="flex items-center justify-between gap-2 mb-1.5">
-                      <div className="flex items-center gap-2">
-                        <div
-                          className={`w-4 h-4 rounded-full border flex items-center justify-center transition-colors shrink-0 ${
-                            isSelected
-                              ? "border-[var(--ink)] bg-[var(--ink)] text-white"
-                              : "border-[var(--muted)] bg-transparent"
-                          }`}
-                        >
-                          {isSelected && <Check className="w-2.5 h-2.5 stroke-[3]" />}
-                        </div>
-                        <h4 className="text-sm font-bold text-[var(--ink)]">{plan.name}</h4>
+                    <div className="h-4 w-24 bg-gray-200 dark:bg-zinc-800 rounded mb-3" />
+                    <div className="h-6 w-20 bg-gray-200 dark:bg-zinc-800 rounded mb-2" />
+                    <div className="h-4 w-28 bg-gray-200 dark:bg-zinc-800 rounded mb-4" />
+                    <div className="space-y-2">
+                      <div className="h-3 w-full bg-gray-200 dark:bg-zinc-800 rounded" />
+                      <div className="h-3 w-3/4 bg-gray-200 dark:bg-zinc-800 rounded" />
+                    </div>
+                  </div>
+                  <div className="h-8 w-full bg-gray-200 dark:bg-zinc-800 rounded mt-4" />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+              {plans.map((plan) => {
+                const planNameLower = (plan.name || "").toLowerCase();
+                const planIdLower = (plan.id || "").toLowerCase();
+                const planSlugLower = (plan.slug || "").toLowerCase();
+                const selectedLower = (formData.selectedPackage || "").toLowerCase();
+
+                const isSelected =
+                  selectedLower === planNameLower ||
+                  selectedLower === planIdLower ||
+                  (Boolean(planSlugLower) && selectedLower === planSlugLower);
+
+                const displayPrice =
+                  plan.priceDisplay !== undefined && plan.priceDisplay !== null && plan.priceDisplay !== ""
+                    ? String(plan.priceDisplay)
+                    : String(plan.price ?? "0");
+
+                return (
+                  <div
+                    key={plan.id || plan.name}
+                    onClick={() => setFormData((prev) => ({ ...prev, selectedPackage: plan.name }))}
+                    className={`relative rounded-2xl p-4.5 cursor-pointer transition-all duration-200 flex flex-col justify-between ${
+                      isSelected
+                        ? "bg-[var(--canvas)] border-2 border-[var(--brand-ochre)] shadow-md ring-2 ring-[var(--brand-ochre)]/20"
+                        : "bg-[var(--canvas)] border border-[var(--hairline)] hover:border-[var(--muted)] hover:shadow-sm opacity-90 hover:opacity-100"
+                    }`}
+                  >
+                    {/* Badge */}
+                    {plan.badge && (
+                      <div className="absolute -top-2.5 right-3 px-2.5 py-0.5 rounded-full text-[9.5px] font-bold uppercase tracking-wider bg-[var(--brand-ochre)] text-[var(--ink)] shadow-xs">
+                        {plan.badge}
                       </div>
+                    )}
+
+                    <div>
+                      {/* Header */}
+                      <div className="flex items-center justify-between gap-2 mb-1.5">
+                        <div className="flex items-center gap-2">
+                          <div
+                            className={`w-4 h-4 rounded-full border flex items-center justify-center transition-colors shrink-0 ${
+                              isSelected
+                                ? "border-[var(--ink)] bg-[var(--ink)] text-white"
+                                : "border-[var(--muted)] bg-transparent"
+                            }`}
+                          >
+                            {isSelected && <Check className="w-2.5 h-2.5 stroke-[3]" />}
+                          </div>
+                          <h4 className="text-sm font-bold text-[var(--ink)]">{plan.name}</h4>
+                        </div>
+                      </div>
+
+                      {/* Price */}
+                      <div className="flex items-baseline gap-1 mb-1">
+                        <span className="text-xs font-semibold text-[var(--muted)]">{plan.currency || "£"}</span>
+                        <span className="text-xl font-bold text-[var(--ink)] tracking-tight">{displayPrice}</span>
+                        <span className="text-[11px] text-[var(--muted-soft)]">{plan.period || "/ month"}</span>
+                      </div>
+
+                      {/* Leads Pill */}
+                      <div className="mb-2.5">
+                        <span className="inline-block text-[11px] font-semibold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200/60">
+                          {plan.leads} {plan.leadsLabel || "Qualified Leads / Month"}
+                        </span>
+                      </div>
+
+                      <p className="text-[11px] text-[var(--muted)] leading-relaxed mb-3">
+                        {plan.tagline}
+                      </p>
+
+                      {/* Features list */}
+                      <ul className="space-y-1.5 border-t border-[var(--hairline)] pt-2.5 mb-2">
+                        {(plan.features || []).slice(0, 4).map((feat, idx) => (
+                          <li key={idx} className="flex items-start gap-1.5 text-[11.5px] text-[var(--body-strong)]">
+                            <Check className={`w-3 h-3 mt-0.5 shrink-0 ${isSelected ? "text-amber-600 font-bold" : "text-emerald-600"}`} />
+                            <span className="leading-tight">{feat}</span>
+                          </li>
+                        ))}
+                        {(plan.features || []).length > 4 && (
+                          <li className="text-[10.5px] text-[var(--muted)] pl-4.5 pt-0.5">
+                            + {plan.features.length - 4} more features
+                          </li>
+                        )}
+                      </ul>
                     </div>
 
-                    {/* Price */}
-                    <div className="flex items-baseline gap-1 mb-1">
-                      <span className="text-xs font-semibold text-[var(--muted)]">{plan.currency}</span>
-                      <span className="text-xl font-bold text-[var(--ink)] tracking-tight">{plan.price}</span>
-                      <span className="text-[11px] text-[var(--muted-soft)]">{plan.period}</span>
-                    </div>
-
-                    {/* Leads Pill */}
-                    <div className="mb-2.5">
-                      <span className="inline-block text-[11px] font-semibold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200/60">
-                        {plan.leads} {plan.leadsLabel}
+                    <div className="pt-2.5 mt-2 border-t border-[var(--hairline)]/60 text-center">
+                      <span
+                        className={`inline-block w-full py-1.5 rounded-lg text-xs font-semibold transition-colors ${
+                          isSelected
+                            ? "bg-[var(--ink)] text-white"
+                            : "bg-[var(--surface-card)] text-[var(--body-strong)]"
+                        }`}
+                      >
+                        {isSelected ? "Selected Plan ✓" : "Select Plan"}
                       </span>
                     </div>
-
-                    <p className="text-[11px] text-[var(--muted)] leading-relaxed mb-3">
-                      {plan.tagline}
-                    </p>
-
-                    {/* Features list */}
-                    <ul className="space-y-1.5 border-t border-[var(--hairline)] pt-2.5 mb-2">
-                      {plan.features.slice(0, 4).map((feat, idx) => (
-                        <li key={idx} className="flex items-start gap-1.5 text-[11.5px] text-[var(--body-strong)]">
-                          <Check className={`w-3 h-3 mt-0.5 shrink-0 ${isSelected ? "text-amber-600 font-bold" : "text-emerald-600"}`} />
-                          <span className="leading-tight">{feat}</span>
-                        </li>
-                      ))}
-                      {plan.features.length > 4 && (
-                        <li className="text-[10.5px] text-[var(--muted)] pl-4.5 pt-0.5">
-                          + {plan.features.length - 4} more features
-                        </li>
-                      )}
-                    </ul>
                   </div>
-
-                  <div className="pt-2.5 mt-2 border-t border-[var(--hairline)]/60 text-center">
-                    <span
-                      className={`inline-block w-full py-1.5 rounded-lg text-xs font-semibold transition-colors ${
-                        isSelected
-                          ? "bg-[var(--ink)] text-white"
-                          : "bg-[var(--surface-card)] text-[var(--body-strong)]"
-                      }`}
-                    >
-                      {isSelected ? "Selected Plan ✓" : "Select Plan"}
-                    </span>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          )}
         </div>
 
         {/* ── SUBMIT BUTTON ── */}

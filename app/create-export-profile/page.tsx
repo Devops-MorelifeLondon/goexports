@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import ExportProfileForm from "./ExportProfileForm";
 import { CheckCircle2, ShieldCheck, Globe2, TrendingUp, Users2, Sparkles } from "lucide-react";
 import Link from "next/link";
+import { getAllPackages } from "@/lib/packages";
 
 export const metadata: Metadata = {
   title: "Create Export Profile | Goexports - Connect with Verified Global Buyers",
@@ -25,7 +26,9 @@ export const metadata: Metadata = {
   },
 };
 
-export default function CreateExportProfilePage() {
+export default async function CreateExportProfilePage() {
+  const initialPackages = await getAllPackages();
+
   return (
     <main className="min-h-screen pt-8 pb-20" style={{ backgroundColor: "var(--canvas)" }}>
       {/* Header Banner */}
@@ -60,7 +63,7 @@ export default function CreateExportProfilePage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
           {/* Main Form Area */}
           <div className="lg:col-span-8">
-            <ExportProfileForm />
+            <ExportProfileForm initialPlans={initialPackages} />
           </div>
 
           {/* Sidebar: Trust & Benefits */}

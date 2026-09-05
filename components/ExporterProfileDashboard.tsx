@@ -81,6 +81,7 @@ export interface ExporterProfileData {
   slug: string;
   fullName: string;
   phone: string;
+  whatsapp?: string;
   email: string;
   companyName: string;
   country: string;
@@ -312,6 +313,7 @@ export default function ExporterProfileDashboard({
   const [formData, setFormData] = useState({
     fullName: "",
     phone: "",
+    whatsapp: "",
     email: "",
     companyName: "",
     country: "",
@@ -377,6 +379,7 @@ export default function ExporterProfileDashboard({
     setFormData({
       fullName: data.fullName || "",
       phone: data.phone || "",
+      whatsapp: data.whatsapp || data.phone || "",
       email: data.email || "",
       companyName: data.companyName || "",
       country: data.country || "",
@@ -1642,9 +1645,27 @@ export default function ExporterProfileDashboard({
                     </div>
 
                     <div>
-                      <span className="text-[var(--muted)] block">Direct Phone</span>
-                      <span className="font-semibold text-[var(--ink)]">{profile.phone}</span>
+                      <span className="text-[var(--muted)] block">Company Phone</span>
+                      <a href={`tel:${profile.phone.replace(/[^0-9+]/g, '')}`} className="font-semibold text-[var(--ink)] hover:underline flex items-center gap-1">
+                        <Phone className="w-3.5 h-3.5 text-[var(--muted)]" />
+                        <span>{profile.phone}</span>
+                      </a>
                     </div>
+
+                    {profile.whatsapp && (
+                      <div>
+                        <span className="text-[var(--muted)] block">WhatsApp Number</span>
+                        <a
+                          href={`https://wa.me/${profile.whatsapp.replace(/[^0-9]/g, '')}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="font-semibold text-emerald-700 hover:underline flex items-center gap-1"
+                        >
+                          <MessageCircle className="w-3.5 h-3.5 text-emerald-600" />
+                          <span>{profile.whatsapp}</span>
+                        </a>
+                      </div>
+                    )}
 
                     {profile.website && (
                       <div>
@@ -2681,7 +2702,7 @@ export default function ExporterProfileDashboard({
 
                   <div>
                     <label className="block text-xs font-bold text-[var(--ink)] mb-1">
-                      Phone Number / WhatsApp *
+                      Company Phone Number *
                     </label>
                     <input
                       type="tel"
@@ -2694,6 +2715,22 @@ export default function ExporterProfileDashboard({
                     {formErrors.phone && (
                       <p className="text-[11px] text-rose-600 mt-1">{formErrors.phone}</p>
                     )}
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-[var(--ink)] mb-1">
+                      WhatsApp Number (Direct Chats)
+                    </label>
+                    <input
+                      type="tel"
+                      value={formData.whatsapp || ""}
+                      onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
+                      placeholder="+44 7911 123456"
+                      className="w-full px-4 py-3 rounded-xl border border-[var(--hairline)] bg-[var(--canvas)] text-sm text-[var(--ink)] focus:outline-none focus:border-[var(--brand-ochre)]"
+                    />
+                    <p className="text-[11px] text-[var(--muted)] mt-1">
+                      International buyers can message you directly on this WhatsApp line.
+                    </p>
                   </div>
 
                   <div className="sm:col-span-2">

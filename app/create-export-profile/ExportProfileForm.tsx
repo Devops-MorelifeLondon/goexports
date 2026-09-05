@@ -49,6 +49,8 @@ interface ExportProfileFormProps {
 interface ExportProfileFormData {
   fullName: string;
   phone: string;
+  whatsapp?: string;
+  sameAsPhone?: boolean;
   email: string;
   password: string;
   confirmPassword: string;
@@ -69,6 +71,7 @@ interface ExportProfileFormData {
 interface FormErrors {
   fullName?: string;
   phone?: string;
+  whatsapp?: string;
   email?: string;
   password?: string;
   confirmPassword?: string;
@@ -161,6 +164,8 @@ export default function ExportProfileForm({ initialPlans }: ExportProfileFormPro
   const [formData, setFormData] = useState<ExportProfileFormData>({
     fullName: "",
     phone: "",
+    whatsapp: "",
+    sameAsPhone: true,
     email: "",
     password: "",
     confirmPassword: "",
@@ -247,8 +252,14 @@ export default function ExportProfileForm({ initialPlans }: ExportProfileFormPro
         return undefined;
 
       case "phone":
-        if (!value || !value.trim()) return "Phone / WhatsApp number is required";
+        if (!value || !value.trim()) return "Company phone number is required";
         if (value.trim().length < 6) return "Please enter a valid phone number with country code";
+        return undefined;
+
+      case "whatsapp":
+        if (value && value.trim() && value.trim().length < 6) {
+          return "Please enter a valid WhatsApp number with country code";
+        }
         return undefined;
 
       case "email":
@@ -354,7 +365,13 @@ export default function ExportProfileForm({ initialPlans }: ExportProfileFormPro
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData((prev) => {
+      const updated = { ...prev, [name]: value };
+      if (name === "phone" && prev.sameAsPhone) {
+        updated.whatsapp = value;
+      }
+      return updated;
+    });
 
     if (touched[name]) {
       const error = validateField(name, value);
@@ -441,6 +458,7 @@ export default function ExportProfileForm({ initialPlans }: ExportProfileFormPro
     const payload = {
       fullName: formData.fullName,
       phone: formData.phone,
+      whatsapp: formData.sameAsPhone !== false ? formData.phone : (formData.whatsapp || formData.phone),
       email: formData.email,
       password: formData.password,
       companyName: formData.companyName,
@@ -734,10 +752,10 @@ export default function ExportProfileForm({ initialPlans }: ExportProfileFormPro
               )}
             </div>
 
-            {/* Phone Number */}
+            {/* Company Phone Number */}
             <div className="flex flex-col gap-1">
               <label htmlFor="phone" className="text-xs font-semibold text-[var(--body-strong)]">
-                Phone / WhatsApp <span className="text-rose-500">*</span>
+                Company Phone Number <span className="text-rose-500">*</span>
               </label>
               <input
                 id="phone"
@@ -748,7 +766,7 @@ export default function ExportProfileForm({ initialPlans }: ExportProfileFormPro
                 onChange={handleInputChange}
                 onFocus={() => setFocusedField("phone")}
                 onBlur={() => handleBlur("phone")}
-                placeholder="e.g. +44 7911 123456"
+                placeholder="e.g. +44 20 7946 0958"
                 className={`w-full px-4 py-2.5 rounded-xl text-sm transition-colors outline-none disabled:opacity-50 placeholder:text-[var(--muted-soft)] ${
                   errors.phone && touched.phone ? "border-rose-500 ring-1 ring-rose-500/30" : ""
                 }`}
@@ -770,6 +788,68 @@ export default function ExportProfileForm({ initialPlans }: ExportProfileFormPro
                   <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                   {errors.phone}
                 </p>
+              )}
+            </div>
+
+            {/* WhatsApp Number with Quick Same-As Toggle */}
+            <div className="flex flex-col gap-1 sm:col-span-2">
+              <div className="flex items-center justify-between">
+                <label htmlFor="whatsapp" className="text-xs font-semibold text-[var(--body-strong)]">
+                  WhatsApp Number <span className="text-[var(--muted)] font-normal">(For direct buyer messaging)</span>
+                </label>
+                <label className="flex items-center gap-1.5 text-xs text-[var(--muted)] hover:text-[var(--ink)] cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={formData.sameAsPhone !== false}
+                    onChange={(e) => {
+                      const checked = e.target.checked;
+                      setFormData((prev) => ({
+                        ...prev,
+                        sameAsPhone: checked,
+                        whatsapp: checked ? prev.phone : prev.whatsapp,
+                      }));
+                    }}
+                    className="rounded border-[var(--hairline)] accent-[var(--brand-ochre)] cursor-pointer"
+                  />
+                  <span>Same as Company Phone</span>
+                </label>
+              </div>
+
+              {!formData.sameAsPhone && (
+                <div className="animate-in fade-in duration-200 mt-1">
+                  <input
+                    id="whatsapp"
+                    name="whatsapp"
+                    type="tel"
+                    disabled={isSubmitting}
+                    value={formData.whatsapp || ""}
+                    onChange={handleInputChange}
+                    onFocus={() => setFocusedField("whatsapp")}
+                    onBlur={() => handleBlur("whatsapp")}
+                    placeholder="e.g. +44 7911 123456 (WhatsApp mobile / business number)"
+                    className={`w-full px-4 py-2.5 rounded-xl text-sm transition-colors outline-none disabled:opacity-50 placeholder:text-[var(--muted-soft)] ${
+                      errors.whatsapp && touched.whatsapp ? "border-rose-500 ring-1 ring-rose-500/30" : ""
+                    }`}
+                    style={{
+                      backgroundColor: "var(--canvas)",
+                      color: "var(--ink)",
+                      border: `1px solid ${
+                        errors.whatsapp && touched.whatsapp
+                          ? "#ef4444"
+                          : focusedField === "whatsapp"
+                          ? "var(--ink)"
+                          : "var(--hairline)"
+                      }`,
+                      height: "44px",
+                    }}
+                  />
+                  {errors.whatsapp && touched.whatsapp && (
+                    <p className="text-xs text-rose-600 flex items-center gap-1 mt-0.5">
+                      <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                      {errors.whatsapp}
+                    </p>
+                  )}
+                </div>
               )}
             </div>
 

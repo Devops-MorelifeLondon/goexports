@@ -88,14 +88,17 @@ export default function ProductDetailClient({
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   const storefrontUrl = `/${seller.slug || seller.id}`;
-  const cleanSellerPhone = (seller.phone || "").replace(/[^0-9]/g, "");
+  const whatsappToUse = (seller as any).whatsapp || seller.phone || "";
+  const cleanSellerWhatsapp = whatsappToUse.replace(/[^0-9]/g, "");
+  const cleanSellerPhone = (seller.phone || "").replace(/[^0-9+]/g, "");
 
   const whatsappMsg = encodeURIComponent(
     `Hello ${seller.companyName}, I found your product "${product.title}" on Goexports (${typeof window !== "undefined" ? window.location.href : ""}) and would like to request an FOB quotation and MOQ details.`
   );
-  const whatsappUrl = cleanSellerPhone
-    ? `https://wa.me/${cleanSellerPhone}?text=${whatsappMsg}`
+  const whatsappUrl = cleanSellerWhatsapp
+    ? `https://wa.me/${cleanSellerWhatsapp}?text=${whatsappMsg}`
     : null;
+  const telUrl = cleanSellerPhone ? `tel:${cleanSellerPhone}` : null;
 
   const handleShare = () => {
     if (typeof window !== "undefined") {
@@ -439,7 +442,7 @@ export default function ProductDetailClient({
             )}
 
             {/* 7. CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-3 pt-1">
+            <div className="flex flex-col sm:flex-row gap-2.5 pt-1">
               <button
                 type="button"
                 onClick={scrollToInquiry}
@@ -450,6 +453,16 @@ export default function ProductDetailClient({
                 <span>Request Quotation &amp; Samples</span>
               </button>
 
+              {telUrl && (
+                <a
+                  href={telUrl}
+                  className="py-3.5 px-4 rounded-2xl font-bold text-sm text-[var(--ink)] bg-[var(--surface-soft)] border border-[var(--hairline)] hover:bg-[var(--surface-card)] no-underline flex items-center justify-center gap-1.5 transition-colors shadow-2xs"
+                >
+                  <Phone className="w-4 h-4 text-sky-600" />
+                  <span>Call</span>
+                </a>
+              )}
+
               {whatsappUrl && (
                 <a
                   href={whatsappUrl}
@@ -458,7 +471,7 @@ export default function ProductDetailClient({
                   className="py-3.5 px-5 rounded-2xl font-bold text-sm text-white bg-emerald-600 hover:bg-emerald-700 no-underline flex items-center justify-center gap-2 transition-colors shadow-sm"
                 >
                   <MessageCircle className="w-4 h-4" />
-                  <span>WhatsApp Inquiry</span>
+                  <span>WhatsApp</span>
                 </a>
               )}
             </div>

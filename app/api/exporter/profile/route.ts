@@ -122,6 +122,7 @@ export async function PUT(req: Request) {
     const {
       fullName,
       phone,
+      whatsapp,
       companyName,
       country,
       productCategory,
@@ -202,6 +203,7 @@ export async function PUT(req: Request) {
     const updatedData = {
       fullName: fullName.trim(),
       phone: phone.trim(),
+      whatsapp: whatsapp !== undefined ? (typeof whatsapp === "string" ? whatsapp.trim() : "") : (userDoc.whatsapp || phone.trim()),
       companyName: cleanCompanyName,
       slug: updatedSlug,
       country: country.trim(),

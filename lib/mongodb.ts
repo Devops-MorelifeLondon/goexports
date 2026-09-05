@@ -52,6 +52,7 @@ const ExportProfileSchema = new mongoose.Schema(
     slug: { type: String, required: true, index: true },
     fullName: { type: String, required: true },
     phone: { type: String, required: true },
+    whatsapp: { type: String, default: "" },
     email: { type: String, required: true, index: true },
     password: { type: String, required: true },
     companyName: { type: String, required: true },

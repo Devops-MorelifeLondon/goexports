@@ -262,12 +262,16 @@ export default function SellerProfileClient({ seller }: SellerProfileClientProps
     }
   };
 
-  // WhatsApp click to chat URL
-  const cleanPhone = (seller.phone || "").replace(/[^0-9]/g, "");
+  // Contact URLs
+  const phoneToUse = seller.phone || "";
+  const whatsappToUse = (seller as any).whatsapp || seller.phone || "";
+  const cleanPhone = phoneToUse.replace(/[^0-9+]/g, "");
+  const cleanWhatsapp = whatsappToUse.replace(/[^0-9]/g, "");
   const whatsappMsg = encodeURIComponent(
     `Hello ${seller.companyName}, I found your export profile on Goexports and would like to inquire about your ${seller.productCategory} offerings.`
   );
-  const whatsappUrl = `https://wa.me/${cleanPhone}?text=${whatsappMsg}`;
+  const whatsappUrl = cleanWhatsapp ? `https://wa.me/${cleanWhatsapp}?text=${whatsappMsg}` : null;
+  const telUrl = cleanPhone ? `tel:${cleanPhone}` : null;
 
   const isApproved =
     (seller.status || "pending").toLowerCase() === "approved" ||
@@ -516,17 +520,29 @@ export default function SellerProfileClient({ seller }: SellerProfileClientProps
                 <span>Send Direct Inquiry / RFQ</span>
               </button>
 
-              {seller.phone && (
-                <a
-                  href={whatsappUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full py-2.5 px-4 rounded-xl font-semibold text-xs sm:text-sm text-white bg-emerald-600 hover:bg-emerald-700 flex items-center justify-center gap-2 no-underline transition-colors shadow-sm"
-                >
-                  <MessageCircle className="w-4 h-4" />
-                  <span>WhatsApp / Direct Message</span>
-                </a>
-              )}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full">
+                {telUrl && (
+                  <a
+                    href={telUrl}
+                    className="w-full py-2.5 px-3 rounded-xl font-semibold text-xs text-[var(--ink)] bg-[var(--canvas)] border border-[var(--hairline)] hover:bg-[var(--surface-soft)] flex items-center justify-center gap-1.5 no-underline transition-colors shadow-2xs"
+                  >
+                    <Phone className="w-3.5 h-3.5 text-sky-600" />
+                    <span>Call Company</span>
+                  </a>
+                )}
+
+                {whatsappUrl && (
+                  <a
+                    href={whatsappUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full py-2.5 px-3 rounded-xl font-semibold text-xs text-white bg-emerald-600 hover:bg-emerald-700 flex items-center justify-center gap-1.5 no-underline transition-colors shadow-2xs"
+                  >
+                    <MessageCircle className="w-3.5 h-3.5" />
+                    <span>WhatsApp</span>
+                  </a>
+                )}
+              </div>
 
               {seller.website && (
                 <a
@@ -775,9 +791,30 @@ export default function SellerProfileClient({ seller }: SellerProfileClientProps
                 </div>
 
                 <div>
-                  <span className="text-[var(--muted)] block">Direct Phone:</span>
-                  <span className="font-semibold text-[var(--ink)]">{seller.phone}</span>
+                  <span className="text-[var(--muted)] block">Company Phone:</span>
+                  <a
+                    href={`tel:${seller.phone.replace(/[^0-9+]/g, '')}`}
+                    className="font-semibold text-[var(--ink)] hover:underline flex items-center gap-1"
+                  >
+                    <Phone className="w-3.5 h-3.5 text-[var(--muted)]" />
+                    <span>{seller.phone}</span>
+                  </a>
                 </div>
+
+                {(seller as any).whatsapp && (
+                  <div>
+                    <span className="text-[var(--muted)] block">WhatsApp Number:</span>
+                    <a
+                      href={`https://wa.me/${(seller as any).whatsapp.replace(/[^0-9]/g, '')}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-semibold text-emerald-700 hover:underline flex items-center gap-1"
+                    >
+                      <MessageCircle className="w-3.5 h-3.5 text-emerald-600" />
+                      <span>{(seller as any).whatsapp}</span>
+                    </a>
+                  </div>
+                )}
 
                 <div>
                   <span className="text-[var(--muted)] block">Official Email:</span>

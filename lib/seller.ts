@@ -19,6 +19,7 @@ export interface SellerProfile {
   slug: string;
   fullName: string;
   phone: string;
+  whatsapp?: string;
   email: string;
   companyName: string;
   country: string;
@@ -119,6 +120,7 @@ export async function getSellerProfile(identifier: string, allowPending: boolean
       slug: doc.slug || slugifyCompanyName(doc.companyName || "exporter"),
       fullName: doc.fullName || "",
       phone: doc.phone || "",
+      whatsapp: doc.whatsapp || "",
       email: doc.email || "",
       companyName: doc.companyName || "",
       country: doc.country || "",

@@ -11,6 +11,7 @@ export async function POST(req: Request) {
     const {
       fullName,
       phone,
+      whatsapp,
       email,
       password,
       companyName,
@@ -89,6 +90,7 @@ export async function POST(req: Request) {
       slug: finalSlug,
       fullName: fullName.trim(),
       phone: phone.trim(),
+      whatsapp: whatsapp ? String(whatsapp).trim() : phone.trim(),
       email: email.trim().toLowerCase(),
       password: hashedPassword,
       companyName: companyName.trim(),

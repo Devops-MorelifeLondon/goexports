@@ -134,6 +134,7 @@ export async function PUT(req: Request) {
       certifications,
       logoUrl,
       logoKey,
+      selectedPackage,
     } = body;
 
     // Validate required fields
@@ -214,6 +215,9 @@ export async function PUT(req: Request) {
       certifications: Array.isArray(certifications) ? certifications : [],
       logoUrl: typeof logoUrl === "string" ? logoUrl.trim() : userDoc.logoUrl || "",
       logoKey: typeof logoKey === "string" ? logoKey.trim() : userDoc.logoKey || "",
+      ...(selectedPackage && typeof selectedPackage === "string"
+        ? { selectedPackage: selectedPackage.trim() }
+        : {}),
       updatedAt: new Date().toISOString(),
     };
 

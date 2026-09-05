@@ -51,8 +51,17 @@ import {
   ChevronLeft,
   ArrowUpDown,
   SlidersHorizontal,
+  Zap,
+  CreditCard,
+  ArrowUpRight,
+  HelpCircle,
+  CheckCircle,
+  Crown,
+  Headphones,
 } from "lucide-react";
 import { toast } from "sonner";
+import { getPlanMeta, PlanMeta, BuyerPlan } from "@/data/plans";
+import { PackageDbModel } from "@/lib/packages";
 
 export interface ExporterProduct {
   id: string;
@@ -173,23 +182,58 @@ const COMMON_COUNTRIES = [
 interface ExporterProfileDashboardProps {
   initialProfile?: ExporterProfileData | null;
   initialInquiries?: BuyerInquiry[];
+  initialPackages?: PackageDbModel[];
 }
 
 export default function ExporterProfileDashboard({
   initialProfile,
   initialInquiries = [],
+  initialPackages = [],
 }: ExporterProfileDashboardProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const initialTab = searchParams.get("tab") || "overview";
 
-  const [activeTab, setActiveTab] = useState<"overview" | "products" | "edit" | "inquiries" | "security">(
+  const [activeTab, setActiveTab] = useState<"overview" | "products" | "plan" | "edit" | "inquiries" | "security">(
     (initialTab as any) || "overview"
   );
 
   const [profile, setProfile] = useState<ExporterProfileData | null>(initialProfile || null);
   const [products, setProducts] = useState<ExporterProduct[]>(initialProfile?.products || []);
   const [inquiries, setInquiries] = useState<BuyerInquiry[]>(initialInquiries);
+  const [availablePlans, setAvailablePlans] = useState<PackageDbModel[]>(initialPackages || []);
+  const [loadingPlans, setLoadingPlans] = useState<boolean>(!initialPackages || initialPackages.length === 0);
+
+  // Client-side fallback fetch to ensure latest database packages from MongoDB
+  useEffect(() => {
+    let isMounted = true;
+    async function loadPackages() {
+      if (initialPackages && initialPackages.length > 0) return;
+      try {
+        setLoadingPlans(true);
+        const res = await fetch("/api/packages", { cache: "no-store" });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.success && Array.isArray(data.packages) && data.packages.length > 0) {
+            if (isMounted) setAvailablePlans(data.packages);
+          }
+        }
+      } catch (e) {
+        console.warn("Failed to load packages in ExporterProfileDashboard", e);
+      } finally {
+        if (isMounted) setLoadingPlans(false);
+      }
+    }
+    loadPackages();
+    return () => {
+      isMounted = false;
+    };
+  }, [initialPackages]);
+
+  // Plan Switching State
+  const [isUpdatingPlan, setIsUpdatingPlan] = useState(false);
+  const [upgradingPlanId, setUpgradingPlanId] = useState<string | null>(null);
+
   // Inquiry Search, Filters, Sorting & Pagination State
   const [inquirySearchQuery, setInquirySearchQuery] = useState("");
   const [inquiryStatusFilter, setInquiryStatusFilter] = useState("all");
@@ -286,6 +330,7 @@ export default function ExporterProfileDashboard({
     certifications: [] as string[],
     logoUrl: initialProfile?.logoUrl || "",
     logoKey: initialProfile?.logoKey || "",
+    selectedPackage: initialProfile?.selectedPackage || "Verified Growth Pro",
   });
 
   const [isUploadingLogo, setIsUploadingLogo] = useState(false);
@@ -350,7 +395,56 @@ export default function ExporterProfileDashboard({
       certifications: Array.isArray(data.certifications) ? data.certifications : [],
       logoUrl: data.logoUrl || "",
       logoKey: data.logoKey || "",
+      selectedPackage: data.selectedPackage || "Verified Growth Pro",
     });
+  };
+
+  // Switch or Upgrade Plan Handler
+  const handleSelectPlan = async (planNameOrId: string) => {
+    if (!profile) return;
+    const currentPkg = profile.selectedPackage || "Verified Growth Pro";
+    if (currentPkg.toLowerCase() === planNameOrId.toLowerCase()) {
+      toast.info("Active Plan", {
+        description: `Your profile is currently on the ${planNameOrId} tier.`,
+      });
+      return;
+    }
+
+    setIsUpdatingPlan(true);
+    setUpgradingPlanId(planNameOrId);
+    try {
+      const res = await fetch("/api/exporter/profile", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...formData,
+          selectedPackage: planNameOrId,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.message || data.error || "Failed to update plan");
+      }
+
+      toast.success("Membership Plan Updated!", {
+        description: `Your membership tier has been switched to ${planNameOrId}.`,
+      });
+
+      if (data.seller) {
+        setProfile(data.seller);
+        syncFormDataWithProfile(data.seller);
+        if (typeof window !== "undefined") {
+          localStorage.setItem("exporter_user", JSON.stringify(data.seller));
+        }
+      }
+    } catch (err: any) {
+      toast.error("Plan Update Failed", {
+        description: err.message || "Could not change plan. Please try again.",
+      });
+    } finally {
+      setIsUpdatingPlan(false);
+      setUpgradingPlanId(null);
+    }
   };
 
   // Fetch authenticated exporter profile
@@ -737,7 +831,7 @@ export default function ExporterProfileDashboard({
   }, []);
 
   // Update URL search params when tab changes
-  const handleTabChange = (tab: "overview" | "products" | "edit" | "inquiries" | "security") => {
+  const handleTabChange = (tab: "overview" | "products" | "plan" | "edit" | "inquiries" | "security") => {
     setActiveTab(tab);
     if (typeof window !== "undefined") {
       const url = new URL(window.location.href);
@@ -847,6 +941,7 @@ export default function ExporterProfileDashboard({
         certifications: formData.certifications,
         logoUrl: formData.logoUrl,
         logoKey: formData.logoKey,
+        selectedPackage: formData.selectedPackage,
       };
 
       const res = await fetch("/api/exporter/profile", {
@@ -994,6 +1089,14 @@ export default function ExporterProfileDashboard({
 
   const isVerified = (profile.status || "").toLowerCase() === "approved" || (profile.status || "").toLowerCase() === "verified";
   const storefrontSlug = profile.slug || profile.id;
+  const matchedDbPlan = availablePlans.find(
+    (p) =>
+      p.name.toLowerCase() === (profile.selectedPackage || "").toLowerCase() ||
+      p.id.toLowerCase() === (profile.selectedPackage || "").toLowerCase() ||
+      (p.slug && p.slug.toLowerCase() === (profile.selectedPackage || "").toLowerCase()) ||
+      (profile.selectedPackage || "").toLowerCase().includes(p.id.toLowerCase())
+  );
+  const planMeta = getPlanMeta(profile.selectedPackage, matchedDbPlan);
 
   return (
     <div className="min-h-screen pb-24" style={{ backgroundColor: "var(--canvas)" }}>
@@ -1039,6 +1142,20 @@ export default function ExporterProfileDashboard({
                       Pending Verification
                     </span>
                   )}
+
+                  {/* Membership Plan Badge */}
+                  <button
+                    onClick={() => handleTabChange("plan")}
+                    className={`inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-[11px] font-extrabold border transition-all hover:scale-105 cursor-pointer shadow-2xs ${planMeta.pillBg}`}
+                    title="Click to view or upgrade your membership plan"
+                  >
+                    {planMeta.type === "enterprise" && <Zap className="w-3.5 h-3.5 text-purple-600" />}
+                    {planMeta.type === "growth" && <Sparkles className="w-3.5 h-3.5 text-amber-600" />}
+                    {planMeta.type === "starter" && <Package className="w-3.5 h-3.5 text-blue-600" />}
+                    {planMeta.type === "free" && <ShieldCheck className="w-3.5 h-3.5 text-slate-600" />}
+                    <span>{planMeta.displayName}</span>
+                    <span className="opacity-75 font-semibold">({planMeta.priceDisplay})</span>
+                  </button>
                 </div>
 
                 <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[var(--muted)]">
@@ -1136,6 +1253,21 @@ export default function ExporterProfileDashboard({
             </button>
 
             <button
+              onClick={() => handleTabChange("plan")}
+              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all border-none cursor-pointer flex items-center gap-2 shrink-0 ${
+                activeTab === "plan"
+                  ? "bg-[var(--ink)] text-white shadow-sm"
+                  : "bg-transparent text-[var(--muted)] hover:text-[var(--ink)] hover:bg-[var(--canvas)]"
+              }`}
+            >
+              <Crown className="w-4 h-4 text-[var(--brand-ochre)]" />
+              <span>Membership Plan</span>
+              <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${planMeta.pillBg}`}>
+                {planMeta.name}
+              </span>
+            </button>
+
+            <button
               onClick={() => handleTabChange("products")}
               className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all border-none cursor-pointer flex items-center gap-2 shrink-0 ${
                 activeTab === "products"
@@ -1205,7 +1337,7 @@ export default function ExporterProfileDashboard({
         {activeTab === "overview" && (
           <div className="space-y-8">
             {/* Top Quick Stats Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
               <div className="p-5 rounded-2xl border border-[var(--hairline)] bg-[var(--surface-card)] space-y-1.5 shadow-sm">
                 <div className="flex items-center justify-between text-xs text-[var(--muted)]">
                   <span className="font-semibold uppercase tracking-wider">Profile Completeness</span>
@@ -1236,6 +1368,26 @@ export default function ExporterProfileDashboard({
                 </p>
               </div>
 
+              {/* Active Plan Stat Card */}
+              <div className="p-5 rounded-2xl border border-[var(--hairline)] bg-[var(--surface-card)] space-y-1.5 shadow-sm">
+                <div className="flex items-center justify-between text-xs text-[var(--muted)]">
+                  <span className="font-semibold uppercase tracking-wider">Active Plan</span>
+                  <Crown className="w-4 h-4 text-[var(--brand-ochre)]" />
+                </div>
+                <div className="text-lg font-bold text-[var(--ink)] truncate">
+                  {planMeta.displayName}
+                </div>
+                <div className="flex items-center justify-between text-[11px] text-[var(--muted)] pt-0.5">
+                  <span className="font-semibold text-emerald-700">{planMeta.leadsCount} leads/mo</span>
+                  <button
+                    onClick={() => handleTabChange("plan")}
+                    className="text-[11px] font-bold text-[var(--ink)] hover:underline border-none bg-transparent p-0 cursor-pointer text-right"
+                  >
+                    Manage →
+                  </button>
+                </div>
+              </div>
+
               <div className="p-5 rounded-2xl border border-[var(--hairline)] bg-[var(--surface-card)] space-y-1.5 shadow-sm">
                 <div className="flex items-center justify-between text-xs text-[var(--muted)]">
                   <span className="font-semibold uppercase tracking-wider">Product Category</span>
@@ -1248,6 +1400,7 @@ export default function ExporterProfileDashboard({
                   Capacity: {profile.exportCapacity || "Not set"}
                 </p>
               </div>
+
               <div className="p-5 rounded-2xl border border-[var(--hairline)] bg-[var(--surface-card)] space-y-1.5 shadow-sm">
                 <div className="flex items-center justify-between text-xs text-[var(--muted)]">
                   <span className="font-semibold uppercase tracking-wider">Products Listed</span>
@@ -1283,6 +1436,96 @@ export default function ExporterProfileDashboard({
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
               {/* Left Column: Business Bio & Export Highlights */}
               <div className="lg:col-span-8 space-y-6">
+                {/* Membership Plan & Leads Quota Card */}
+                <div className="p-6 sm:p-8 rounded-3xl border border-[var(--hairline)] bg-[var(--surface-card)] space-y-5 shadow-sm">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[var(--hairline)] pb-4">
+                    <div className="flex items-center gap-3">
+                      <div
+                        className="w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-xl shadow-xs shrink-0"
+                        style={{ backgroundColor: "var(--brand-ochre)", color: "var(--ink)" }}
+                      >
+                        <Crown className="w-6 h-6" />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <h2 className="text-lg font-bold text-[var(--ink)]">
+                            Membership Plan & Buyer Leads Quota
+                          </h2>
+                          <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-extrabold border ${planMeta.pillBg}`}>
+                            {planMeta.badge || planMeta.displayName}
+                          </span>
+                        </div>
+                        <p className="text-xs text-[var(--muted)] m-0 mt-0.5">
+                          Tier: <strong className="text-[var(--ink)]">{planMeta.displayName}</strong> • {planMeta.priceDisplay}
+                        </p>
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={() => handleTabChange("plan")}
+                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-[var(--ink)] bg-[var(--brand-ochre)] hover:opacity-90 transition-all border-none cursor-pointer shadow-xs shrink-0"
+                    >
+                      <Sparkles className="w-3.5 h-3.5" />
+                      <span>Upgrade / Change Plan</span>
+                    </button>
+                  </div>
+
+                  {/* Quota Progress & Features Highlight */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {/* Left: Monthly Lead Quota */}
+                    <div className="p-4 rounded-2xl bg-[var(--canvas)] border border-[var(--hairline)] space-y-3">
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="font-bold text-[var(--ink)] flex items-center gap-1.5">
+                          <Inbox className="w-4 h-4 text-amber-600" />
+                          Monthly Qualified Leads
+                        </span>
+                        <span className="font-extrabold text-[var(--ink)]">
+                          {inquiries.length} / {planMeta.leadsCount} Active
+                        </span>
+                      </div>
+                      <div className="w-full bg-[var(--surface-soft)] h-2 rounded-full overflow-hidden border border-[var(--hairline)]">
+                        <div
+                          className="h-full rounded-full transition-all duration-500 bg-amber-500"
+                          style={{
+                            width: `${Math.min(100, Math.max(10, (inquiries.length / (planMeta.leadsCount || 1)) * 100))}%`,
+                          }}
+                        />
+                      </div>
+                      <p className="text-[11px] text-[var(--muted)] m-0 leading-relaxed">
+                        {planMeta.leadsLabel} included with {planMeta.displayName}. Inquiries arrive in real-time from verified international buyers.
+                      </p>
+                    </div>
+
+                    {/* Right: Key Tier Perks */}
+                    <div className="p-4 rounded-2xl bg-[var(--canvas)] border border-[var(--hairline)] space-y-2">
+                      <div className="text-xs font-bold text-[var(--ink)] flex items-center gap-1.5">
+                        <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                        Active Package Inclusions
+                      </div>
+                      <div className="grid grid-cols-1 gap-1.5 text-xs text-[var(--body)] pt-0.5">
+                        {planMeta.features.slice(0, 4).map((feat, idx) => (
+                          <div key={idx} className="flex items-center gap-2 text-[11px]">
+                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                            <span>{feat}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between text-xs pt-1 border-t border-[var(--hairline)]">
+                    <span className="text-[var(--muted)]">
+                      Want to unlock higher monthly buyer lead quotas & dedicated trade manager support?
+                    </span>
+                    <button
+                      onClick={() => handleTabChange("plan")}
+                      className="font-bold text-[var(--ink)] hover:underline border-none bg-transparent cursor-pointer p-0 shrink-0 ml-2"
+                    >
+                      Compare All 4 Plans →
+                    </button>
+                  </div>
+                </div>
+
                 {/* Company Bio */}
                 <div className="p-6 sm:p-8 rounded-3xl border border-[var(--hairline)] bg-[var(--surface-card)] space-y-4 shadow-sm">
                   <div className="flex items-center justify-between border-b border-[var(--hairline)] pb-3">
@@ -1393,6 +1636,28 @@ export default function ExporterProfileDashboard({
                     </div>
 
                     <div>
+                      <span className="text-[var(--muted)] block">Membership Plan</span>
+                      <div className="flex items-center justify-between mt-1">
+                        <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold border ${planMeta.pillBg}`}>
+                          {planMeta.type === "enterprise" && <Zap className="w-3 h-3 text-purple-600" />}
+                          {planMeta.type === "growth" && <Sparkles className="w-3 h-3 text-amber-600" />}
+                          {planMeta.type === "starter" && <Package className="w-3 h-3 text-blue-600" />}
+                          {planMeta.type === "free" && <ShieldCheck className="w-3 h-3 text-slate-600" />}
+                          <span>{planMeta.displayName}</span>
+                        </span>
+                        <button
+                          onClick={() => handleTabChange("plan")}
+                          className="text-xs font-semibold text-[var(--ink)] hover:underline border-none bg-transparent cursor-pointer p-0"
+                        >
+                          Manage →
+                        </button>
+                      </div>
+                      <span className="text-[11px] text-[var(--muted)] block mt-0.5 font-medium">
+                        {planMeta.priceDisplay} · {planMeta.leadsCount} qualified leads / month
+                      </span>
+                    </div>
+
+                    <div>
                       <span className="text-[var(--muted)] block">Primary Product Category</span>
                       <span className="font-semibold text-[var(--ink)]">{profile.productCategory}</span>
                     </div>
@@ -1489,6 +1754,395 @@ export default function ExporterProfileDashboard({
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* ══════════════════════════════════════════
+            TAB: MEMBERSHIP PLAN & LEADS QUOTA
+            ══════════════════════════════════════════ */}
+        {activeTab === "plan" && (
+          <div className="space-y-8 max-w-6xl mx-auto">
+            {/* Header / Intro Card */}
+            <div className="p-6 sm:p-8 rounded-3xl border border-[var(--hairline)] bg-[var(--surface-card)] space-y-4 shadow-sm">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[var(--brand-ochre)] text-[var(--ink)] mb-2">
+                    <Crown className="w-3.5 h-3.5" />
+                    <span>Exporter Subscription & Plan</span>
+                  </div>
+                  <h2 className="text-2xl sm:text-3xl font-bold text-[var(--ink)] tracking-tight">
+                    Membership Tier & Lead Allocation
+                  </h2>
+                  <p className="text-xs sm:text-sm text-[var(--muted)] mt-1 max-w-2xl leading-relaxed">
+                    Connect directly with verified international buyers, unlock targeted RFQs, and access dedicated trade management for global scale.
+                  </p>
+                </div>
+
+                <div className="flex flex-col sm:items-end gap-1 shrink-0">
+                  <span className="text-[11px] font-bold text-[var(--muted)] uppercase tracking-wider">
+                    Current Active Tier
+                  </span>
+                  <span className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-extrabold border shadow-xs ${planMeta.pillBg}`}>
+                    {planMeta.type === "enterprise" && <Zap className="w-4 h-4 text-purple-600" />}
+                    {planMeta.type === "growth" && <Sparkles className="w-4 h-4 text-amber-600" />}
+                    {planMeta.type === "starter" && <Package className="w-4 h-4 text-blue-600" />}
+                    {planMeta.type === "free" && <ShieldCheck className="w-4 h-4 text-slate-600" />}
+                    <span>{planMeta.displayName}</span>
+                    <span className="opacity-80">({planMeta.priceDisplay})</span>
+                  </span>
+                </div>
+              </div>
+
+              {/* Active Plan Snapshot Banner */}
+              <div className="mt-4 p-5 sm:p-6 rounded-2xl bg-[var(--canvas)] border border-[var(--hairline)] grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+                <div className="space-y-1">
+                  <span className="text-xs text-[var(--muted)] font-semibold">Monthly Investment</span>
+                  <div className="text-2xl sm:text-3xl font-extrabold text-[var(--ink)]">
+                    {planMeta.priceDisplay}
+                  </div>
+                  <span className="inline-block text-[11px] text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
+                    Active Subscription • 0% Sales Commission
+                  </span>
+                </div>
+
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between text-xs font-bold text-[var(--ink)]">
+                    <span>Monthly Qualified Leads</span>
+                    <span>{inquiries.length} / {planMeta.leadsCount} Active</span>
+                  </div>
+                  <div className="w-full bg-[var(--surface-soft)] h-2.5 rounded-full overflow-hidden border border-[var(--hairline)]">
+                    <div
+                      className="h-full rounded-full transition-all duration-500 bg-amber-500"
+                      style={{
+                        width: `${Math.min(100, Math.max(12, (inquiries.length / (planMeta.leadsCount || 1)) * 100))}%`,
+                      }}
+                    />
+                  </div>
+                  <p className="text-[11px] text-[var(--muted)] m-0">
+                    {planMeta.leadsCount} verified buyer leads allocated per 30-day billing cycle.
+                  </p>
+                </div>
+
+                <div className="space-y-1 md:text-right">
+                  <span className="text-xs text-[var(--muted)] font-semibold">Dedicated Trade Advisory</span>
+                  <p className="text-xs font-bold text-[var(--ink)] m-0">
+                    {planMeta.type === "free" ? "Standard Support" : "Dedicated Account Manager Included"}
+                  </p>
+                  <p className="text-[11px] text-[var(--muted)] m-0">
+                    Direct access via WhatsApp, Phone & Email.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* 4-Tier Plan Grid */}
+            <div className="space-y-4">
+              <div>
+                <h3 className="text-xl font-bold text-[var(--ink)]">
+                  Available Membership Plans
+                </h3>
+                <p className="text-xs text-[var(--muted)] m-0 mt-0.5">
+                  Select a plan that matches your production capacity and export ambition.
+                </p>
+              </div>
+
+              {/* Database-Driven Plan Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {availablePlans.map((plan) => {
+                  const pMeta = getPlanMeta(plan.name, plan);
+                  const isCurrent =
+                    (profile.selectedPackage || "growth").toLowerCase().includes(plan.id.toLowerCase()) ||
+                    (profile.selectedPackage || "").toLowerCase() === plan.name.toLowerCase() ||
+                    (plan.slug && (profile.selectedPackage || "").toLowerCase() === plan.slug.toLowerCase());
+                  const isUpgradingThis = isUpdatingPlan && upgradingPlanId === plan.name;
+
+                  return (
+                    <div
+                      key={plan.id || plan.slug}
+                      className={`relative rounded-3xl p-6 sm:p-7 flex flex-col justify-between transition-all duration-200 border-2 ${
+                        isCurrent
+                          ? "border-[var(--brand-ochre)] bg-[var(--surface-card)] shadow-md ring-2 ring-[var(--brand-ochre)]/20"
+                          : plan.featured
+                          ? "border-amber-300 bg-[var(--surface-card)] shadow-sm hover:shadow-md"
+                          : "border-[var(--hairline)] bg-[var(--surface-card)] shadow-xs hover:border-[var(--brand-ochre)]"
+                      }`}
+                    >
+                      {/* Top Badges */}
+                      <div className="space-y-4">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-bold uppercase tracking-wider text-[var(--muted)]">
+                            {plan.name}
+                          </span>
+                          {isCurrent ? (
+                            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-300">
+                              ✓ Current Plan
+                            </span>
+                          ) : plan.badge ? (
+                            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-100 text-amber-900 border border-amber-300">
+                              {plan.badge}
+                            </span>
+                          ) : null}
+                        </div>
+
+                        {/* Price */}
+                        <div>
+                          <div className="flex items-baseline gap-1">
+                            <span className="text-3xl sm:text-4xl font-extrabold text-[var(--ink)]">
+                              {plan.currency || "£"}{plan.priceDisplay || plan.price}
+                            </span>
+                            <span className="text-xs text-[var(--muted)] font-semibold">
+                              {plan.period || "/ month"}
+                            </span>
+                          </div>
+                          <p className="text-xs text-[var(--muted)] mt-1 min-h-[32px] leading-relaxed">
+                            {plan.tagline || "Export subscription plan for international sellers"}
+                          </p>
+                        </div>
+
+                        {/* Leads Highlight Box */}
+                        <div className="p-3 rounded-2xl bg-[var(--canvas)] border border-[var(--hairline)] flex items-center gap-2.5">
+                          <Inbox className="w-4 h-4 text-amber-600 shrink-0" />
+                          <div>
+                            <span className="text-xs font-extrabold text-[var(--ink)] block">
+                              {plan.leads} Leads / mo
+                            </span>
+                            <span className="text-[10px] text-[var(--muted)] block">
+                              {plan.leadsLabel || "Qualified Global Buyers"}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Features Checklist */}
+                        <div className="space-y-2 pt-2 border-t border-[var(--hairline)]">
+                          <span className="text-[11px] font-bold text-[var(--ink)] uppercase tracking-wider block">
+                            Included Perks:
+                          </span>
+                          <div className="space-y-2 text-xs">
+                            {(plan.features || []).map((feat, idx) => (
+                              <div key={idx} className="flex items-start gap-2">
+                                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                                <span className="text-[var(--body)] text-[12px] leading-tight">{feat}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Action Button */}
+                      <div className="pt-6 mt-4 border-t border-[var(--hairline)]">
+                        {isCurrent ? (
+                          <div className="w-full py-3 rounded-xl text-center text-xs font-bold text-emerald-800 bg-emerald-50 border border-emerald-300 flex items-center justify-center gap-1.5">
+                            <Check className="w-4 h-4 text-emerald-600" />
+                            <span>Active Subscription</span>
+                          </div>
+                        ) : (
+                          <button
+                            type="button"
+                            disabled={isUpdatingPlan}
+                            onClick={() => handleSelectPlan(plan.name)}
+                            className={`w-full py-3 rounded-xl font-bold text-xs border-none cursor-pointer transition-all flex items-center justify-center gap-2 shadow-sm disabled:opacity-50 ${
+                              plan.featured
+                                ? "bg-[var(--brand-ochre)] text-[var(--ink)] hover:opacity-95"
+                                : "bg-[var(--ink)] text-white hover:bg-slate-800"
+                            }`}
+                          >
+                            {isUpgradingThis ? (
+                              <>
+                                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                                <span>Switching Plan...</span>
+                              </>
+                            ) : (
+                              <>
+                                <Sparkles className="w-3.5 h-3.5" />
+                                <span>Switch to {plan.name}</span>
+                              </>
+                            )}
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Feature Comparison Matrix */}
+            <div className="p-6 sm:p-8 rounded-3xl border border-[var(--hairline)] bg-[var(--surface-card)] space-y-5 shadow-sm">
+              <div>
+                <h3 className="text-xl font-bold text-[var(--ink)] flex items-center gap-2">
+                  <SlidersHorizontal className="w-5 h-5 text-[var(--brand-ochre)]" />
+                  <span>Comprehensive Plan Feature Comparison</span>
+                </h3>
+                <p className="text-xs text-[var(--muted)] mt-1">
+                  Compare lead capacities, buyer verification levels, and account manager services across all available database tiers.
+                </p>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr className="border-b border-[var(--hairline)] text-[var(--muted)]">
+                      <th className="py-3 px-4 font-bold text-[var(--ink)]">Feature / Benefit</th>
+                      {availablePlans.map((plan) => (
+                        <th
+                          key={plan.id || plan.slug}
+                          className={`py-3 px-3 font-bold text-center ${
+                            plan.featured ? "text-amber-900 bg-amber-50/50 rounded-t-xl" : ""
+                          }`}
+                        >
+                          {plan.name} ({plan.currency || "£"}{plan.priceDisplay || plan.price}{plan.period === "/ month" ? "/mo" : plan.period})
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[var(--hairline)]">
+                    <tr>
+                      <td className="py-3 px-4 font-bold text-[var(--ink)]">Qualified Leads / Month</td>
+                      {availablePlans.map((plan) => (
+                        <td
+                          key={plan.id || plan.slug}
+                          className={`py-3 px-3 text-center font-semibold ${
+                            plan.featured ? "font-bold text-amber-900 bg-amber-50/50" : ""
+                          }`}
+                        >
+                          {plan.leads} Leads
+                        </td>
+                      ))}
+                    </tr>
+                    <tr>
+                      <td className="py-3 px-4 text-[var(--ink)]">Targeted Industry Leads</td>
+                      {availablePlans.map((plan) => (
+                        <td
+                          key={plan.id || plan.slug}
+                          className={`py-3 px-3 text-center text-emerald-600 font-bold ${
+                            plan.featured ? "bg-amber-50/50" : ""
+                          }`}
+                        >
+                          ✓ Included
+                        </td>
+                      ))}
+                    </tr>
+                    <tr>
+                      <td className="py-3 px-4 text-[var(--ink)]">Verified Global Buyers</td>
+                      {availablePlans.map((plan) => {
+                        const count = Number(plan.leads) || 0;
+                        let label = "✓ Standard";
+                        if (count >= 100) label = "✓ VIP Direct Routing";
+                        else if (count >= 50) label = "✓ High Priority";
+                        else if (count >= 20) label = "✓ Priority";
+                        return (
+                          <td
+                            key={plan.id || plan.slug}
+                            className={`py-3 px-3 text-center text-emerald-600 font-bold ${
+                              plan.featured ? "bg-amber-50/50" : ""
+                            }`}
+                          >
+                            {label}
+                          </td>
+                        );
+                      })}
+                    </tr>
+                    <tr>
+                      <td className="py-3 px-4 text-[var(--ink)]">Dedicated Account Manager</td>
+                      {availablePlans.map((plan) => {
+                        const count = Number(plan.leads) || 0;
+                        let mgr = "—";
+                        if (count >= 100) mgr = "✓ Executive Director";
+                        else if (count >= 50) mgr = "✓ Senior Trade Manager";
+                        else if (count >= 20) mgr = "✓ Dedicated Manager";
+                        return (
+                          <td
+                            key={plan.id || plan.slug}
+                            className={`py-3 px-3 text-center ${
+                              mgr === "—" ? "text-gray-400" : "text-emerald-600 font-bold"
+                            } ${plan.featured ? "bg-amber-50/50" : ""}`}
+                          >
+                            {mgr}
+                          </td>
+                        );
+                      })}
+                    </tr>
+                    <tr>
+                      <td className="py-3 px-4 text-[var(--ink)]">24/7/365 Multi-Channel Support</td>
+                      {availablePlans.map((plan) => (
+                        <td
+                          key={plan.id || plan.slug}
+                          className={`py-3 px-3 text-center text-emerald-600 font-bold ${
+                            plan.featured ? "bg-amber-50/50" : ""
+                          }`}
+                        >
+                          ✓ Included
+                        </td>
+                      ))}
+                    </tr>
+                    <tr>
+                      <td className="py-3 px-4 text-[var(--ink)]">Trade & Lead Performance Reporting</td>
+                      {availablePlans.map((plan) => {
+                        const count = Number(plan.leads) || 0;
+                        let rep = "Self-service";
+                        if (count >= 100) rep = "Weekly + Custom Strategy";
+                        else if (count >= 50) rep = "Weekly & Monthly Reporting";
+                        else if (count >= 20) rep = "Monthly Reporting";
+                        return (
+                          <td
+                            key={plan.id || plan.slug}
+                            className={`py-3 px-3 text-center text-[var(--ink)] ${
+                              plan.featured ? "font-bold bg-amber-50/50" : ""
+                            }`}
+                          >
+                            {rep}
+                          </td>
+                        );
+                      })}
+                    </tr>
+                    <tr>
+                      <td className="py-3 px-4 text-[var(--ink)]">Strategy & Deal Closure Calls</td>
+                      {availablePlans.map((plan) => {
+                        const count = Number(plan.leads) || 0;
+                        let call = "—";
+                        if (count >= 100) call = "Unlimited On-demand";
+                        else if (count >= 50) call = "Weekly / Monthly Call";
+                        else if (count >= 20) call = "Monthly Call";
+                        return (
+                          <td
+                            key={plan.id || plan.slug}
+                            className={`py-3 px-3 text-center ${
+                              call === "—" ? "text-gray-400" : "font-bold text-[var(--ink)]"
+                            } ${plan.featured ? "bg-amber-50/50" : ""}`}
+                          >
+                            {call}
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Advisory Support Box */}
+            <div className="p-6 sm:p-8 rounded-3xl border border-[var(--hairline)] bg-[var(--surface-soft)] flex flex-col sm:flex-row items-center justify-between gap-6 shadow-2xs">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-[var(--ink)] text-white flex items-center justify-center shrink-0">
+                  <Headphones className="w-6 h-6 text-[var(--brand-ochre)]" />
+                </div>
+                <div>
+                  <h4 className="text-base font-bold text-[var(--ink)]">
+                    Need a Custom Enterprise Volume Package?
+                  </h4>
+                  <p className="text-xs text-[var(--muted)] m-0 mt-0.5">
+                    Our international trade desk can tailor bespoke buyer matching for high-volume multinational exporters.
+                  </p>
+                </div>
+              </div>
+
+              <a
+                href="mailto:support@goexports.co.uk?subject=Custom%20Exporter%20Plan%20Inquiry"
+                className="px-5 py-2.5 rounded-xl text-xs font-bold text-[var(--ink)] bg-[var(--canvas)] border border-[var(--hairline)] hover:bg-[var(--surface-card)] transition-colors no-underline shrink-0"
+              >
+                Contact Trade Advisory →
+              </a>
             </div>
           </div>
         )}
@@ -2383,6 +3037,82 @@ export default function ExporterProfileDashboard({
                       >
                         <span>{cert}</span>
                         {isSelected && <CheckCircle2 className="w-3.5 h-3.5 text-emerald-300 shrink-0 ml-1" />}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Card 6: Membership Plan & Subscription Tier */}
+              <div className="p-6 sm:p-8 rounded-3xl border border-[var(--hairline)] bg-[var(--surface-card)] space-y-5 shadow-sm">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[var(--hairline)] pb-4">
+                  <div>
+                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[var(--brand-ochre)] text-[var(--ink)] mb-2">
+                      <Crown className="w-3.5 h-3.5" />
+                      Section 6: Membership Plan
+                    </div>
+                    <h2 className="text-xl font-bold text-[var(--ink)]">
+                      Selected Membership Plan & Quota
+                    </h2>
+                    <p className="text-xs text-[var(--muted)] mt-1">
+                      Choose your preferred membership tier for buyer lead matching and global storefront priority.
+                    </p>
+                  </div>
+
+                  <span className="text-xs font-bold text-[var(--ink)] bg-[var(--canvas)] px-3 py-1 rounded-xl border border-[var(--hairline)] self-start sm:self-auto">
+                    Selected: <strong className="text-amber-700">{formData.selectedPackage}</strong>
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-1">
+                  {availablePlans.map((plan) => {
+                    const isSelected =
+                      (formData.selectedPackage || "").toLowerCase() === plan.name.toLowerCase() ||
+                      (formData.selectedPackage || "").toLowerCase() === plan.id.toLowerCase() ||
+                      (plan.slug && (formData.selectedPackage || "").toLowerCase() === plan.slug.toLowerCase()) ||
+                      ((formData.selectedPackage || "").toLowerCase().includes("growth") && plan.id === "growth") ||
+                      ((formData.selectedPackage || "").toLowerCase().includes("enterprise") && plan.id === "enterprise") ||
+                      ((formData.selectedPackage || "").toLowerCase().includes("starter") && plan.id === "starter") ||
+                      ((formData.selectedPackage || "").toLowerCase().includes("free") && plan.id === "free");
+
+                    return (
+                      <button
+                        type="button"
+                        key={plan.id || plan.slug}
+                        onClick={() => setFormData((prev) => ({ ...prev, selectedPackage: plan.name }))}
+                        className={`p-4 rounded-2xl text-left border-2 transition-all cursor-pointer flex flex-col justify-between space-y-3 ${
+                          isSelected
+                            ? "border-[var(--brand-ochre)] bg-[var(--canvas)] ring-2 ring-[var(--brand-ochre)]/20 shadow-sm"
+                            : "border-[var(--hairline)] bg-[var(--surface-card)] hover:border-[var(--brand-ochre)]/50"
+                        }`}
+                      >
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs font-extrabold uppercase tracking-wider text-[var(--ink)]">
+                              {plan.name}
+                            </span>
+                            {isSelected && (
+                              <span className="w-5 h-5 rounded-full bg-[var(--brand-ochre)] text-[var(--ink)] flex items-center justify-center font-bold text-[10px]">
+                                ✓
+                              </span>
+                            )}
+                          </div>
+                          <div>
+                            <span className="text-xl font-extrabold text-[var(--ink)]">
+                              {plan.currency || "£"}{plan.priceDisplay || plan.price}
+                            </span>
+                            <span className="text-[10px] text-[var(--muted)] font-semibold">
+                              {plan.period || "/ month"}
+                            </span>
+                          </div>
+                          <div className="text-[11px] font-bold text-amber-900 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">
+                            {plan.leads} {plan.leadsLabel || "Leads / month"}
+                          </div>
+                        </div>
+
+                        <div className="text-[10px] text-[var(--muted)] border-t border-[var(--hairline)] pt-2 line-clamp-2">
+                          {plan.tagline || "Export subscription plan for international sellers"}
+                        </div>
                       </button>
                     );
                   })}

@@ -23,7 +23,7 @@ import {
   PackageCheck
 } from "lucide-react";
 import { toast } from "sonner";
-import { BUYER_PLANS, BuyerPlan } from "@/data/plans";
+import { BuyerPlan } from "@/data/plans";
 
 export interface PackageItem {
   id: string;
@@ -148,14 +148,12 @@ const COMMON_COUNTRIES = [
 ];
 
 export default function ExportProfileForm({ initialPlans }: ExportProfileFormProps = {}) {
-  const [plans, setPlans] = useState<PackageItem[]>(
-    initialPlans && initialPlans.length > 0 ? initialPlans : BUYER_PLANS
-  );
+  const [plans, setPlans] = useState<PackageItem[]>(initialPlans || []);
   const [loadingPlans, setLoadingPlans] = useState(!initialPlans || initialPlans.length === 0);
 
-  // Determine initial selected package from initial plans or BUYER_PLANS
+  // Determine initial selected package from initial plans
   const defaultSelected = (() => {
-    const list = initialPlans && initialPlans.length > 0 ? initialPlans : BUYER_PLANS;
+    const list = initialPlans && initialPlans.length > 0 ? initialPlans : [];
     const featured = list.find((p) => p.featured);
     return featured ? featured.name : list[0]?.name || "Growth";
   })();

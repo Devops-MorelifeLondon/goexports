@@ -77,7 +77,7 @@ export default function StructuredData() {
           "@type": "Offer",
           "itemOffered": {
             "@type": "Service",
-            "name": "Free Plan - 5 Qualified Leads Monthly"
+            "name": "Free Plan - 2 Qualified Leads Monthly"
           },
           "description": "Try our platform and connect with verified global buyers",
           "price": "0",

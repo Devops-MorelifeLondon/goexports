@@ -30,7 +30,7 @@ const BUYER_PLANS = [
     priceDisplay: "0",
     currency: "£",
     period: "/ month",
-    leads: 5,
+    leads: 2,
     leadsLabel: "Qualified Leads / Month",
     featured: false,
     features: [

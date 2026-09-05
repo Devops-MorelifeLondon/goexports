@@ -1,5 +1,4 @@
 import { PackageModel, connectToDatabase } from "./mongodb";
-import { BUYER_PLANS } from "@/data/plans";
 
 export interface PackageDbModel {
   id: string; // "free" | "starter" | "growth" | "enterprise"
@@ -21,42 +20,132 @@ export interface PackageDbModel {
   updatedAt: string;
 }
 
+const DEFAULT_SEEDED_PACKAGES: Omit<PackageDbModel, "createdAt" | "updatedAt">[] = [
+  {
+    id: "free",
+    slug: "free",
+    name: "Free",
+    tagline: "Start exploring international markets",
+    price: 0,
+    priceDisplay: "0",
+    currency: "£",
+    period: "/ month",
+    leads: 2,
+    leadsLabel: "Qualified Leads / Month",
+    featured: false,
+    badge: undefined,
+    features: [
+      "Targeted Industry Leads",
+      "International Buyers",
+      "Verified Global Buyers",
+      "24/7/365 Support",
+    ],
+    isActive: true,
+    sortOrder: 1,
+  },
+  {
+    id: "starter",
+    slug: "starter",
+    name: "Starter",
+    tagline: "Perfect for new exporters",
+    price: 249,
+    priceDisplay: "249",
+    currency: "£",
+    period: "/ month",
+    leads: 20,
+    leadsLabel: "Qualified Leads / Month",
+    featured: false,
+    badge: undefined,
+    features: [
+      "Targeted Industry Leads",
+      "International Buyers",
+      "Verified Global Buyers",
+      "Dedicated Account Manager",
+      "24/7/365 Support",
+      "Weekly Reporting",
+      "Monthly Reporting",
+      "Weekly / Monthly Call",
+    ],
+    isActive: true,
+    sortOrder: 2,
+  },
+  {
+    id: "growth",
+    slug: "growth",
+    name: "Growth",
+    tagline: "Most popular for scaling",
+    price: 499,
+    priceDisplay: "499",
+    currency: "£",
+    period: "/ month",
+    leads: 50,
+    leadsLabel: "Qualified Leads / Month",
+    featured: true,
+    badge: "⭐ Most Popular",
+    features: [
+      "Targeted Industry Leads",
+      "International Buyers",
+      "Verified Global Buyers",
+      "Dedicated Account Manager",
+      "24/7/365 Support",
+      "Weekly Reporting",
+      "Monthly Reporting",
+      "Weekly / Monthly Call",
+    ],
+    isActive: true,
+    sortOrder: 3,
+  },
+  {
+    id: "enterprise",
+    slug: "enterprise",
+    name: "Enterprise",
+    tagline: "For established businesses",
+    price: 999,
+    priceDisplay: "999",
+    currency: "£",
+    period: "/ month",
+    leads: 120,
+    leadsLabel: "Qualified Leads / Month",
+    featured: false,
+    badge: undefined,
+    features: [
+      "Targeted Industry Leads",
+      "International Buyers",
+      "Verified Global Buyers",
+      "Dedicated Account Manager",
+      "24/7/365 Support",
+      "Weekly Reporting",
+      "Monthly Reporting",
+      "Weekly / Monthly Call",
+    ],
+    isActive: true,
+    sortOrder: 4,
+  },
+];
+
 /**
  * Seed initial Find International Buyers Plans into MongoDB
  */
 export async function seedPackages(): Promise<{ success: boolean; count: number; packages: PackageDbModel[] }> {
   await connectToDatabase();
 
-  const initialPackages: PackageDbModel[] = BUYER_PLANS.map((plan, index) => ({
-    id: plan.id,
-    slug: plan.id,
-    name: plan.name,
-    tagline: plan.tagline,
-    price: parseFloat(plan.price) || 0,
-    priceDisplay: plan.price,
-    currency: plan.currency,
-    period: plan.period,
-    leads: parseInt(plan.leads, 10) || 0,
-    leadsLabel: plan.leadsLabel,
-    featured: plan.featured,
-    badge: plan.badge,
-    features: plan.features,
-    isActive: true,
-    sortOrder: index + 1,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+  const now = new Date().toISOString();
+  const seededPackages: PackageDbModel[] = DEFAULT_SEEDED_PACKAGES.map((pkg) => ({
+    ...pkg,
+    createdAt: now,
+    updatedAt: now,
   }));
 
-  for (const pkg of initialPackages) {
+  for (const pkg of seededPackages) {
     await PackageModel.updateOne(
       { id: pkg.id },
       {
         $set: {
           ...pkg,
-          updatedAt: new Date().toISOString(),
+          updatedAt: now,
         },
         $setOnInsert: {
-          createdAt: new Date().toISOString(),
+          createdAt: now,
         },
       },
       { upsert: true }
@@ -65,27 +154,35 @@ export async function seedPackages(): Promise<{ success: boolean; count: number;
 
   return {
     success: true,
-    count: initialPackages.length,
-    packages: initialPackages,
+    count: seededPackages.length,
+    packages: seededPackages,
   };
 }
 
 /**
- * Retrieve all active packages from MongoDB (with static fallback)
+ * Retrieve all active packages directly from MongoDB packages collection
  */
 export async function getAllPackages(): Promise<PackageDbModel[]> {
   try {
     await connectToDatabase();
-    const docs = await PackageModel.find({ isActive: { $ne: false } })
+    let docs = await PackageModel.find({ isActive: { $ne: false } })
       .sort({ sortOrder: 1 })
       .lean();
+
+    if (!docs || docs.length === 0) {
+      // Auto-seed if database packages collection is completely empty
+      await seedPackages();
+      docs = await PackageModel.find({ isActive: { $ne: false } })
+        .sort({ sortOrder: 1 })
+        .lean();
+    }
 
     if (docs && docs.length > 0) {
       return docs.map((doc: any) => ({
         id: doc.id || doc._id.toString(),
         slug: doc.slug || doc.id,
         name: doc.name,
-        tagline: doc.tagline,
+        tagline: doc.tagline || "",
         price: typeof doc.price === "number" ? doc.price : parseFloat(doc.price) || 0,
         priceDisplay: doc.priceDisplay || String(doc.price || "0"),
         currency: doc.currency || "£",
@@ -102,33 +199,14 @@ export async function getAllPackages(): Promise<PackageDbModel[]> {
       }));
     }
   } catch (err: any) {
-    console.warn("Could not query packages from MongoDB, using fallback:", err.message);
+    console.error("Could not query packages from MongoDB:", err.message);
   }
 
-  // Fallback to static BUYER_PLANS if database is unreachable or empty
-  return BUYER_PLANS.map((plan, index) => ({
-    id: plan.id,
-    slug: plan.id,
-    name: plan.name,
-    tagline: plan.tagline,
-    price: parseFloat(plan.price) || 0,
-    priceDisplay: plan.price,
-    currency: plan.currency,
-    period: plan.period,
-    leads: parseInt(plan.leads, 10) || 0,
-    leadsLabel: plan.leadsLabel,
-    featured: plan.featured,
-    badge: plan.badge,
-    features: plan.features,
-    isActive: true,
-    sortOrder: index + 1,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  }));
+  return [];
 }
 
 /**
- * Retrieve a single package by id/slug
+ * Retrieve a single package directly from MongoDB by id/slug/name
  */
 export async function getPackageById(idOrSlug: string): Promise<PackageDbModel | null> {
   const cleanId = (idOrSlug || "").trim().toLowerCase();
@@ -145,7 +223,7 @@ export async function getPackageById(idOrSlug: string): Promise<PackageDbModel |
         id: doc.id || doc._id.toString(),
         slug: doc.slug || doc.id,
         name: doc.name,
-        tagline: doc.tagline,
+        tagline: doc.tagline || "",
         price: typeof doc.price === "number" ? doc.price : parseFloat(doc.price) || 0,
         priceDisplay: doc.priceDisplay || String(doc.price || "0"),
         currency: doc.currency || "£",
@@ -162,31 +240,8 @@ export async function getPackageById(idOrSlug: string): Promise<PackageDbModel |
       };
     }
   } catch (err: any) {
-    console.warn("Could not query package from MongoDB:", err.message);
+    console.error("Could not query package from MongoDB:", err.message);
   }
 
-  const staticPlan = BUYER_PLANS.find(
-    (p) => p.id === cleanId || p.name.toLowerCase() === cleanId
-  );
-  if (!staticPlan) return null;
-
-  return {
-    id: staticPlan.id,
-    slug: staticPlan.id,
-    name: staticPlan.name,
-    tagline: staticPlan.tagline,
-    price: parseFloat(staticPlan.price) || 0,
-    priceDisplay: staticPlan.price,
-    currency: staticPlan.currency,
-    period: staticPlan.period,
-    leads: parseInt(staticPlan.leads, 10) || 0,
-    leadsLabel: staticPlan.leadsLabel,
-    featured: staticPlan.featured,
-    badge: staticPlan.badge,
-    features: staticPlan.features,
-    isActive: true,
-    sortOrder: 1,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  };
+  return null;
 }

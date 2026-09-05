@@ -3,6 +3,7 @@ import { Metadata } from "next";
 import mongoose from "mongoose";
 import { getExporterSessionFromRequest } from "@/lib/exporter-auth";
 import { ExportProfile, SellerInquiry, connectToDatabase } from "@/lib/mongodb";
+import { getAllPackages } from "@/lib/packages";
 import ExporterProfileDashboard from "@/components/ExporterProfileDashboard";
 import { Loader2 } from "lucide-react";
 
@@ -31,8 +32,12 @@ function DashboardFallback() {
 export default async function ExporterProfilePage() {
   let initialProfile: any = null;
   let initialInquiries: any[] = [];
+  let initialPackages: any[] = [];
 
   try {
+    // Fetch active packages directly from database
+    initialPackages = await getAllPackages();
+
     const session = await getExporterSessionFromRequest();
     if (session) {
       await connectToDatabase();
@@ -110,6 +115,7 @@ export default async function ExporterProfilePage() {
       <ExporterProfileDashboard
         initialProfile={initialProfile}
         initialInquiries={initialInquiries}
+        initialPackages={initialPackages}
       />
     </Suspense>
   );

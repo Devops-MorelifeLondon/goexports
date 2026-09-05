@@ -230,10 +230,6 @@ export default function ExporterProfileDashboard({
     };
   }, [initialPackages]);
 
-  // Plan Switching State
-  const [isUpdatingPlan, setIsUpdatingPlan] = useState(false);
-  const [upgradingPlanId, setUpgradingPlanId] = useState<string | null>(null);
-
   // Inquiry Search, Filters, Sorting & Pagination State
   const [inquirySearchQuery, setInquirySearchQuery] = useState("");
   const [inquiryStatusFilter, setInquiryStatusFilter] = useState("all");
@@ -397,54 +393,6 @@ export default function ExporterProfileDashboard({
       logoKey: data.logoKey || "",
       selectedPackage: data.selectedPackage || "Verified Growth Pro",
     });
-  };
-
-  // Switch or Upgrade Plan Handler
-  const handleSelectPlan = async (planNameOrId: string) => {
-    if (!profile) return;
-    const currentPkg = profile.selectedPackage || "Verified Growth Pro";
-    if (currentPkg.toLowerCase() === planNameOrId.toLowerCase()) {
-      toast.info("Active Plan", {
-        description: `Your profile is currently on the ${planNameOrId} tier.`,
-      });
-      return;
-    }
-
-    setIsUpdatingPlan(true);
-    setUpgradingPlanId(planNameOrId);
-    try {
-      const res = await fetch("/api/exporter/profile", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...formData,
-          selectedPackage: planNameOrId,
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.message || data.error || "Failed to update plan");
-      }
-
-      toast.success("Membership Plan Updated!", {
-        description: `Your membership tier has been switched to ${planNameOrId}.`,
-      });
-
-      if (data.seller) {
-        setProfile(data.seller);
-        syncFormDataWithProfile(data.seller);
-        if (typeof window !== "undefined") {
-          localStorage.setItem("exporter_user", JSON.stringify(data.seller));
-        }
-      }
-    } catch (err: any) {
-      toast.error("Plan Update Failed", {
-        description: err.message || "Could not change plan. Please try again.",
-      });
-    } finally {
-      setIsUpdatingPlan(false);
-      setUpgradingPlanId(null);
-    }
   };
 
   // Fetch authenticated exporter profile
@@ -1836,14 +1784,23 @@ export default function ExporterProfileDashboard({
               </div>
             </div>
 
-            {/* 4-Tier Plan Grid */}
+            {/* Readonly Subscription Notice */}
+            <div className="p-4 sm:p-5 rounded-2xl bg-amber-50/80 border border-amber-200/80 flex items-start gap-3 shadow-xs">
+              <ShieldCheck className="w-5 h-5 text-amber-700 shrink-0 mt-0.5" />
+              <div className="text-xs text-amber-900 leading-relaxed">
+                <strong className="font-bold text-amber-950 block mb-0.5">Subscription Tier Managed by Administrator (Read-Only)</strong>
+                Your membership tier and monthly qualified buyer leads quota are assigned directly by Goexports Account Administration. If your production volume has grown and you need more international buyer leads or dedicated account management, please reach out to our trade support desk at <a href="mailto:info@goexports.co.uk" className="underline font-bold text-amber-950 hover:text-amber-800">info@goexports.co.uk</a>.
+              </div>
+            </div>
+
+            {/* 4-Tier Plan Grid (Readonly) */}
             <div className="space-y-4">
               <div>
                 <h3 className="text-xl font-bold text-[var(--ink)]">
-                  Available Membership Plans
+                  Available Membership Plans Reference
                 </h3>
                 <p className="text-xs text-[var(--muted)] m-0 mt-0.5">
-                  Select a plan that matches your production capacity and export ambition.
+                  Overview of all platform tiers and their respective monthly lead quotas and privileges.
                 </p>
               </div>
 
@@ -1855,7 +1812,6 @@ export default function ExporterProfileDashboard({
                     (profile.selectedPackage || "growth").toLowerCase().includes(plan.id.toLowerCase()) ||
                     (profile.selectedPackage || "").toLowerCase() === plan.name.toLowerCase() ||
                     (plan.slug && (profile.selectedPackage || "").toLowerCase() === plan.slug.toLowerCase());
-                  const isUpgradingThis = isUpdatingPlan && upgradingPlanId === plan.name;
 
                   return (
                     <div
@@ -1876,7 +1832,7 @@ export default function ExporterProfileDashboard({
                           </span>
                           {isCurrent ? (
                             <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-300">
-                              ✓ Current Plan
+                              ✓ Your Active Plan
                             </span>
                           ) : plan.badge ? (
                             <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-100 text-amber-900 border border-amber-300">
@@ -1929,36 +1885,17 @@ export default function ExporterProfileDashboard({
                         </div>
                       </div>
 
-                      {/* Action Button */}
+                      {/* Readonly Plan Status Indicator */}
                       <div className="pt-6 mt-4 border-t border-[var(--hairline)]">
                         {isCurrent ? (
-                          <div className="w-full py-3 rounded-xl text-center text-xs font-bold text-emerald-800 bg-emerald-50 border border-emerald-300 flex items-center justify-center gap-1.5">
-                            <Check className="w-4 h-4 text-emerald-600" />
-                            <span>Active Subscription</span>
+                          <div className="w-full py-2.5 rounded-xl text-center text-xs font-extrabold text-emerald-800 bg-emerald-100 border border-emerald-300 flex items-center justify-center gap-1.5 shadow-2xs">
+                            <Check className="w-4 h-4 text-emerald-700" />
+                            <span>Current Active Plan</span>
                           </div>
                         ) : (
-                          <button
-                            type="button"
-                            disabled={isUpdatingPlan}
-                            onClick={() => handleSelectPlan(plan.name)}
-                            className={`w-full py-3 rounded-xl font-bold text-xs border-none cursor-pointer transition-all flex items-center justify-center gap-2 shadow-sm disabled:opacity-50 ${
-                              plan.featured
-                                ? "bg-[var(--brand-ochre)] text-[var(--ink)] hover:opacity-95"
-                                : "bg-[var(--ink)] text-white hover:bg-slate-800"
-                            }`}
-                          >
-                            {isUpgradingThis ? (
-                              <>
-                                <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                                <span>Switching Plan...</span>
-                              </>
-                            ) : (
-                              <>
-                                <Sparkles className="w-3.5 h-3.5" />
-                                <span>Switch to {plan.name}</span>
-                              </>
-                            )}
-                          </button>
+                          <div className="w-full py-2.5 rounded-xl text-center text-xs font-semibold text-[var(--muted)] bg-[var(--surface-soft)] border border-[var(--hairline)] flex items-center justify-center gap-1.5">
+                            <span>Available Tier</span>
+                          </div>
                         )}
                       </div>
                     </div>
@@ -3052,70 +2989,56 @@ export default function ExporterProfileDashboard({
                       Section 6: Membership Plan
                     </div>
                     <h2 className="text-xl font-bold text-[var(--ink)]">
-                      Selected Membership Plan & Quota
+                      Current Membership Plan & Quota
                     </h2>
                     <p className="text-xs text-[var(--muted)] mt-1">
-                      Choose your preferred membership tier for buyer lead matching and global storefront priority.
+                      Your subscription tier is managed by Goexports Account Administration.
                     </p>
                   </div>
 
-                  <span className="text-xs font-bold text-[var(--ink)] bg-[var(--canvas)] px-3 py-1 rounded-xl border border-[var(--hairline)] self-start sm:self-auto">
-                    Selected: <strong className="text-amber-700">{formData.selectedPackage}</strong>
+                  <span className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-700 bg-slate-100 px-3 py-1 rounded-xl border border-slate-300 self-start sm:self-auto">
+                    <ShieldCheck className="w-3.5 h-3.5 text-slate-500" />
+                    <span>Read-Only</span>
                   </span>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-1">
-                  {availablePlans.map((plan) => {
-                    const isSelected =
-                      (formData.selectedPackage || "").toLowerCase() === plan.name.toLowerCase() ||
-                      (formData.selectedPackage || "").toLowerCase() === plan.id.toLowerCase() ||
-                      (plan.slug && (formData.selectedPackage || "").toLowerCase() === plan.slug.toLowerCase()) ||
-                      ((formData.selectedPackage || "").toLowerCase().includes("growth") && plan.id === "growth") ||
-                      ((formData.selectedPackage || "").toLowerCase().includes("enterprise") && plan.id === "enterprise") ||
-                      ((formData.selectedPackage || "").toLowerCase().includes("starter") && plan.id === "starter") ||
-                      ((formData.selectedPackage || "").toLowerCase().includes("free") && plan.id === "free");
+                {/* Readonly Active Plan Details Card */}
+                <div className="p-5 sm:p-6 rounded-2xl bg-[var(--canvas)] border border-[var(--hairline)] flex flex-col md:flex-row md:items-center justify-between gap-5">
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <span className="px-3 py-1 rounded-full text-xs font-extrabold bg-emerald-100 text-emerald-900 border border-emerald-300">
+                        ✓ Active Tier: {planMeta.displayName}
+                      </span>
+                      {planMeta.badge && (
+                        <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300">
+                          {planMeta.badge}
+                        </span>
+                      )}
+                    </div>
 
-                    return (
-                      <button
-                        type="button"
-                        key={plan.id || plan.slug}
-                        onClick={() => setFormData((prev) => ({ ...prev, selectedPackage: plan.name }))}
-                        className={`p-4 rounded-2xl text-left border-2 transition-all cursor-pointer flex flex-col justify-between space-y-3 ${
-                          isSelected
-                            ? "border-[var(--brand-ochre)] bg-[var(--canvas)] ring-2 ring-[var(--brand-ochre)]/20 shadow-sm"
-                            : "border-[var(--hairline)] bg-[var(--surface-card)] hover:border-[var(--brand-ochre)]/50"
-                        }`}
-                      >
-                        <div className="space-y-2">
-                          <div className="flex items-center justify-between">
-                            <span className="text-xs font-extrabold uppercase tracking-wider text-[var(--ink)]">
-                              {plan.name}
-                            </span>
-                            {isSelected && (
-                              <span className="w-5 h-5 rounded-full bg-[var(--brand-ochre)] text-[var(--ink)] flex items-center justify-center font-bold text-[10px]">
-                                ✓
-                              </span>
-                            )}
-                          </div>
-                          <div>
-                            <span className="text-xl font-extrabold text-[var(--ink)]">
-                              {plan.currency || "£"}{plan.priceDisplay || plan.price}
-                            </span>
-                            <span className="text-[10px] text-[var(--muted)] font-semibold">
-                              {plan.period || "/ month"}
-                            </span>
-                          </div>
-                          <div className="text-[11px] font-bold text-amber-900 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">
-                            {plan.leads} {plan.leadsLabel || "Leads / month"}
-                          </div>
-                        </div>
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-2xl sm:text-3xl font-extrabold text-[var(--ink)] font-mono">
+                        {planMeta.priceDisplay}
+                      </span>
+                      <span className="text-xs text-[var(--muted)] font-semibold">
+                        • {planMeta.leads} {planMeta.leadsLabel}
+                      </span>
+                    </div>
 
-                        <div className="text-[10px] text-[var(--muted)] border-t border-[var(--hairline)] pt-2 line-clamp-2">
-                          {plan.tagline || "Export subscription plan for international sellers"}
-                        </div>
-                      </button>
-                    );
-                  })}
+                    <p className="text-xs text-[var(--muted)] max-w-lg leading-relaxed m-0">
+                      {planMeta.tagline}
+                    </p>
+                  </div>
+
+                  <div className="p-4 rounded-xl bg-[var(--surface-card)] border border-[var(--hairline)] text-xs space-y-1.5 shrink-0 max-w-xs">
+                    <div className="font-bold text-[var(--ink)] flex items-center gap-1.5">
+                      <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                      <span>Admin-Managed Tier</span>
+                    </div>
+                    <p className="text-[11px] text-[var(--muted)] leading-relaxed m-0">
+                      To upgrade your lead capacity or switch tiers, contact our trade desk at <a href="mailto:info@goexports.co.uk" className="underline text-[var(--ink)] font-bold">info@goexports.co.uk</a>.
+                    </p>
+                  </div>
                 </div>
               </div>
 

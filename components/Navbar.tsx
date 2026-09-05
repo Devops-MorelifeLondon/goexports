@@ -163,13 +163,13 @@ export default function Navbar() {
               className="flex items-center cursor-pointer no-underline group shrink-0 transition-transform duration-200 active:scale-[0.98]"
               aria-label="Goexports Home"
             >
-              <div className="relative w-[110px] xs:w-[125px] sm:w-[138px] h-[32px] sm:h-[36px]">
+              <div className="relative w-[115px] sm:w-[138px] h-[32px] sm:h-[36px]">
                 <Image
                   src="/logo/logo.png"
                   alt="Goexports Logo"
                   fill
                   priority
-                  sizes="(max-width: 640px) 125px, 140px"
+                  sizes="(max-width: 640px) 115px, 138px"
                   className="object-contain object-left"
                 />
               </div>
@@ -277,7 +277,7 @@ export default function Navbar() {
               </Link>
             )}
 
-            {/* Contact Sales Pill (Medium+ Screens) */}
+            {/* Contact Sales Pill (Large Screens) */}
             <button
               onClick={() => scrollTo("#contact-form")}
               className="hidden lg:inline-flex items-center gap-1.5 px-3.5 py-1.5 text-[12.5px] font-medium text-[var(--ink)] bg-[var(--surface-soft)] border border-[var(--hairline)] rounded-full cursor-pointer transition-all duration-200 hover:bg-[var(--surface-card)] active:scale-[0.98] h-[36px] sm:h-[38px]"
@@ -285,28 +285,24 @@ export default function Navbar() {
               Contact Sales
             </button>
 
-            {/* Primary Action Button (Adaptive Text for Mobile/Tablet/Desktop) */}
+            {/* Primary Action Button */}
             <Link
               href={exporterUser ? "/exporter/profile" : "/create-export-profile"}
-              className="inline-flex items-center justify-center gap-1.5 px-3 xs:px-3.5 sm:px-4 md:px-5 py-1.5 sm:py-2 text-[12px] xs:text-[12.5px] sm:text-[13.5px] font-bold text-[var(--ink)] border-none rounded-full no-underline cursor-pointer transition-all duration-200 hover:opacity-95 active:scale-[0.97] shadow-sm shrink-0 group h-[36px] sm:h-[38px]"
+              className="inline-flex items-center justify-center gap-1.5 px-3.5 sm:px-4 md:px-5 py-1.5 sm:py-2 text-[12.5px] sm:text-[13.5px] font-bold text-[var(--ink)] border-none rounded-full no-underline cursor-pointer transition-all duration-200 hover:opacity-95 active:scale-[0.97] shadow-sm shrink-0 group h-[36px] sm:h-[38px]"
               style={{ backgroundColor: "var(--brand-ochre)" }}
             >
               {exporterUser ? (
                 <>
                   <LayoutDashboard className="w-3.5 h-3.5" />
-                  <span className="inline sm:hidden">Portal</span>
+                  <span className="inline sm:hidden">Hub</span>
                   <span className="hidden sm:inline">My Exporter Hub</span>
                 </>
               ) : (
                 <>
-                  <UserPlus className="w-3.5 h-3.5 hidden xs:inline sm:hidden" />
-                  {/* Ultra small screens (< 360px) */}
-                  <span className="inline xs:hidden">Get Listed</span>
-                  {/* Small screens (360px - 640px) */}
-                  <span className="hidden xs:inline sm:hidden">Create Profile</span>
-                  {/* Medium & Desktop screens (> 640px) */}
+                  <UserPlus className="w-3.5 h-3.5 sm:hidden" />
+                  <span className="inline sm:hidden">Create Profile</span>
                   <span className="hidden sm:inline">Create Export Profile</span>
-                  <ArrowRight className="w-3.5 h-3.5 opacity-75 transition-transform duration-200 group-hover:translate-x-0.5 hidden xs:inline" />
+                  <ArrowRight className="w-3.5 h-3.5 opacity-75 transition-transform duration-200 group-hover:translate-x-0.5 hidden sm:inline" />
                 </>
               )}
             </Link>

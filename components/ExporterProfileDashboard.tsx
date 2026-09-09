@@ -116,6 +116,14 @@ export interface BuyerInquiry {
   callingPerson?: string;
   assignedTo?: string;
   assignedCompany?: string;
+  assignments?: Array<{
+    exporterId?: string;
+    companyName?: string;
+    email?: string;
+    country?: string;
+    assignedAt?: string;
+  }>;
+  assignedExporters?: string[];
   message: string;
   createdAt: string;
   isAssigned?: boolean;

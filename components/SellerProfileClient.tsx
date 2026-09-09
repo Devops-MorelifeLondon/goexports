@@ -995,10 +995,14 @@ export default function SellerProfileClient({ seller }: SellerProfileClientProps
 
       {/* ── SHORT & COMPACT PRODUCT INQUIRY MODAL DIALOG ── */}
       {isProductInquiryModalOpen && selectedProductForInquiry && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs overflow-y-auto">
-          <div className="relative w-full max-w-md p-5 sm:p-6 rounded-2xl border border-[var(--hairline)] bg-[var(--surface-card)] shadow-2xl space-y-4 my-6 text-xs text-[var(--ink)]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs overflow-hidden">
+          <div
+            className="fixed inset-0 bg-black/60 backdrop-blur-xs"
+            onClick={() => setIsProductInquiryModalOpen(false)}
+          />
+          <div className="relative z-10 flex flex-col w-full max-w-md max-h-[90vh] sm:max-h-[85vh] rounded-2xl border border-[var(--hairline)] bg-[var(--surface-card)] shadow-2xl overflow-hidden text-xs text-[var(--ink)] animate-in fade-in zoom-in-95 duration-150">
             {/* Modal Header */}
-            <div className="flex items-center justify-between border-b border-[var(--hairline)] pb-3">
+            <div className="shrink-0 flex items-center justify-between border-b border-[var(--hairline)] p-4 sm:p-5 bg-[var(--canvas)]">
               <div className="flex items-center gap-2.5 min-w-0">
                 <div className="w-8 h-8 rounded-xl bg-[var(--brand-ochre)] text-[var(--ink)] flex items-center justify-center font-bold shrink-0">
                   <Package className="w-4 h-4" />
@@ -1019,6 +1023,7 @@ export default function SellerProfileClient({ seller }: SellerProfileClientProps
               </div>
 
               <button
+                type="button"
                 onClick={() => setIsProductInquiryModalOpen(false)}
                 className="p-1.5 rounded-lg text-[var(--muted)] hover:text-[var(--ink)] hover:bg-[var(--canvas)] border-none bg-transparent cursor-pointer shrink-0"
                 title="Close modal"
@@ -1028,6 +1033,7 @@ export default function SellerProfileClient({ seller }: SellerProfileClientProps
             </div>
 
             {/* Modal Body */}
+            <div className="flex-1 min-h-0 p-4 sm:p-5 space-y-3.5 overflow-y-auto overscroll-contain">
             {productInquirySubmitted ? (
               <div className="py-4 text-center space-y-3">
                 <div className="w-12 h-12 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto border border-emerald-300">
@@ -1206,7 +1212,8 @@ export default function SellerProfileClient({ seller }: SellerProfileClientProps
             )}
           </div>
         </div>
-      )}
-    </div>
-  );
+      </div>
+    )}
+  </div>
+);
 }

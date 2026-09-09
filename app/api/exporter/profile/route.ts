@@ -52,9 +52,16 @@ export async function GET(req: Request) {
         { sellerId: userDoc._id.toString() },
         { assignedTo: userDoc.id },
         { assignedTo: userDoc._id.toString() },
+        { assignedExporters: userDoc.id },
+        { assignedExporters: userDoc._id.toString() },
+        { "assignments.exporterId": userDoc.id },
+        { "assignments.exporterId": userDoc._id.toString() },
+        { "assignments.email": userDoc.email.toLowerCase() },
       ];
       if (userDoc.companyName) {
-        queryOr.push({ assignedCompany: userDoc.companyName });
+        const escapedCompany = userDoc.companyName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        queryOr.push({ assignedCompany: { $regex: new RegExp(escapedCompany, "i") } });
+        queryOr.push({ "assignments.companyName": { $regex: new RegExp(escapedCompany, "i") } });
         queryOr.push({ sellerCompanyName: userDoc.companyName });
       }
 
@@ -66,7 +73,16 @@ export async function GET(req: Request) {
       inquiries = rawInquiries.map((inq: any) => {
         const isAssigned =
           (inq.assignedTo && (inq.assignedTo === userDoc.id || inq.assignedTo === userDoc._id?.toString())) ||
-          (inq.assignedCompany && userDoc.companyName && inq.assignedCompany.toLowerCase() === userDoc.companyName.toLowerCase());
+          (Array.isArray(inq.assignedExporters) && (inq.assignedExporters.includes(userDoc.id) || inq.assignedExporters.includes(userDoc._id?.toString()))) ||
+          (Array.isArray(inq.assignments) && inq.assignments.some((a: any) =>
+            (a.exporterId && (a.exporterId === userDoc.id || a.exporterId === userDoc._id?.toString())) ||
+            (a.email && userDoc.email && a.email.toLowerCase() === userDoc.email.toLowerCase()) ||
+            (a.companyName && userDoc.companyName && a.companyName.toLowerCase() === userDoc.companyName.toLowerCase())
+          )) ||
+          (inq.assignedCompany && userDoc.companyName && (
+            inq.assignedCompany.toLowerCase() === userDoc.companyName.toLowerCase() ||
+            inq.assignedCompany.toLowerCase().includes(userDoc.companyName.toLowerCase())
+          ));
 
         return {
           id: inq._id.toString(),
@@ -82,6 +98,8 @@ export async function GET(req: Request) {
           callingPerson: inq.callingPerson || "",
           assignedTo: inq.assignedTo || "",
           assignedCompany: inq.assignedCompany || "",
+          assignments: inq.assignments || [],
+          assignedExporters: inq.assignedExporters || [],
           message: inq.message || "",
           createdAt: inq.createdAt || inq.receivedAt || new Date().toISOString(),
           isAssigned: !!isAssigned,

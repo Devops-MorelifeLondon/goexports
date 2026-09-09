@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { connectToDatabase, ExportProfile } from "@/lib/mongodb";
 import { industries } from "@/data/industries";
 import { slugifyCompanyName } from "@/lib/seller";
+import { getAllSpiceSlugs } from "@/lib/spices";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 3600; // Cache and revalidate every 1 hour
@@ -58,6 +59,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     changeFrequency: "weekly",
     priority: 0.8,
   }));
+
+  // 3. Programmatic Spices Export Pages
+  const spicesPages: MetadataRoute.Sitemap = [
+    {
+      url: `${BASE_URL}/exports/spices`,
+      lastModified: now,
+      changeFrequency: "daily",
+      priority: 0.85,
+    },
+    ...getAllSpiceSlugs().map((slug) => ({
+      url: `${BASE_URL}/exports/spices/${slug}`,
+      lastModified: now,
+      changeFrequency: "weekly" as const,
+      priority: 0.9,
+    })),
+  ];
 
   // 3. Dynamic Exporter Profiles & Products from MongoDB
   const exporterPages: MetadataRoute.Sitemap = [];
@@ -116,5 +133,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     console.error("Error generating dynamic sitemap from MongoDB:", error);
   }
 
-  return [...staticPages, ...industryPages, ...exporterPages, ...productPages];
+  return [...staticPages, ...industryPages, ...spicesPages, ...exporterPages, ...productPages];
 }

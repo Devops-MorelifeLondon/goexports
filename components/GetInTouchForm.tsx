@@ -13,7 +13,19 @@ interface FormData {
   inquiryDate: string;
 }
 
-export default function GetInTouchForm() {
+interface GetInTouchFormProps {
+  initialCategory?: string;
+  title?: string;
+  subtitle?: string;
+  className?: string;
+}
+
+export default function GetInTouchForm({
+  initialCategory = "",
+  title = "Get in Touch",
+  subtitle = "We'll get back within 24 hours",
+  className = "",
+}: GetInTouchFormProps) {
   const getCurrentDate = () => new Date().toISOString().split("T")[0];
 
   const [formData, setFormData] = useState<FormData>({
@@ -22,7 +34,7 @@ export default function GetInTouchForm() {
     phone: "",
     company: "",
     country: "",
-    productCategory: "",
+    productCategory: initialCategory,
     inquiryDate: getCurrentDate(),
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -76,7 +88,7 @@ export default function GetInTouchForm() {
   ];
 
   return (
-    <div className="flex-1 w-full max-w-[420px]" id="contact-form">
+    <div className={`flex-1 w-full max-w-[420px] ${className}`} id="contact-form">
       <div
         className="relative"
         style={{
@@ -104,10 +116,10 @@ export default function GetInTouchForm() {
           </div>
           <div>
             <h2 style={{ fontSize: "18px", fontWeight: 600, color: "var(--ink)", lineHeight: 1.3 }}>
-              Get in Touch
+              {title}
             </h2>
             <p style={{ fontSize: "13px", color: "var(--muted)", marginTop: "2px" }}>
-              We&apos;ll get back within 24 hours
+              {subtitle}
             </p>
           </div>
         </div>

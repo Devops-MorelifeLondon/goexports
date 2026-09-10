@@ -122,10 +122,10 @@ export default function WhySellGlobally() {
             return (
               <motion.div
                 key={ind.slug}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{ duration: 0.4, delay: 0.05 }}
+                viewport={{ once: true, amount: 0.05 }}
+                transition={{ duration: 0.35, ease: "easeOut" }}
               >
                 <h3
                   className="mb-4"

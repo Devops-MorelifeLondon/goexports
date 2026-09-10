@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import TopStrip from "@/components/TopStrip";
+import NextTopLoader from "nextjs-toploader";
 import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
@@ -102,7 +104,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        
         {/* Google tag (gtag.js) */}
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-3YVK8TPYEV"></script>
         <script dangerouslySetInnerHTML={{
@@ -140,7 +141,19 @@ export default function RootLayout({
         {/* End Meta Pixel Code */}
       </head>
       <body style={{ backgroundColor: 'var(--canvas)' }}>
+        <NextTopLoader
+          color="#e8b94a"
+          initialPosition={0.08}
+          crawlSpeed={200}
+          height={3}
+          crawl={true}
+          showSpinner={false}
+          easing="ease"
+          speed={200}
+          shadow="0 0 10px #e8b94a,0 0 5px #e8b94a"
+        />
         <div className="min-h-screen">
+          <TopStrip />
           <Navbar />
           {children}
           <Footer />

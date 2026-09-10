@@ -112,12 +112,8 @@ export default function BenefitsForExporters() {
         {/* 6 saturated feature cards cycling through brand palette */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {benefits.map((benefit, index) => (
-            <FadeIn key={index} delay={index * 0.08}>
-              <motion.div
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-60px" }}
-                transition={{ delay: index * 0.08, duration: 0.5 }}
+            <FadeIn key={index} delay={index * 0.06}>
+              <div
                 className="flex flex-col h-full"
                 style={{
                   backgroundColor: benefit.cardColor,
@@ -176,7 +172,7 @@ export default function BenefitsForExporters() {
                 >
                   {benefit.highlight}
                 </div>
-              </motion.div>
+              </div>
             </FadeIn>
           ))}
         </div>

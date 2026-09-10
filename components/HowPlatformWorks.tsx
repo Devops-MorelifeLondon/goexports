@@ -80,18 +80,12 @@ export default function HowPlatformWorks() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {steps.map((step, index) => (
-            <FadeIn key={index} delay={index * 0.1}>
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-60px" }}
-                transition={{ delay: index * 0.1, duration: 0.5 }}
-                className="relative"
-              >
+            <FadeIn key={index} delay={index * 0.08}>
+              <div className="relative">
                 {/* Step circle */}
                 <div className="mb-6">
                   <div
-                    className="w-14 h-14 flex items-center justify-center"
+                    className="w-14 h-14 flex items-center justify-center shadow-xs"
                     style={{
                       backgroundColor: "var(--primary)",
                       color: "var(--on-primary)",
@@ -132,7 +126,7 @@ export default function HowPlatformWorks() {
                     }}
                   />
                 )}
-              </motion.div>
+              </div>
             </FadeIn>
           ))}
         </div>

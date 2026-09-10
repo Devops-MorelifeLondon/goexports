@@ -1,111 +1,7 @@
-"use client";
-
-import { useState, useEffect } from "react";
 import Link from "next/link";
 import GetInTouchForm from "./GetInTouchForm";
 
-const lines = [
-  { prefix: "Get ", keyword: "Buyer Leads" },
-  { prefix: "Find ", keyword: "Verified Buyers" },
-  { prefix: "Connect ", keyword: "Globally" },
-];
-
 export default function HeroSection() {
-  const [currentLine, setCurrentLine] = useState(0);
-  const [charIndex, setCharIndex] = useState(0);
-  const [completedLines, setCompletedLines] = useState<number[]>([]);
-  const [phase, setPhase] = useState<"typing" | "paused" | "deleting">("typing");
-
-  useEffect(() => {
-    if (phase === "typing" && currentLine >= lines.length) {
-      const timeout = setTimeout(() => {
-        setPhase("deleting");
-        setCurrentLine(lines.length - 1);
-        setCharIndex((lines[lines.length - 1].prefix + lines[lines.length - 1].keyword + ".").length);
-      }, 2000);
-      return () => clearTimeout(timeout);
-    }
-
-    if (phase === "typing") {
-      const fullText = lines[currentLine].prefix + lines[currentLine].keyword + ".";
-      if (charIndex < fullText.length) {
-        const timeout = setTimeout(() => setCharIndex((prev) => prev + 1), 70);
-        return () => clearTimeout(timeout);
-      } else {
-        const timeout = setTimeout(() => {
-          setCompletedLines((prev) => [...prev, currentLine]);
-          setCurrentLine((prev) => prev + 1);
-          setCharIndex(0);
-        }, 400);
-        return () => clearTimeout(timeout);
-      }
-    }
-
-    if (phase === "deleting") {
-      if (charIndex > 0) {
-        const timeout = setTimeout(() => setCharIndex((prev) => prev - 1), 40);
-        return () => clearTimeout(timeout);
-      } else {
-        setCompletedLines((prev) => prev.filter((l) => l !== currentLine));
-        if (currentLine > 0) {
-          const prevLine = currentLine - 1;
-          setCurrentLine(prevLine);
-          setCharIndex((lines[prevLine].prefix + lines[prevLine].keyword + ".").length);
-        } else {
-          const timeout = setTimeout(() => {
-            setPhase("typing");
-            setCurrentLine(0);
-            setCharIndex(0);
-            setCompletedLines([]);
-          }, 500);
-          return () => clearTimeout(timeout);
-        }
-      }
-    }
-  }, [charIndex, currentLine, phase]);
-
-  const getDisplayText = (lineIndex: number) => {
-    const full = lines[lineIndex].prefix + lines[lineIndex].keyword + ".";
-    if (lineIndex === currentLine) return full.slice(0, charIndex);
-    if (completedLines.includes(lineIndex)) return full;
-    return "";
-  };
-
-  const renderLine = (lineIndex: number) => {
-    const text = getDisplayText(lineIndex);
-    const { prefix, keyword } = lines[lineIndex];
-    const isActive = lineIndex === currentLine;
-    const isComplete = completedLines.includes(lineIndex) && !isActive;
-    const showCursor = isActive;
-
-    if (!isComplete && !isActive) return <span className="block h-[1.15em]">&nbsp;</span>;
-    if (text.length === 0 && !showCursor) return <span className="block h-[1.15em]">&nbsp;</span>;
-
-    const prefixEnd = prefix.length;
-    const keywordEnd = prefix.length + keyword.length;
-    const typedPrefix = text.slice(0, Math.min(text.length, prefixEnd));
-    const typedKeyword = text.length > prefixEnd ? text.slice(prefixEnd, Math.min(text.length, keywordEnd)) : "";
-    const typedDot = text.length > keywordEnd ? "." : "";
-
-    return (
-      <span className="block">
-        {typedPrefix}
-        {typedKeyword && (
-          <span style={{ color: isComplete ? "var(--brand-ochre)" : "var(--ink)" }}>
-            {typedKeyword}
-          </span>
-        )}
-        {typedDot}
-        {showCursor && (
-          <span
-            className="inline-block w-[3px] h-[0.85em] ml-[2px] align-middle animate-pulse"
-            style={{ backgroundColor: "var(--brand-ochre)" }}
-          />
-        )}
-      </span>
-    );
-  };
-
   return (
     <section
       className="min-h-[calc(100vh-64px)] flex items-center"
@@ -142,16 +38,22 @@ export default function HeroSection() {
             <h1
               className="mb-6 display-xl"
               style={{
-                fontSize: "clamp(40px, 6vw, 72px)",
+                fontSize: "clamp(38px, 5.8vw, 70px)",
                 fontWeight: 500,
-                lineHeight: 1.0,
+                lineHeight: 1.05,
                 letterSpacing: "-2.5px",
                 color: "var(--ink)",
               }}
             >
-              {lines.map((_, i) => (
-                <span key={i} className="block">{renderLine(i)}</span>
-              ))}
+              <span className="block">
+                Get <span style={{ color: "var(--brand-ochre)" }}>Buyer Leads</span>.
+              </span>
+              <span className="block">
+                Find <span style={{ color: "var(--brand-ochre)" }}>Verified Buyers</span>.
+              </span>
+              <span className="block">
+                Connect <span style={{ color: "var(--brand-ochre)" }}>Globally</span>.
+              </span>
             </h1>
             <p
               className="mb-10 max-w-[480px] mx-auto lg:mx-0"

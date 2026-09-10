@@ -133,15 +133,15 @@ export default function Locations() {
           </div>
         </FadeIn>
 
-        <FadeIn delay={0.3}>
+        <FadeIn delay={0.2}>
           <div className="bg-[#FAFAFA] border border-[#e7e7e7] rounded-[14px] p-7 md:p-8">
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeTab}
-                initial={{ opacity: 0, y: 15 }}
+                initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -15 }}
-                transition={{ duration: 0.3 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.2 }}
               >
                 <div className="bg-[#111111] text-white border-l-4 border-l-[#111111] py-3.5 px-5 rounded-lg mb-6 text-xl font-bold flex items-center justify-between">
                   <span>{activeContinent}</span>
@@ -149,16 +149,16 @@ export default function Locations() {
                     {countries.length} {countries.length === 1 ? "country" : "countries"}
                   </span>
                 </div>
-                <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-x-6 gap-y-1 ${activeTab === 0 ? "max-h-[400px] overflow-y-auto pr-2" : ""}`}
+                <div
+                  className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-x-6 gap-y-1 ${
+                    activeTab === 0 ? "max-h-[400px] overflow-y-auto pr-2" : ""
+                  }`}
                   style={activeTab === 0 ? { scrollbarWidth: "thin", scrollbarColor: "#d1d5db transparent" } : undefined}
                 >
-                  {countries.map((country, i) => (
-                    <motion.div
+                  {countries.map((country) => (
+                    <div
                       key={country.code + (activeTab === 0 ? "-all" : "")}
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: Math.min(i * 0.008, 0.5), duration: 0.3 }}
-                      className="flex items-center gap-2.5 py-1.5 text-sm text-[#0F1111] whitespace-nowrap overflow-hidden text-ellipsis"
+                      className="flex items-center gap-2.5 py-1.5 text-sm text-[#0F1111] whitespace-nowrap overflow-hidden text-ellipsis hover:text-black transition-colors"
                     >
                       <img
                         src={`https://flagcdn.com/20x15/${country.code}.png`}
@@ -166,11 +166,12 @@ export default function Locations() {
                         width="20"
                         height="15"
                         alt={`${country.name} flag`}
-                        className="rounded-[2px] shrink-0 object-cover"
+                        className="rounded-[2px] shrink-0 object-cover bg-gray-100"
                         loading="lazy"
+                        decoding="async"
                       />
-                      {country.name}
-                    </motion.div>
+                      <span className="truncate">{country.name}</span>
+                    </div>
                   ))}
                 </div>
               </motion.div>

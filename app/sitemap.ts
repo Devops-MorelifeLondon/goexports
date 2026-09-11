@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { connectToDatabase, ExportProfile } from "@/lib/mongodb";
 import { industries } from "@/data/industries";
 import { slugifyCompanyName } from "@/lib/seller";
-import { getAllSpiceSlugs } from "@/lib/spices";
+import { getAllSpices, getAllLevel2Spices } from "@/lib/spices";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 3600; // Cache and revalidate every 1 hour
@@ -17,8 +17,15 @@ function parseSafeDate(dateVal?: string | Date | null): Date {
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
+  const sitemapMap = new Map<string, MetadataRoute.Sitemap[number]>();
 
-  // 1. Static Core Pages
+  const addEntry = (entry: MetadataRoute.Sitemap[number]) => {
+    if (!sitemapMap.has(entry.url)) {
+      sitemapMap.set(entry.url, entry);
+    }
+  };
+
+  // 1. Static Core Platform Pages
   const staticPages: MetadataRoute.Sitemap = [
     {
       url: `${BASE_URL}`,
@@ -27,10 +34,28 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 1.0,
     },
     {
+      url: `${BASE_URL}/spices`,
+      lastModified: now,
+      changeFrequency: "daily",
+      priority: 0.95,
+    },
+    {
+      url: `${BASE_URL}/exports/spices`,
+      lastModified: now,
+      changeFrequency: "daily",
+      priority: 0.9,
+    },
+    {
       url: `${BASE_URL}/create-export-profile`,
       lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.85,
+    },
+    {
+      url: `${BASE_URL}/exporter/login`,
+      lastModified: now,
       changeFrequency: "monthly",
-      priority: 0.8,
+      priority: 0.7,
     },
     {
       url: `${BASE_URL}/privacy`,
@@ -52,34 +77,71 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ];
 
-  // 2. Dynamic Industry Pages
-  const industryPages: MetadataRoute.Sitemap = industries.map((industry) => ({
-    url: `${BASE_URL}/${industry.slug}`,
-    lastModified: now,
-    changeFrequency: "weekly",
-    priority: 0.8,
-  }));
+  staticPages.forEach(addEntry);
 
-  // 3. Programmatic Spices Export Pages
-  const spicesPages: MetadataRoute.Sitemap = [
-    {
-      url: `${BASE_URL}/exports/spices`,
+  // 2. Global Industry Pages
+  for (const industry of industries) {
+    if (!industry.slug) continue;
+    addEntry({
+      url: `${BASE_URL}/${industry.slug}`,
       lastModified: now,
-      changeFrequency: "daily",
+      changeFrequency: "weekly",
       priority: 0.85,
-    },
-    ...getAllSpiceSlugs().map((slug) => ({
-      url: `${BASE_URL}/exports/spices/${slug}`,
+    });
+  }
+
+  // 3. Spices Category Pages (Level 1)
+  const spices = getAllSpices();
+  for (const s of spices) {
+    if (!s.slug) continue;
+    addEntry({
+      url: `${BASE_URL}/spices/${s.slug}`,
       lastModified: now,
-      changeFrequency: "weekly" as const,
+      changeFrequency: "weekly",
       priority: 0.9,
-    })),
-  ];
+    });
+    addEntry({
+      url: `${BASE_URL}/exports/spices/${s.slug}`,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.85,
+    });
+  }
 
-  // 3. Dynamic Exporter Profiles & Products from MongoDB
-  const exporterPages: MetadataRoute.Sitemap = [];
-  const productPages: MetadataRoute.Sitemap = [];
+  // 4. Spices Variety Pages (Level 2 Cultivars & Varieties)
+  const level2Spices = getAllLevel2Spices();
+  for (const v of level2Spices) {
+    // Canonical /spices/[slug]/[variety]
+    if (v.categorySlug && v.varietySlug) {
+      addEntry({
+        url: `${BASE_URL}/spices/${v.categorySlug}/${v.varietySlug}`,
+        lastModified: now,
+        changeFrequency: "weekly",
+        priority: 0.88,
+      });
 
+      // Mirror /exports/spices/[slug]/[variety]
+      addEntry({
+        url: `${BASE_URL}/exports/spices/${v.categorySlug}/${v.varietySlug}`,
+        lastModified: now,
+        changeFrequency: "weekly",
+        priority: 0.85,
+      });
+    }
+
+    // Include v.slug if it provides a specific format
+    if (v.slug) {
+      const formattedSlug = v.slug.startsWith("/") ? v.slug : `/${v.slug}`;
+      addEntry({
+        url: `${BASE_URL}${formattedSlug}`,
+        lastModified: now,
+        changeFrequency: "weekly",
+        priority: 0.88,
+      });
+    }
+  }
+
+  // 5. Dynamic Exporter Profiles & Products from MongoDB
   try {
     await connectToDatabase();
 
@@ -107,7 +169,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       const sellerLastMod = parseSafeDate(seller.updatedAt || seller.createdAt);
 
       // Exporter Profile Page
-      exporterPages.push({
+      addEntry({
         url: `${BASE_URL}/${sellerSlug}`,
         lastModified: sellerLastMod,
         changeFrequency: "daily",
@@ -120,7 +182,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           if (!product.id) continue;
           const productLastMod = parseSafeDate(product.createdAt || seller.updatedAt || seller.createdAt);
 
-          productPages.push({
+          addEntry({
             url: `${BASE_URL}/${sellerSlug}/products/${product.id}`,
             lastModified: productLastMod,
             changeFrequency: "weekly",
@@ -133,5 +195,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     console.error("Error generating dynamic sitemap from MongoDB:", error);
   }
 
-  return [...staticPages, ...industryPages, ...spicesPages, ...exporterPages, ...productPages];
+  return Array.from(sitemapMap.values());
 }

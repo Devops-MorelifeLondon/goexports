@@ -24,11 +24,13 @@ import {
   MapPin,
   Mail,
   UserPlus,
-  ArrowRight
+  ArrowRight,
+  Flame
 } from "lucide-react";
 import { toast } from "sonner";
 
 const navItems = [
+  { label: "Spices", href: "/spices", icon: Flame },
   { label: "How It Works", href: "#how-it-works", icon: Sparkles },
   { label: "Benefits", href: "#benefits", icon: TrendingUp },
   { label: "Industries", href: "#industries", icon: Boxes },
@@ -134,6 +136,11 @@ export default function Navbar() {
   };
 
   const scrollTo = useCallback((href: string) => {
+    if (href.startsWith("/")) {
+      router.push(href);
+      setMobileMenu(false);
+      return;
+    }
     if (typeof window !== "undefined" && window.location.pathname !== "/") {
       window.location.href = `/${href}`;
       return;
@@ -143,7 +150,7 @@ export default function Navbar() {
       el.scrollIntoView({ behavior: "smooth", block: "start" });
     }
     setMobileMenu(false);
-  }, []);
+  }, [router]);
 
   return (
     <>
@@ -180,15 +187,36 @@ export default function Navbar() {
               aria-label="Main Navigation"
               className="hidden lg:flex items-center gap-0.5 xl:gap-1 p-1 rounded-full bg-[var(--surface-soft)]/80 border border-[var(--hairline)] shadow-2xs"
             >
-              {navItems.map((item) => (
-                <button
-                  key={item.label}
-                  onClick={() => scrollTo(item.href)}
-                  className="relative px-3 xl:px-4 py-1.5 rounded-full border-none bg-transparent cursor-pointer text-[12.5px] xl:text-[13.5px] font-medium text-[var(--muted)] transition-all duration-200 hover:text-[var(--ink)] hover:bg-[var(--surface-card)] flex items-center gap-1.5 shrink-0"
-                >
-                  {item.label}
-                </button>
-              ))}
+              {navItems.map((item) => {
+                const isInternalRoute = item.href.startsWith("/");
+                const isActive = isInternalRoute && (pathname === item.href || pathname.startsWith(item.href + "/"));
+
+                if (isInternalRoute) {
+                  return (
+                    <Link
+                      key={item.label}
+                      href={item.href}
+                      className={`relative px-3 xl:px-4 py-1.5 rounded-full no-underline text-[12.5px] xl:text-[13.5px] font-medium transition-all duration-200 flex items-center gap-1.5 shrink-0 ${
+                        isActive
+                          ? "text-[var(--ink)] bg-[var(--surface-card)] font-bold shadow-2xs"
+                          : "text-[var(--muted)] hover:text-[var(--ink)] hover:bg-[var(--surface-card)]"
+                      }`}
+                    >
+                      {item.label}
+                    </Link>
+                  );
+                }
+
+                return (
+                  <button
+                    key={item.label}
+                    onClick={() => scrollTo(item.href)}
+                    className="relative px-3 xl:px-4 py-1.5 rounded-full border-none bg-transparent cursor-pointer text-[12.5px] xl:text-[13.5px] font-medium text-[var(--muted)] transition-all duration-200 hover:text-[var(--ink)] hover:bg-[var(--surface-card)] flex items-center gap-1.5 shrink-0"
+                  >
+                    {item.label}
+                  </button>
+                );
+              })}
             </nav>
           </div>
 
@@ -422,6 +450,32 @@ export default function Navbar() {
                 <div className="flex flex-col gap-0.5 py-1">
                   {navItems.map((item) => {
                     const Icon = item.icon;
+                    const isInternalRoute = item.href.startsWith("/");
+                    const isActive = isInternalRoute && (pathname === item.href || pathname.startsWith(item.href + "/"));
+
+                    if (isInternalRoute) {
+                      return (
+                        <Link
+                          key={item.label}
+                          href={item.href}
+                          onClick={() => setMobileMenu(false)}
+                          className={`text-left px-3.5 py-2.5 min-h-[44px] rounded-xl no-underline transition-all duration-150 flex items-center justify-between text-[14px] font-semibold group ${
+                            isActive
+                              ? "bg-[var(--surface-card)] text-[var(--ink)] font-bold"
+                              : "bg-transparent text-[var(--ink)] hover:bg-[var(--surface-card)] active:bg-[var(--surface-soft)]"
+                          }`}
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="w-7 h-7 rounded-lg bg-[var(--surface-soft)] border border-[var(--hairline)] flex items-center justify-center text-[var(--muted)] group-hover:text-[var(--ink)] transition-colors">
+                              <Icon className="w-3.5 h-3.5" />
+                            </div>
+                            <span>{item.label}</span>
+                          </div>
+                          <ChevronRight className="w-4 h-4 text-[var(--muted)] group-hover:translate-x-0.5 transition-transform" />
+                        </Link>
+                      );
+                    }
+
                     return (
                       <button
                         key={item.label}

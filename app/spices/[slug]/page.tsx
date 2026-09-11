@@ -6,7 +6,11 @@ import {
   getSpiceBySlug,
   getAllSpiceSlugs,
   getAllSpices,
+  getLevel2SpicesByParentId,
+  getLevel2SpicesByCategory,
 } from "@/lib/spices";
+import Image from "next/image";
+import { Sparkles, Layers3, ArrowRight, ShieldCheck } from "lucide-react";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -51,6 +55,10 @@ export default async function LegacySpiceRedirectPage({ params }: PageProps) {
     notFound();
   }
 
+  const varieties = data.id
+    ? getLevel2SpicesByParentId(data.id)
+    : getLevel2SpicesByCategory(data.category_name);
+
   const faqSchema = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
@@ -89,11 +97,7 @@ export default async function LegacySpiceRedirectPage({ params }: PageProps) {
             Home
           </Link>
           <span className="text-[#C5BFA9]">/</span>
-          <Link href="/exports/spices" className="transition hover:text-[#0A0A0A]">
-            Exports
-          </Link>
-          <span className="text-[#C5BFA9]">/</span>
-          <Link href="/exports/spices" className="transition hover:text-[#0A0A0A]">
+          <Link href="/spices" className="transition hover:text-[#0A0A0A]">
             Spices
           </Link>
           <span className="text-[#C5BFA9]">/</span>
@@ -107,6 +111,7 @@ export default async function LegacySpiceRedirectPage({ params }: PageProps) {
             <div className="lg:col-span-8">
               <div className="mb-4 flex flex-wrap items-center gap-2.5">
                 <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-300 bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-900">
+                  <Sparkles className="h-3.5 w-3.5 text-amber-600" />
                   Export Grade Sourcing
                 </span>
                 <span className="inline-flex items-center gap-1 rounded-full border border-[#E5E0D0] bg-[#FAF5E8] px-3 py-1 text-xs font-mono font-medium text-[#1A1A1A]">
@@ -136,13 +141,83 @@ export default async function LegacySpiceRedirectPage({ params }: PageProps) {
                     href={`/exports/spices/${data.slug}`}
                     className="flex w-full items-center justify-center gap-2 rounded-xl bg-amber-400 px-5 py-3.5 text-center text-sm font-bold text-slate-950 transition hover:bg-amber-300"
                   >
-                    View Full Specifications
+                    View Full Specifications &rarr;
                   </Link>
                 </div>
               </div>
             </div>
           </div>
         </section>
+
+        {/* Commercial Varieties (Level 2) */}
+        {varieties.length > 0 && (
+          <section className="space-y-6">
+            <div className="flex items-center justify-between border-b border-[#EAE5D9] pb-4">
+              <div>
+                <div className="text-xs font-bold uppercase tracking-wider text-[#8B6008] flex items-center gap-1.5">
+                  <Layers3 className="h-4 w-4" />
+                  Available Varieties
+                </div>
+                <h2 className="mt-1 text-2xl font-bold tracking-tight text-[#0A0A0A] sm:text-3xl">
+                  {data.category_name} Commercial Varieties &amp; Grades
+                </h2>
+              </div>
+              <span className="text-xs text-[#767676]">
+                {varieties.length} export grades
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {varieties.map((v) => (
+                <Link
+                  key={v.varietySlug}
+                  href={v.slug}
+                  className="group flex flex-col justify-between overflow-hidden rounded-2xl border border-[#E5E0D0] bg-white transition hover:border-[#0A0A0A]/40 hover:shadow-md hover:-translate-y-1"
+                >
+                  <div className="relative h-44 w-full overflow-hidden bg-[#FAF5E8]">
+                    <Image
+                      src={v.image}
+                      alt={v.variety}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                      className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent" />
+                    <div className="absolute top-3 left-3">
+                      <span className="font-mono text-[11px] font-semibold text-white bg-black/60 backdrop-blur-xs px-2.5 py-1 rounded-md border border-white/20">
+                        {data.category_name}
+                      </span>
+                    </div>
+                    <div className="absolute bottom-2.5 left-3 right-3 text-white text-xs flex items-center justify-between">
+                      <span className="font-semibold">{v.technical_specifications.length} Technical Specs</span>
+                      <span className="text-[11px] text-white/90 bg-emerald-950/70 px-2 py-0.5 rounded border border-emerald-500/30">
+                        Export Ready
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="p-5 flex-1 flex flex-col justify-between">
+                    <div>
+                      <h3 className="text-lg font-bold text-[#0A0A0A] group-hover:text-[#8B6008] transition">
+                        {v.variety}
+                      </h3>
+                      <p className="mt-2 line-clamp-2 text-xs leading-relaxed text-[#5A5A5A]">
+                        {v.overview}
+                      </p>
+                    </div>
+
+                    <div className="mt-4 flex items-center justify-between border-t border-[#EAE5D9] pt-3 text-xs">
+                      <span className="text-[#767676]">MOQ: 1x 20ft FCL</span>
+                      <span className="font-semibold text-[#8B6008] group-hover:translate-x-1 transition flex items-center gap-1">
+                        View Specifications &rarr;
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
       </main>
     </div>
   );

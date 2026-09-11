@@ -22,19 +22,23 @@ import {
   Search,
   Camera,
   Layers3,
+  Bookmark,
 } from "lucide-react";
-import type { SpiceCategoryData, SpiceLevel2Data } from "@/lib/spices";
+import type { SpiceLevel2Data, SpiceCategoryData } from "@/lib/spices";
 import SpiceLeadGenForm from "@/components/SpiceLeadGenForm";
 import SpiceFAQAccordion from "@/components/SpiceFAQAccordion";
 
 interface Props {
-  data: SpiceCategoryData;
-  relatedSpices: SpiceCategoryData[];
-  varieties?: SpiceLevel2Data[];
+  data: SpiceLevel2Data;
+  siblingVarieties: SpiceLevel2Data[];
+  relatedCategories: SpiceCategoryData[];
 }
 
-export default function SpiceDetailClient({ data, relatedSpices, varieties = [] }: Props) {
-  const [activeTab, setActiveTab] = useState<"all" | "chemical" | "physical">("all");
+export default function SpiceLevel2DetailClient({
+  data,
+  siblingVarieties,
+  relatedCategories,
+}: Props) {
   const [tableSearch, setTableSearch] = useState("");
   const [selectedPhoto, setSelectedPhoto] = useState<string>(data.image);
 
@@ -49,6 +53,10 @@ export default function SpiceDetailClient({ data, relatedSpices, varieties = [] 
     }
     return true;
   });
+
+  const parentSlug = data.parentCategory?.slug || data.categorySlug;
+  const parentName = data.parentCategory?.category_name || data.category;
+  const parentHsCode = data.parentCategory?.hs_code || "0904.00.00";
 
   return (
     <div className="space-y-12">
@@ -69,12 +77,15 @@ export default function SpiceDetailClient({ data, relatedSpices, varieties = [] 
           >
             {/* Live Indicator Badge Strip */}
             <div className="mb-4 flex flex-wrap items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-300 bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-900">
+              <Link
+                href={`/spices/${parentSlug}`}
+                className="inline-flex items-center gap-1.5 rounded-full border border-amber-300 bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-900 transition hover:bg-amber-100"
+              >
                 <Sparkles className="h-3.5 w-3.5 text-amber-600" />
-                Commercial Export Grade
-              </span>
+                Category: {parentName}
+              </Link>
               <span className="inline-flex items-center gap-1 rounded-full border border-[#E5E0D0] bg-[#FAF5E8] px-3 py-1 text-xs font-mono font-medium text-[#1A1A1A]">
-                <span className="text-[#767676]">HS Code:</span> {data.hs_code}
+                <span className="text-[#767676]">HS Code:</span> {parentHsCode}
               </span>
               <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-800">
                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
@@ -82,21 +93,21 @@ export default function SpiceDetailClient({ data, relatedSpices, varieties = [] 
               </span>
             </div>
 
-            {/* Title & Subtitle */}
+            {/* Variety Title & Subtitle */}
             <h1 className="text-3xl font-extrabold tracking-tight text-[#0A0A0A] sm:text-4xl lg:text-5xl leading-tight">
-              {data.category_name}
+              {data.variety}
             </h1>
 
             <p className="mt-2 text-base font-semibold text-[#8B6008] sm:text-lg">
-              Technical Specifications, Quality Benchmarks &amp; Exporter Sourcing
+              Export Grade Sourcing, Technical Specifications &amp; Direct Quotations
             </p>
 
-            {/* Featured Spice Image Showcase with Photo Switcher */}
+            {/* Featured Variety Image Showcase */}
             <div className="mt-5 space-y-2.5">
               <div className="relative h-56 sm:h-64 w-full overflow-hidden rounded-2xl border border-[#E5E0D0] bg-[#FAF7F0] shadow-inner group">
                 <Image
                   src={selectedPhoto || data.image}
-                  alt={`${data.category_name} commercial export grade`}
+                  alt={`${data.variety} commercial export grade`}
                   fill
                   priority
                   sizes="(max-width: 768px) 100vw, 50vw"
@@ -107,20 +118,20 @@ export default function SpiceDetailClient({ data, relatedSpices, varieties = [] 
                 <div className="absolute top-3 left-3 flex flex-wrap gap-2">
                   <span className="inline-flex items-center gap-1.5 rounded-full bg-black/60 backdrop-blur-md px-3 py-1 text-[11px] font-medium text-white border border-white/20">
                     <Camera className="h-3 w-3 text-amber-300" />
-                    Export Commodity Grade
+                    Commercial Variety
                   </span>
                   <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-950/70 backdrop-blur-md px-2.5 py-1 text-[11px] font-medium text-emerald-200 border border-emerald-500/30">
                     <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                    Direct Origin: India
+                    Verified Indian Exporters
                   </span>
                 </div>
 
                 <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-white text-xs">
                   <span className="font-semibold drop-shadow-sm truncate">
-                    {data.category_name} &bull; Exporter Sourcing
+                    {data.variety} &bull; {parentName}
                   </span>
                   <span className="text-[11px] text-white/90 bg-black/40 backdrop-blur-xs px-2.5 py-0.5 rounded-md border border-white/10 hidden sm:inline-block">
-                    Phytosanitary &amp; COA on Request
+                    COA &amp; Phytosanitary Ready
                   </span>
                 </div>
               </div>
@@ -140,7 +151,7 @@ export default function SpiceDetailClient({ data, relatedSpices, varieties = [] 
                         : "border-[#E5E0D0] bg-[#FAF5E8] text-[#3A3A3A] hover:bg-[#F5EFE0]"
                     }`}
                   >
-                    <span>Primary Commodity Form</span>
+                    <span>Whole / Primary Cut</span>
                   </button>
                   <button
                     type="button"
@@ -151,7 +162,7 @@ export default function SpiceDetailClient({ data, relatedSpices, varieties = [] 
                         : "border-[#E5E0D0] bg-[#FAF5E8] text-[#3A3A3A] hover:bg-[#F5EFE0]"
                     }`}
                   >
-                    <span>Secondary / Processed Format</span>
+                    <span>Processed / Bulk Format</span>
                   </button>
                 </div>
               )}
@@ -167,29 +178,29 @@ export default function SpiceDetailClient({ data, relatedSpices, varieties = [] 
                 whileHover={{ y: -2 }}
                 className="rounded-xl border border-[#EAE5D9] bg-[#FAF7F0] p-3 transition"
               >
-                <div className="text-[11px] font-semibold uppercase tracking-wider text-[#767676]">Origin</div>
-                <div className="mt-1 text-xs sm:text-sm font-bold text-[#0A0A0A]">India Growing Belts</div>
+                <div className="text-[11px] font-semibold uppercase tracking-wider text-[#767676]">Category</div>
+                <div className="mt-1 text-xs sm:text-sm font-bold text-[#0A0A0A] truncate">{parentName}</div>
               </motion.div>
               <motion.div
                 whileHover={{ y: -2 }}
                 className="rounded-xl border border-[#EAE5D9] bg-[#FAF7F0] p-3 transition"
               >
-                <div className="text-[11px] font-semibold uppercase tracking-wider text-[#767676]">Sterilization</div>
-                <div className="mt-1 text-xs sm:text-sm font-bold text-[#0A0A0A]">Steam / Untreated</div>
+                <div className="text-[11px] font-semibold uppercase tracking-wider text-[#767676]">Treatment</div>
+                <div className="mt-1 text-xs sm:text-sm font-bold text-[#0A0A0A]">Steam / ETO-Free</div>
               </motion.div>
               <motion.div
                 whileHover={{ y: -2 }}
                 className="rounded-xl border border-[#EAE5D9] bg-[#FAF7F0] p-3 transition"
               >
-                <div className="text-[11px] font-semibold uppercase tracking-wider text-[#767676]">Typical MOQ</div>
+                <div className="text-[11px] font-semibold uppercase tracking-wider text-[#767676]">Export MOQ</div>
                 <div className="mt-1 text-xs sm:text-sm font-bold text-[#0A0A0A]">1x 20ft FCL (or LCL)</div>
               </motion.div>
               <motion.div
                 whileHover={{ y: -2 }}
                 className="rounded-xl border border-[#EAE5D9] bg-[#FAF7F0] p-3 transition"
               >
-                <div className="text-[11px] font-semibold uppercase tracking-wider text-[#767676]">Lab Samples</div>
-                <div className="mt-1 text-xs sm:text-sm font-bold text-[#0A0A0A]">Available on Request</div>
+                <div className="text-[11px] font-semibold uppercase tracking-wider text-[#767676]">Pre-Ship Samples</div>
+                <div className="mt-1 text-xs sm:text-sm font-bold text-[#0A0A0A]">Couriers on Request</div>
               </motion.div>
             </div>
 
@@ -197,10 +208,10 @@ export default function SpiceDetailClient({ data, relatedSpices, varieties = [] 
             <div className="mt-5 rounded-xl border border-[#EAE5D9] bg-[#FAF7F0] p-4 text-xs text-[#5A5A5A] space-y-1.5">
               <div className="font-semibold text-[#1A1A1A] flex items-center gap-1.5">
                 <Zap className="h-4 w-4 text-[#8B6008]" />
-                Fast B2B Sourcing Protocol
+                Direct Exporter Matching
               </div>
               <p>
-                Select your required quality grade and volume on the right to receive tailored commercial quotations and COAs directly from Indian spice exporters.
+                Configure your grade and volume parameters on the right to receive competitive proforma quotations and batch COAs directly from verified Indian processors for {data.variety}.
               </p>
             </div>
           </motion.div>
@@ -208,9 +219,9 @@ export default function SpiceDetailClient({ data, relatedSpices, varieties = [] 
           {/* Quick Lead Gen Form (Hero Right) */}
           <div className="lg:col-span-6 flex justify-center">
             <SpiceLeadGenForm
-              spiceCategory={data.category_name}
-              hsCode={data.hs_code}
-              availableForms={data.export_forms_available}
+              spiceCategory={`${data.variety} (${parentName})`}
+              hsCode={parentHsCode}
+              buttonText={`Request ${data.variety} Quotation`}
               className="w-full shadow-md"
             />
           </div>
@@ -218,88 +229,7 @@ export default function SpiceDetailClient({ data, relatedSpices, varieties = [] 
       </section>
 
       {/* ================================================================= */}
-      {/* 2. COMMERCIAL VARIETIES & CULTIVARS (LEVEL 2)                     */}
-      {/* ================================================================= */}
-      {varieties.length > 0 && (
-        <motion.section
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.4 }}
-        >
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-[#EAE5D9] pb-4">
-            <div>
-              <div className="text-xs font-bold uppercase tracking-wider text-[#8B6008] flex items-center gap-1.5">
-                <Layers3 className="h-4 w-4" />
-                Commodity Cultivars &amp; Grades
-              </div>
-              <h2 className="mt-1 text-2xl font-bold tracking-tight text-[#0A0A0A] sm:text-3xl">
-                Commercial {data.category_name} Export Varieties
-              </h2>
-            </div>
-            <span className="text-xs text-[#767676]">
-              {varieties.length} distinct export grades with lot-level COAs
-            </span>
-          </div>
-
-          <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {varieties.map((v) => (
-              <Link
-                key={v.varietySlug}
-                href={v.slug}
-                className="group flex flex-col justify-between overflow-hidden rounded-2xl border border-[#E5E0D0] bg-white transition hover:border-[#0A0A0A]/40 hover:shadow-md hover:-translate-y-1"
-              >
-                <div className="relative h-44 w-full overflow-hidden bg-[#FAF5E8]">
-                  <Image
-                    src={v.image}
-                    alt={v.variety}
-                    fill
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent pointer-events-none" />
-
-                  <div className="absolute top-3 left-3">
-                    <span className="font-mono text-[11px] font-semibold text-white bg-black/60 backdrop-blur-xs px-2.5 py-1 rounded-md border border-white/20">
-                      {data.category_name} Grade
-                    </span>
-                  </div>
-
-                  <div className="absolute bottom-2.5 left-3 right-3 text-white text-xs flex items-center justify-between">
-                    <span className="font-semibold drop-shadow-sm">
-                      {v.technical_specifications.length} Technical Specs
-                    </span>
-                    <span className="text-[11px] text-white/90 bg-emerald-950/70 px-2 py-0.5 rounded border border-emerald-500/30">
-                      Export Ready
-                    </span>
-                  </div>
-                </div>
-
-                <div className="p-5 flex-1 flex flex-col justify-between">
-                  <div>
-                    <h3 className="text-lg font-bold text-[#0A0A0A] group-hover:text-[#8B6008] transition">
-                      {v.variety}
-                    </h3>
-                    <p className="mt-2 line-clamp-2 text-xs leading-relaxed text-[#5A5A5A]">
-                      {v.overview}
-                    </p>
-                  </div>
-
-                  <div className="mt-4 flex items-center justify-between border-t border-[#EAE5D9] pt-3 text-xs">
-                    <span className="text-[#767676]">MOQ: 1x 20ft FCL</span>
-                    <span className="font-semibold text-[#8B6008] group-hover:translate-x-1 transition flex items-center gap-1">
-                      View Specifications &rarr;
-                    </span>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </motion.section>
-      )}
-
-      {/* ================================================================= */}
-      {/* 3. SPECIFICATIONS TABLE WITH SEARCH & HOVER MICRO-ANIMATION       */}
+      {/* 2. SPECIFICATIONS TABLE WITH SEARCH & HOVER MICRO-ANIMATION       */}
       {/* ================================================================= */}
       <motion.section
         initial={{ opacity: 0, y: 20 }}
@@ -311,10 +241,10 @@ export default function SpiceDetailClient({ data, relatedSpices, varieties = [] 
           <div>
             <div className="text-xs font-bold uppercase tracking-wider text-[#8B6008] flex items-center gap-1.5">
               <FileSpreadsheet className="h-4 w-4" />
-              Analytical QA Parameters
+              Quality Assurance Benchmarks
             </div>
             <h2 className="mt-1 text-2xl font-bold tracking-tight text-[#0A0A0A] sm:text-3xl">
-              Technical Specifications &amp; Quality Standards
+              {data.variety} Technical Specifications
             </h2>
           </div>
 
@@ -376,8 +306,8 @@ export default function SpiceDetailClient({ data, relatedSpices, varieties = [] 
             </table>
           </div>
           <div className="border-t border-[#EAE5D9] bg-[#FAF5E8] px-6 py-3 text-xs text-[#767676] flex flex-wrap items-center justify-between gap-2">
-            <span>* Specifications represent standard commercial export averages. Inquire with exporters for lot-specific COAs.</span>
-            <span className="text-[#8B6008] font-semibold">Custom parameters available upon RFQ</span>
+            <span>* Specifications represent standard export parameters. Inquire for custom batch sorting, particle sizing, or ASTA calibration.</span>
+            <span className="text-[#8B6008] font-semibold">ISO 17025 Accredited Lab COAs Provided</span>
           </div>
         </div>
       </motion.section>
@@ -397,7 +327,7 @@ export default function SpiceDetailClient({ data, relatedSpices, varieties = [] 
             International Trade Intelligence
           </div>
           <h2 className="mt-1 text-2xl font-bold tracking-tight text-[#0A0A0A] sm:text-3xl">
-            Market Standards, Certifications &amp; Freight Logistics
+            Regulatory Compliance, Packaging &amp; Ocean Freight
           </h2>
         </div>
 
@@ -412,14 +342,13 @@ export default function SpiceDetailClient({ data, relatedSpices, varieties = [] 
               <div className="flex items-center justify-between border-b border-[#EAE5D9] pb-3">
                 <h3 className="text-base font-bold text-[#0A0A0A] flex items-center gap-2">
                   <Globe className="h-5 w-5 text-blue-600" />
-                  Target Market Relevance
+                  Target Markets &amp; Quality
                 </h3>
                 <span className="rounded-full bg-blue-50 px-2.5 py-0.5 text-[11px] font-semibold text-blue-800 border border-blue-200">
-                  Destination Focus
+                  Global Standard
                 </span>
               </div>
 
-              {/* Destination Visual Banner */}
               <div className="relative h-28 w-full overflow-hidden rounded-xl mt-4 mb-3 border border-[#EAE5D9] group">
                 <Image
                   src="https://images.pexels.com/photos/906023/pexels-photo-906023.jpeg?auto=compress&cs=tinysrgb&w=800"
@@ -430,33 +359,30 @@ export default function SpiceDetailClient({ data, relatedSpices, varieties = [] 
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
                 <div className="absolute bottom-2 left-2.5 right-2.5 flex items-center justify-between text-white text-[11px]">
-                  <span className="font-semibold">Global Distribution</span>
-                  <span className="text-white/90 font-mono text-[10px] bg-black/50 px-2 py-0.5 rounded border border-white/20">USA &bull; EU &bull; GCC</span>
+                  <span className="font-semibold">{parentName} Variety</span>
+                  <span className="text-white/90 font-mono text-[10px] bg-black/50 px-2 py-0.5 rounded border border-white/20">USA &bull; EU &bull; GCC &bull; APAC</span>
                 </div>
               </div>
 
               <div className="space-y-3.5 text-xs">
                 <div>
-                  <span className="font-semibold uppercase tracking-wider text-[#767676]">Primary Export Destinations:</span>
+                  <span className="font-semibold uppercase tracking-wider text-[#767676]">Commercial Cultivar:</span>
                   <p className="mt-1 text-sm font-semibold text-[#1A1A1A]">
-                    {data.target_market_relevance.market}
+                    {data.variety}
                   </p>
                 </div>
 
                 <div className="rounded-xl border border-[#EAE5D9] bg-[#FAF7F0] p-3.5">
-                  <span className="font-semibold uppercase tracking-wider text-[#8B6008]">Regulatory &amp; Compliance Notes:</span>
+                  <span className="font-semibold uppercase tracking-wider text-[#8B6008]">Regulatory Baseline:</span>
                   <p className="mt-1 text-xs leading-relaxed text-[#3A3A3A]">
-                    {data.target_market_relevance.compliance_notes}
-                  </p>
-                </div>
-
-                <div>
-                  <span className="font-semibold uppercase tracking-wider text-[#767676]">Industry Demand Drivers:</span>
-                  <p className="mt-1 text-xs leading-relaxed text-[#3A3A3A]">
-                    {data.target_market_relevance.demand_drivers}
+                    Meets EU Regulation (EC) 396/2005 for pesticide MRLs, US FDA FSVP requirements, and Spices Board of India export mandates.
                   </p>
                 </div>
               </div>
+            </div>
+
+            <div className="mt-4 rounded-xl border border-[#EAE5D9] bg-[#FAF7F0] p-3 text-[11px] text-[#767676]">
+              Third-party pre-shipment inspections (SGS, Eurofins, Intertek) available prior to maritime loading.
             </div>
           </motion.div>
 
@@ -470,14 +396,13 @@ export default function SpiceDetailClient({ data, relatedSpices, varieties = [] 
               <div className="flex items-center justify-between border-b border-[#EAE5D9] pb-3">
                 <h3 className="text-base font-bold text-[#0A0A0A] flex items-center gap-2">
                   <Award className="h-5 w-5 text-emerald-600" />
-                  Common Industry Certifications
+                  Facility Accreditations
                 </h3>
                 <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-[11px] font-semibold text-emerald-800 border border-emerald-200">
-                  Accreditations
+                  Certified Exporters
                 </span>
               </div>
 
-              {/* Lab Testing Visual Banner */}
               <div className="relative h-28 w-full overflow-hidden rounded-xl mt-4 mb-3 border border-[#EAE5D9] group">
                 <Image
                   src="https://images.pexels.com/photos/3735777/pexels-photo-3735777.jpeg?auto=compress&cs=tinysrgb&w=800"
@@ -488,13 +413,13 @@ export default function SpiceDetailClient({ data, relatedSpices, varieties = [] 
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
                 <div className="absolute bottom-2 left-2.5 right-2.5 flex items-center justify-between text-white text-[11px]">
-                  <span className="font-semibold">ISO 17025 Lab Standard</span>
-                  <span className="text-white/90 font-mono text-[10px] bg-black/50 px-2 py-0.5 rounded border border-white/20">Batch COA</span>
+                  <span className="font-semibold">ISO / BRCGS Facilities</span>
+                  <span className="text-white/90 font-mono text-[10px] bg-black/50 px-2 py-0.5 rounded border border-white/20">Lot Traceability</span>
                 </div>
               </div>
 
               <p className="text-xs text-[#767676]">
-                Certifications commonly held by Indian spice processors in this sector:
+                Certifications held by verified processors for {data.variety}:
               </p>
 
               <div className="mt-3 flex flex-wrap gap-2">
@@ -511,7 +436,7 @@ export default function SpiceDetailClient({ data, relatedSpices, varieties = [] 
             </div>
 
             <div className="mt-4 rounded-xl border border-[#EAE5D9] bg-[#FAF7F0] p-3 text-[11px] text-[#767676]">
-              Buyers can request specific ISO, BRCGS, or Organic certificates with their RFQ submission.
+              Request specific Halal, Kosher, or Organic certificates alongside your quotation submission.
             </div>
           </motion.div>
 
@@ -525,14 +450,13 @@ export default function SpiceDetailClient({ data, relatedSpices, varieties = [] 
               <div className="flex items-center justify-between border-b border-[#EAE5D9] pb-3">
                 <h3 className="text-base font-bold text-[#0A0A0A] flex items-center gap-2">
                   <Truck className="h-5 w-5 text-amber-600" />
-                  Shipping &amp; Logistics Guide
+                  Container Freight Logistics
                 </h3>
                 <span className="rounded-full bg-amber-50 px-2.5 py-0.5 text-[11px] font-semibold text-amber-900 border border-amber-200">
                   FCL / LCL
                 </span>
               </div>
 
-              {/* Freight Container Shipping Visual Banner */}
               <div className="relative h-28 w-full overflow-hidden rounded-xl mt-4 mb-3 border border-[#EAE5D9] group">
                 <Image
                   src="https://images.pexels.com/photos/2226458/pexels-photo-2226458.jpeg?auto=compress&cs=tinysrgb&w=800"
@@ -543,14 +467,14 @@ export default function SpiceDetailClient({ data, relatedSpices, varieties = [] 
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
                 <div className="absolute bottom-2 left-2.5 right-2.5 flex items-center justify-between text-white text-[11px]">
-                  <span className="font-semibold">Ocean Freight Logistics</span>
+                  <span className="font-semibold">Ocean Shipping</span>
                   <span className="text-white/90 font-mono text-[10px] bg-black/50 px-2 py-0.5 rounded border border-white/20">FOB / CIF / CFR</span>
                 </div>
               </div>
 
               <div className="space-y-3.5 text-xs">
                 <div>
-                  <span className="font-semibold uppercase tracking-wider text-[#767676]">Packaging Configurations:</span>
+                  <span className="font-semibold uppercase tracking-wider text-[#767676]">Packaging Options:</span>
                   <p className="mt-1 text-xs leading-relaxed text-[#3A3A3A]">
                     {data.shipping_logistics.packaging_options}
                   </p>
@@ -582,103 +506,14 @@ export default function SpiceDetailClient({ data, relatedSpices, varieties = [] 
 
             <div className="mt-4 flex items-center gap-2 text-[11px] text-[#767676]">
               <Anchor className="h-4 w-4 text-blue-600 flex-shrink-0" />
-              Major Ports: Nhava Sheva (JNPT), Mundra, Chennai &amp; Cochin.
+              Primary Load Ports: Mundra, Nhava Sheva (JNPT), Chennai &amp; Cochin.
             </div>
           </motion.div>
         </div>
       </motion.section>
 
       {/* ================================================================= */}
-      {/* 4. APPLICATIONS & FORMS                                           */}
-      {/* ================================================================= */}
-      <section className="grid gap-8 lg:grid-cols-2">
-        {/* Available Export Forms */}
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.4 }}
-        >
-          <div className="border-b border-[#EAE5D9] pb-3">
-            <div className="text-xs font-bold uppercase tracking-wider text-[#8B6008] flex items-center gap-1.5">
-              <Package className="h-4 w-4" />
-              Processing Formats
-            </div>
-            <h2 className="mt-1 text-xl font-bold tracking-tight text-[#0A0A0A] sm:text-2xl">
-              Common Export Forms
-            </h2>
-          </div>
-
-          <div className="mt-6 space-y-3.5">
-            {data.export_forms_available.map((formItem, index) => (
-              <motion.div
-                key={index}
-                whileHover={{ x: 3 }}
-                className="rounded-2xl border border-[#E5E0D0] bg-white p-5 transition hover:border-[#1A1A1A]/30 shadow-2xs"
-              >
-                <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-bold text-[#0A0A0A] flex items-center gap-2">
-                    <span className="flex h-5 w-5 items-center justify-center rounded-md bg-[#FAF5E8] text-xs text-[#8B6008] font-mono border border-[#E5E0D0]">
-                      {index + 1}
-                    </span>
-                    {formItem.form}
-                  </h3>
-                  <span className="text-[11px] font-mono text-[#767676]">Custom specifications</span>
-                </div>
-                <p className="mt-2 text-xs leading-relaxed text-[#5A5A5A]">
-                  <strong className="text-[#1A1A1A]">Best Suited For: </strong>
-                  {formItem.best_suited_for}
-                </p>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
-
-        {/* Industrial Applications */}
-        <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.4 }}
-        >
-          <div className="border-b border-[#EAE5D9] pb-3">
-            <div className="text-xs font-bold uppercase tracking-wider text-[#8B6008] flex items-center gap-1.5">
-              <TrendingUp className="h-4 w-4" />
-              End-Use Applications
-            </div>
-            <h2 className="mt-1 text-xl font-bold tracking-tight text-[#0A0A0A] sm:text-2xl">
-              Industrial Applications
-            </h2>
-          </div>
-
-          <div className="mt-6 space-y-3.5">
-            {data.industrial_applications.map((appItem, index) => (
-              <motion.div
-                key={index}
-                whileHover={{ x: 3 }}
-                className="rounded-2xl border border-[#E5E0D0] bg-white p-5 transition hover:border-[#1A1A1A]/30 shadow-2xs"
-              >
-                <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-bold text-[#0A0A0A] flex items-center gap-2">
-                    <Layers className="h-4 w-4 text-blue-600" />
-                    {appItem.industry}
-                  </h3>
-                  <span className="text-[11px] font-medium text-blue-800 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-200">
-                    Formulation
-                  </span>
-                </div>
-                <p className="mt-2 text-xs leading-relaxed text-[#5A5A5A]">
-                  <strong className="text-[#1A1A1A]">Usage &amp; Notes: </strong>
-                  {appItem.usage_notes}
-                </p>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
-      </section>
-
-      {/* ================================================================= */}
-      {/* 5. ANIMATED FAQ SECTION                                           */}
+      {/* 4. INDUSTRIAL APPLICATIONS                                        */}
       {/* ================================================================= */}
       <motion.section
         initial={{ opacity: 0, y: 20 }}
@@ -686,58 +521,78 @@ export default function SpiceDetailClient({ data, relatedSpices, varieties = [] 
         viewport={{ once: true }}
         transition={{ duration: 0.4 }}
       >
-        <div className="border-b border-[#EAE5D9] pb-4">
+        <div className="border-b border-[#EAE5D9] pb-3">
           <div className="text-xs font-bold uppercase tracking-wider text-[#8B6008] flex items-center gap-1.5">
-            <HelpCircle className="h-4 w-4" />
-            Commercial Guidance
+            <TrendingUp className="h-4 w-4" />
+            Downstream Utilization
           </div>
           <h2 className="mt-1 text-2xl font-bold tracking-tight text-[#0A0A0A] sm:text-3xl">
-            Frequently Asked Sourcing Questions
+            {data.variety} Industrial Applications
           </h2>
-          <p className="mt-1 text-xs text-[#767676]">
-            Answers covering MOQs, lab inspections, payment terms, and delivery schedules.
-          </p>
         </div>
 
-        <div className="mt-6">
-          <SpiceFAQAccordion faqs={data.b2b_faqs} />
+        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {data.industrial_applications.map((appItem, index) => (
+            <motion.div
+              key={index}
+              whileHover={{ y: -3 }}
+              className="rounded-2xl border border-[#E5E0D0] bg-white p-5 transition hover:border-[#1A1A1A]/30 shadow-2xs flex flex-col justify-between"
+            >
+              <div>
+                <div className="flex items-center justify-between">
+                  <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-[#FAF5E8] text-xs text-[#8B6008] font-mono border border-[#E5E0D0]">
+                    {index + 1}
+                  </span>
+                  <span className="text-[10px] font-medium text-blue-800 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-200">
+                    Industrial
+                  </span>
+                </div>
+                <h3 className="mt-3 text-sm font-bold text-[#0A0A0A]">
+                  {appItem.industry}
+                </h3>
+                <p className="mt-2 text-xs leading-relaxed text-[#5A5A5A]">
+                  {appItem.usage_notes}
+                </p>
+              </div>
+            </motion.div>
+          ))}
         </div>
       </motion.section>
 
       {/* ================================================================= */}
-      {/* 6. RELATED SPICE CATEGORIES                                       */}
+      {/* 5. SIBLING VARIETIES IN THE SAME CATEGORY                         */}
       {/* ================================================================= */}
-      {relatedSpices.length > 0 && (
+      {siblingVarieties.length > 0 && (
         <section className="border-t border-[#EAE5D9] pt-10">
-          <div className="flex items-center justify-between pb-4">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 pb-4">
             <div>
-              <div className="text-xs font-bold uppercase tracking-wider text-[#8B6008]">
-                Export Directory
+              <div className="text-xs font-bold uppercase tracking-wider text-[#8B6008] flex items-center gap-1.5">
+                <Layers3 className="h-4 w-4" />
+                Variety Catalog
               </div>
               <h2 className="mt-1 text-xl font-bold tracking-tight text-[#0A0A0A] sm:text-2xl">
-                Explore Other Bulk Spices
+                Other {parentName} Varieties Available
               </h2>
             </div>
             <Link
-              href="/exports/spices"
+              href={`/spices/${parentSlug}`}
               className="text-xs font-semibold text-[#8B6008] hover:text-[#0A0A0A] transition"
             >
-              View Full Catalog &rarr;
+              View Full {parentName} Specifications &rarr;
             </Link>
           </div>
 
           <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {relatedSpices.map((spice) => (
+            {siblingVarieties.map((sibling) => (
               <Link
-                key={spice.slug}
-                href={`/exports/spices/${spice.slug}`}
+                key={sibling.varietySlug}
+                href={sibling.slug}
                 className="group flex flex-col justify-between overflow-hidden rounded-2xl border border-[#E5E0D0] bg-white transition hover:border-[#0A0A0A]/40 hover:shadow-md hover:-translate-y-1"
               >
-                {/* Related Spice Card Image */}
                 <div className="relative h-36 w-full overflow-hidden bg-[#FAF5E8]">
                   <Image
-                    src={spice.image}
-                    alt={spice.category_name}
+                    src={sibling.image}
+                    alt={sibling.variety}
                     fill
                     sizes="(max-width: 768px) 100vw, 33vw"
                     className="object-cover transition-transform duration-500 group-hover:scale-105"
@@ -745,21 +600,21 @@ export default function SpiceDetailClient({ data, relatedSpices, varieties = [] 
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
                   <div className="absolute top-2.5 left-2.5">
                     <span className="text-[10px] font-mono font-medium text-white bg-black/60 backdrop-blur-xs px-2 py-0.5 rounded border border-white/20">
-                      HS {spice.hs_code}
+                      {parentName}
                     </span>
                   </div>
                   <div className="absolute bottom-2 left-2.5 text-[11px] font-medium text-white drop-shadow-sm">
-                    Origin: India
+                    {sibling.technical_specifications.length} Technical Specs
                   </div>
                 </div>
 
                 <div className="p-4 flex-1 flex flex-col justify-between">
                   <div>
                     <h3 className="text-base font-bold text-[#0A0A0A] group-hover:text-[#8B6008] transition">
-                      {spice.category_name}
+                      {sibling.variety}
                     </h3>
                     <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-[#5A5A5A]">
-                      {spice.overview}
+                      {sibling.overview}
                     </p>
                   </div>
 
@@ -777,7 +632,84 @@ export default function SpiceDetailClient({ data, relatedSpices, varieties = [] 
       )}
 
       {/* ================================================================= */}
-      {/* 7. BOTTOM CONVERSION BANNER WITH FAST LEAD GEN                    */}
+      {/* 6. ANIMATED FAQ SECTION                                           */}
+      {/* ================================================================= */}
+      <motion.section
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.4 }}
+      >
+        <div className="border-b border-[#EAE5D9] pb-4">
+          <div className="text-xs font-bold uppercase tracking-wider text-[#8B6008] flex items-center gap-1.5">
+            <HelpCircle className="h-4 w-4" />
+            Procurement Guidance
+          </div>
+          <h2 className="mt-1 text-2xl font-bold tracking-tight text-[#0A0A0A] sm:text-3xl">
+            {data.variety} Sourcing FAQs
+          </h2>
+          <p className="mt-1 text-xs text-[#767676]">
+            Key answers regarding minimum orders, mycotoxin controls, analytical verification, and ocean transit parameters.
+          </p>
+        </div>
+
+        <div className="mt-6">
+          <SpiceFAQAccordion faqs={data.b2b_faqs} />
+        </div>
+      </motion.section>
+
+      {/* ================================================================= */}
+      {/* 7. OTHER SPICE CATEGORIES DIRECTORY EXPLORER                      */}
+      {/* ================================================================= */}
+      {relatedCategories.length > 0 && (
+        <section className="border-t border-[#EAE5D9] pt-10">
+          <div className="flex items-center justify-between pb-4">
+            <div>
+              <div className="text-xs font-bold uppercase tracking-wider text-[#8B6008]">
+                Commodity Catalog
+              </div>
+              <h2 className="mt-1 text-xl font-bold tracking-tight text-[#0A0A0A] sm:text-2xl">
+                Explore Other Indian Spice Categories
+              </h2>
+            </div>
+            <Link
+              href="/spices"
+              className="text-xs font-semibold text-[#8B6008] hover:text-[#0A0A0A] transition"
+            >
+              All 16 Categories &rarr;
+            </Link>
+          </div>
+
+          <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+            {relatedCategories.slice(0, 6).map((cat) => (
+              <Link
+                key={cat.slug}
+                href={`/spices/${cat.slug}`}
+                className="group flex flex-col rounded-xl border border-[#E5E0D0] bg-white p-3 transition hover:border-[#0A0A0A]/40 hover:shadow-xs"
+              >
+                <div className="relative h-20 w-full overflow-hidden rounded-lg bg-[#FAF5E8]">
+                  <Image
+                    src={cat.image}
+                    alt={cat.category_name}
+                    fill
+                    sizes="(max-width: 768px) 50vw, 16vw"
+                    className="object-cover group-hover:scale-105 transition duration-300"
+                  />
+                </div>
+                <div className="mt-2 text-xs font-bold text-[#0A0A0A] group-hover:text-[#8B6008] transition truncate">
+                  {cat.category_name}
+                </div>
+                <div className="text-[10px] font-mono text-[#767676]">
+                  HS {cat.hs_code}
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* ================================================================= */}
+      {/* 8. BOTTOM CONVERSION BANNER WITH FAST LEAD GEN                    */}
       {/* ================================================================= */}
       <motion.section
         id="rfq-inquiry"
@@ -791,47 +723,52 @@ export default function SpiceDetailClient({ data, relatedSpices, varieties = [] 
           <div className="lg:col-span-6">
             <div className="inline-flex items-center gap-1.5 rounded-full border border-amber-300 bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-900">
               <Zap className="h-3.5 w-3.5 text-amber-600" />
-              Direct Commercial Sourcing
+              Direct Commercial Sourcing Requisition
             </div>
 
             <h2 className="mt-3 text-2xl font-extrabold tracking-tight text-[#0A0A0A] sm:text-3xl lg:text-4xl">
-              Source Bulk {data.category_name}
+              Source Bulk {data.variety}
             </h2>
 
             <p className="mt-3 text-sm leading-relaxed text-[#4A4A4A] sm:text-base">
-              Submit your target grade (organic certified, steam sterilized, custom mesh) and container volume. Connect directly with Indian spice export processors.
+              Specify your target mesh size, sterilization criteria (ETO-free steam sterilization or natural), ASTA/SHU ranges, and destination port. Connect directly with audited Indian spice exporters.
             </p>
 
             <div className="mt-6 space-y-2.5 text-xs text-[#5A5A5A]">
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="h-4 w-4 text-emerald-600 flex-shrink-0" />
-                <span>Direct communication with export processors in India</span>
+                <span>Pre-shipment batch COAs from ISO 17025 accredited laboratories</span>
               </div>
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="h-4 w-4 text-emerald-600 flex-shrink-0" />
-                <span>Inquire for custom mesh, ASTA/SHU profiles &amp; private packaging</span>
+                <span>Custom packaging: 25kg Kraft bags, PP woven, or Big Bags (FIBC)</span>
               </div>
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="h-4 w-4 text-emerald-600 flex-shrink-0" />
-                <span>Standard FOB / CIF / CFR Incoterms available</span>
+                <span>Full container load (FCL) &amp; consolidated multi-spice trial shipments</span>
               </div>
             </div>
 
-            <div className="mt-8">
+            <div className="mt-8 flex flex-wrap gap-3">
               <Link
-                href="/exports/spices"
+                href={`/spices/${parentSlug}`}
                 className="inline-flex items-center justify-center gap-2 rounded-xl border border-[#E5E0D0] bg-[#FAF5E8] px-5 py-3 text-center text-xs font-semibold text-[#1A1A1A] transition hover:bg-[#F5F0E0]"
               >
-                &larr; Browse All 16 Spice Categories
+                &larr; Return to {parentName}
+              </Link>
+              <Link
+                href="/spices"
+                className="inline-flex items-center justify-center gap-2 rounded-xl border border-[#E5E0D0] bg-white px-5 py-3 text-center text-xs font-semibold text-[#1A1A1A] transition hover:bg-[#FAF7F0]"
+              >
+                Browse All 16 Categories
               </Link>
             </div>
           </div>
 
           <div className="lg:col-span-6">
             <SpiceLeadGenForm
-              spiceCategory={data.category_name}
-              hsCode={data.hs_code}
-              availableForms={data.export_forms_available}
+              spiceCategory={`${data.variety} (${parentName})`}
+              hsCode={parentHsCode}
               buttonText="Submit Sourcing Requisition"
               className="shadow-sm"
             />

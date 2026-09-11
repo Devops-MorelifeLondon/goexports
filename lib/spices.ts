@@ -34,7 +34,29 @@ export interface B2BFAQ {
   answer: string;
 }
 
+export interface SpiceLevel2Data {
+  id: number;
+  parent_id: number;
+  category: string;
+  variety: string;
+  slug: string; // e.g. "/spices/red-chilli/guntur-teja-s17"
+  meta_title: string;
+  meta_description: string;
+  overview: string;
+  technical_specifications: TechnicalSpecification[];
+  regulatory_certifications: string[];
+  shipping_logistics: ShippingLogistics;
+  industrial_applications: IndustrialApplication[];
+  b2b_faqs: B2BFAQ[];
+  categorySlug: string; // e.g. "red-chilli"
+  varietySlug: string;  // e.g. "guntur-teja-s17"
+  image: string;
+  secondaryImage?: string;
+  parentCategory?: SpiceCategoryData;
+}
+
 export interface SpiceCategoryData {
+  id?: number;
   slug: string;
   category_name: string;
   hs_code: string | number;
@@ -50,6 +72,7 @@ export interface SpiceCategoryData {
   shipping_logistics: ShippingLogistics;
   industrial_applications: IndustrialApplication[];
   b2b_faqs: B2BFAQ[];
+  varieties?: SpiceLevel2Data[];
 }
 
 const SPICE_IMAGES: Record<string, { main: string; secondary?: string }> = {
@@ -103,7 +126,7 @@ const SPICE_IMAGES: Record<string, { main: string; secondary?: string }> = {
   },
   "cinnamon-and-cassia-sourcing": {
     main: "/images/cinnamon-and-cassia.png",
-    secondary: "https://images.pexels.com/photos/1417945/pexels-photo-1417945.jpeg?auto=compress&cs=tinysrgb&w=1200",
+    secondary: "https://images.pexels.com/photos/1417945/toBe-crop?auto=compress&cs=tinysrgb&w=1200",
   },
   "bulk-ajwain-seeds-india": {
     main: "/images/ajwain.png",
@@ -119,10 +142,127 @@ const SPICE_IMAGES: Record<string, { main: string; secondary?: string }> = {
   },
 };
 
+const VARIETY_IMAGES: Record<string, { main: string; secondary?: string }> = {
+  // Red Chilli varieties
+  "guntur-teja-s17": {
+    main: "https://images.pexels.com/photos/7094360/pexels-photo-7094360.jpeg",
+    secondary: "https://images.pexels.com/photos/30387987/pexels-photo-30387987.jpeg",
+  },
+  "byadagi": {
+    main: "https://images.pexels.com/photos/30387987/pexels-photo-30387987.jpeg",
+    secondary: "https://images.pexels.com/photos/7094360/pexels-photo-7094360.jpeg",
+  },
+  "sanam-s4": {
+    main: "https://images.pexels.com/photos/7094360/pexels-photo-7094360.jpeg",
+    secondary: "https://images.pexels.com/photos/30387987/pexels-photo-30387987.jpeg",
+  },
+  "kashmiri": {
+    main: "https://images.pexels.com/photos/2802527/pexels-photo-2802527.jpeg",
+    secondary: "https://images.pexels.com/photos/30387987/pexels-photo-30387987.jpeg",
+  },
+  "ghost-pepper": {
+    main: "https://images.pexels.com/photos/7094360/pexels-photo-7094360.jpeg",
+    secondary: "https://images.pexels.com/photos/2802527/pexels-photo-2802527.jpeg",
+  },
+  "crushed-flakes": {
+    main: "https://images.pexels.com/photos/10487762/pexels-photo-10487762.jpeg",
+    secondary: "https://images.pexels.com/photos/7094360/pexels-photo-7094360.jpeg",
+  },
+
+  // Turmeric varieties
+  "salem-fingers": {
+    main: "https://images.pexels.com/photos/6220709/pexels-photo-6220709.jpeg",
+    secondary: "https://images.pexels.com/photos/6220707/pexels-photo-6220707.jpeg",
+  },
+  "nizamabad-fingers": {
+    main: "https://images.pexels.com/photos/6220707/pexels-photo-6220707.jpeg",
+    secondary: "https://images.pexels.com/photos/6220709/pexels-photo-6220709.jpeg",
+  },
+  "alleppey": {
+    main: "https://images.pexels.com/photos/6220709/pexels-photo-6220709.jpeg",
+    secondary: "https://images.pexels.com/photos/6220707/pexels-photo-6220707.jpeg",
+  },
+  "high-curcumin-powder": {
+    main: "https://images.pexels.com/photos/6220707/pexels-photo-6220707.jpeg",
+    secondary: "https://images.pexels.com/photos/6220709/pexels-photo-6220709.jpeg",
+  },
+
+  // Cumin varieties
+  "singapore-quality": {
+    main: "https://images.pexels.com/photos/4871244/pexels-photo-4871244.jpeg",
+    secondary: "https://images.pexels.com/photos/10487762/pexels-photo-10487762.jpeg",
+  },
+  "europe-quality": {
+    main: "https://images.pexels.com/photos/4871244/pexels-photo-4871244.jpeg",
+    secondary: "https://images.pexels.com/photos/10487762/pexels-photo-10487762.jpeg",
+  },
+  "powder": {
+    main: "https://images.pexels.com/photos/10487762/pexels-photo-10487762.jpeg",
+    secondary: "https://images.pexels.com/photos/4871244/pexels-photo-4871244.jpeg",
+  },
+
+  // Black Pepper varieties
+  "tellicherry-tgseb": {
+    main: "https://images.pexels.com/photos/8559086/pexels-photo-8559086.jpeg",
+    secondary: "https://images.pexels.com/photos/5001423/pexels-photo-5001423.jpeg",
+  },
+  "tellicherry-tgeb": {
+    main: "https://images.pexels.com/photos/8559086/pexels-photo-8559086.jpeg",
+    secondary: "https://images.pexels.com/photos/5001423/pexels-photo-5001423.jpeg",
+  },
+  "malabar-mg1": {
+    main: "https://images.pexels.com/photos/5001423/pexels-photo-5001423.jpeg",
+    secondary: "https://images.pexels.com/photos/8559086/pexels-photo-8559086.jpeg",
+  },
+  "500-gl": {
+    main: "https://images.pexels.com/photos/5001423/pexels-photo-5001423.jpeg",
+    secondary: "https://images.pexels.com/photos/8559086/pexels-photo-8559086.jpeg",
+  },
+
+  // Coriander varieties
+  "eagle-quality": {
+    main: "https://images.pexels.com/photos/10487771/pexels-photo-10487771.jpeg",
+    secondary: "https://images.pexels.com/photos/5988179/pexels-photo-5988179.jpeg",
+  },
+  "parrot-quality": {
+    main: "https://images.pexels.com/photos/5988179/pexels-photo-5988179.jpeg",
+    secondary: "https://images.pexels.com/photos/10487771/pexels-photo-10487771.jpeg",
+  },
+  "split-dal": {
+    main: "https://images.pexels.com/photos/10487771/pexels-photo-10487771.jpeg",
+    secondary: "https://images.pexels.com/photos/5988179/pexels-photo-5988179.jpeg",
+  },
+
+  // Dry Ginger
+  "cochin-bleached": {
+    main: "https://images.pexels.com/photos/16122309/pexels-photo-16122309.jpeg",
+    secondary: "https://images.pexels.com/photos/4198566/pexels-photo-4198566.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  },
+  "cochin-unbleached": {
+    main: "https://images.pexels.com/photos/4198566/pexels-photo-4198566.jpeg?auto=compress&cs=tinysrgb&w=1200",
+    secondary: "https://images.pexels.com/photos/16122309/pexels-photo-16122309.jpeg",
+  },
+
+  // Green Cardamom
+  "ageb": {
+    main: "https://images.pexels.com/photos/8217944/pexels-photo-8217944.jpeg",
+    secondary: "https://images.pexels.com/photos/1417945/pexels-photo-1417945.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  },
+  "agb": {
+    main: "https://images.pexels.com/photos/8217944/pexels-photo-8217944.jpeg",
+    secondary: "https://images.pexels.com/photos/1417945/pexels-photo-1417945.jpeg?auto=compress&cs=tinysrgb&w=1200",
+  },
+  "decorticated-seeds": {
+    main: "https://images.pexels.com/photos/1417945/pexels-photo-1417945.jpeg?auto=compress&cs=tinysrgb&w=1200",
+    secondary: "https://images.pexels.com/photos/8217944/pexels-photo-8217944.jpeg",
+  },
+};
+
 const DEFAULT_IMAGE =
   "https://images.pexels.com/photos/277253/pexels-photo-277253.jpeg?auto=compress&cs=tinysrgb&w=1200";
 
 let cachedSpices: SpiceCategoryData[] | null = null;
+let cachedLevel2Spices: SpiceLevel2Data[] | null = null;
 
 export function getAllSpices(): SpiceCategoryData[] {
   if (cachedSpices) {
@@ -139,11 +279,13 @@ export function getAllSpices(): SpiceCategoryData[] {
     const sanitized = raw.replace(/:\s*NaN\b/g, ": null");
     const parsed = JSON.parse(sanitized);
 
-    const spices: SpiceCategoryData[] = parsed.map((item: any) => {
+    const spices: SpiceCategoryData[] = parsed.map((item: any, idx: number) => {
       const slug = String(item.slug || "").trim();
       const imgConfig = SPICE_IMAGES[slug] || { main: DEFAULT_IMAGE };
+      const id = item.id ? Number(item.id) : idx + 1;
 
       return {
+        id,
         slug,
         category_name: String(item.category_name || "").trim(),
         hs_code: item.hs_code ? String(item.hs_code) : "0904.00.00",
@@ -200,9 +342,154 @@ export function getAllSpices(): SpiceCategoryData[] {
 
 export function getSpiceBySlug(slug: string): SpiceCategoryData | null {
   const spices = getAllSpices();
-  return spices.find((s) => s.slug.toLowerCase() === slug.toLowerCase()) || null;
+  const normalized = slug.toLowerCase().replace(/^\/+|\/+$/g, "");
+  return (
+    spices.find(
+      (s) =>
+        s.slug.toLowerCase() === normalized ||
+        s.category_name.toLowerCase().replace(/\s+/g, "-") === normalized
+    ) || null
+  );
 }
 
 export function getAllSpiceSlugs(): string[] {
   return getAllSpices().map((s) => s.slug);
 }
+
+// ─── Level 2 Spice Variety Functions ───
+
+export function getAllLevel2Spices(): SpiceLevel2Data[] {
+  if (cachedLevel2Spices) {
+    return cachedLevel2Spices;
+  }
+
+  try {
+    const filePath = path.join(process.cwd(), "data", "data-level-2.json");
+    if (!fs.existsSync(filePath)) {
+      return [];
+    }
+
+    const raw = fs.readFileSync(filePath, "utf-8");
+    const sanitized = raw.replace(/:\s*NaN\b/g, ": null");
+    const parsed = JSON.parse(sanitized);
+    const parentSpices = getAllSpices();
+
+    const level2List: SpiceLevel2Data[] = parsed.map((item: any) => {
+      const slugRaw = String(item.slug || "").trim();
+      const slugClean = slugRaw.replace(/^\/+|\/+$/g, ""); // e.g. "spices/red-chilli/guntur-teja-s17"
+      const parts = slugClean.split("/"); // ["spices", "red-chilli", "guntur-teja-s17"]
+      const categorySlug = parts.length >= 3 ? parts[1] : parts[0] || "spice";
+      const varietySlug = parts.length >= 3 ? parts[2] : parts[1] || slugClean;
+
+      const parentCategory =
+        parentSpices.find((p) => p.id === item.parent_id) ||
+        parentSpices.find((p) => p.category_name.toLowerCase() === String(item.category || "").toLowerCase()) ||
+        parentSpices.find((p) => p.slug === categorySlug);
+
+      const varImgConfig = VARIETY_IMAGES[varietySlug] ||
+        (parentCategory ? SPICE_IMAGES[parentCategory.slug] : null) || { main: DEFAULT_IMAGE };
+
+      return {
+        id: Number(item.id),
+        parent_id: Number(item.parent_id),
+        category: String(item.category || "").trim(),
+        variety: String(item.variety || "").trim(),
+        slug: slugRaw.startsWith("/") ? slugRaw : `/${slugRaw}`,
+        meta_title: String(item.meta_title || `${item.variety} Bulk Exporter | GoExports`),
+        meta_description: String(item.meta_description || item.overview || ""),
+        overview: String(item.overview || ""),
+        technical_specifications: Array.isArray(item.technical_specifications)
+          ? item.technical_specifications
+          : [],
+        regulatory_certifications: Array.isArray(item.regulatory_certifications)
+          ? item.regulatory_certifications
+          : parentCategory?.regulatory_certifications || [],
+        shipping_logistics: {
+          packaging_options:
+            item.shipping_logistics?.packaging_options ||
+            parentCategory?.shipping_logistics.packaging_options ||
+            "25kg / 50kg export bags",
+          fcl_20ft_capacity:
+            item.shipping_logistics?.fcl_20ft_capacity ||
+            parentCategory?.shipping_logistics.fcl_20ft_capacity ||
+            "12 to 14 Metric Tons",
+          fcl_40ft_capacity:
+            item.shipping_logistics?.fcl_40ft_capacity ||
+            parentCategory?.shipping_logistics.fcl_40ft_capacity ||
+            "24 to 26 Metric Tons"
+        },
+        industrial_applications: Array.isArray(item.industrial_applications)
+          ? item.industrial_applications
+          : [],
+        b2b_faqs: Array.isArray(item.b2b_faqs) ? item.b2b_faqs : [],
+        categorySlug,
+        varietySlug,
+        image: varImgConfig.main,
+        secondaryImage: varImgConfig.secondary || varImgConfig.main,
+        parentCategory
+      };
+    });
+
+    cachedLevel2Spices = level2List;
+    return level2List;
+  } catch (error) {
+    console.error("Error loading level-2 spices dataset:", error);
+    return [];
+  }
+}
+
+export function getLevel2SpiceBySlug(slug: string): SpiceLevel2Data | null {
+  const all = getAllLevel2Spices();
+  const normalized = slug.toLowerCase().replace(/^\/+|\/+$/g, "");
+  return (
+    all.find((item) => {
+      const itemSlugClean = item.slug.toLowerCase().replace(/^\/+|\/+$/g, "");
+      return (
+        itemSlugClean === normalized ||
+        `${item.categorySlug}/${item.varietySlug}`.toLowerCase() === normalized ||
+        item.varietySlug.toLowerCase() === normalized
+      );
+    }) || null
+  );
+}
+
+export function getLevel2SpiceByParams(categorySlug: string, varietySlug: string): SpiceLevel2Data | null {
+  const all = getAllLevel2Spices();
+  const catNorm = categorySlug.toLowerCase().trim();
+  const varNorm = varietySlug.toLowerCase().trim();
+
+  return (
+    all.find(
+      (item) =>
+        (item.categorySlug.toLowerCase() === catNorm ||
+          item.category.toLowerCase().replace(/[\s&()]+/g, "-") === catNorm ||
+          (item.parentCategory && item.parentCategory.slug.toLowerCase() === catNorm)) &&
+        item.varietySlug.toLowerCase() === varNorm
+    ) || null
+  );
+}
+
+export function getLevel2SpicesByParentId(parentId: number): SpiceLevel2Data[] {
+  const all = getAllLevel2Spices();
+  return all.filter((item) => item.parent_id === parentId);
+}
+
+export function getLevel2SpicesByCategory(category: string): SpiceLevel2Data[] {
+  const all = getAllLevel2Spices();
+  const catNorm = category.toLowerCase().trim();
+  return all.filter(
+    (item) =>
+      item.category.toLowerCase() === catNorm ||
+      item.categorySlug.toLowerCase() === catNorm ||
+      (item.parentCategory && item.parentCategory.slug.toLowerCase() === catNorm)
+  );
+}
+
+export function getAllLevel2SpiceParams(): { slug: string; variety: string }[] {
+  const all = getAllLevel2Spices();
+  return all.map((item) => ({
+    slug: item.categorySlug,
+    variety: item.varietySlug,
+  }));
+}
+

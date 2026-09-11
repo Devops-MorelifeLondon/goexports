@@ -3,52 +3,50 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import {
-  getSpiceBySlug,
-  getAllSpiceSlugs,
-  getAllSpices,
+  getAllLevel2Spices,
+  getLevel2SpiceByParams,
+  getLevel2SpiceBySlug,
+  getAllLevel2SpiceParams,
   getLevel2SpicesByParentId,
-  getLevel2SpicesByCategory,
+  getAllSpices,
 } from "@/lib/spices";
-import SpiceDetailClient from "@/components/SpiceDetailClient";
+import SpiceLevel2DetailClient from "@/components/SpiceLevel2DetailClient";
 
 interface PageProps {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ slug: string; variety: string }>;
 }
 
 const BASE_URL = (process.env.NEXT_PUBLIC_BASE_URL || "https://www.goexports.co.uk").replace(/\/$/, "");
 
-// ─── SSG: Pre-generate all static paths ───
 export async function generateStaticParams() {
-  const slugs = getAllSpiceSlugs();
-  return slugs.map((slug) => ({ slug }));
+  return getAllLevel2SpiceParams();
 }
 
-// ─── Programmatic SEO Metadata ───
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const { slug } = await params;
-  const data = getSpiceBySlug(slug);
+  const { slug, variety } = await params;
+  const data = getLevel2SpiceByParams(slug, variety) || getLevel2SpiceBySlug(`/spices/${slug}/${variety}`);
 
   if (!data) {
     return {
-      title: "Spice Export Category | GoExports",
-      description: "Indian spice export specifications and supplier directory."
+      title: "Spice Variety Export | GoExports",
+      description: "Indian spice variety export specifications and supplier directory.",
     };
   }
 
   const title = data.meta_title;
   const description = data.meta_description;
-  const url = `${BASE_URL}/exports/spices/${data.slug}`;
+  const url = `${BASE_URL}${data.slug}`;
+  const parentName = data.parentCategory?.category_name || data.category;
+
   const keywords = [
-    data.category_name,
-    `HS Code ${data.hs_code}`,
-    `${data.category_name} exporters`,
-    `${data.category_name} wholesale suppliers`,
-    "bulk Indian spice exporters",
+    data.variety,
+    `${data.variety} exporters`,
+    `bulk ${data.variety}`,
+    `wholesale ${data.variety}`,
+    `${parentName} exporter India`,
+    "Indian spice varieties",
     "B2B spice procurement",
     "export grade spices",
-    "organic spice suppliers India",
-    "spice specifications",
-    "FCL container spice shipping"
   ];
 
   return {
@@ -67,10 +65,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       locale: "en_US",
       images: [
         {
-          url: `${BASE_URL}/og/spice-${data.slug}.png`,
+          url: `${BASE_URL}/og/spice-${data.varietySlug}.png`,
           width: 1200,
           height: 630,
-          alt: `${data.category_name} B2B Specifications & Sourcing`,
+          alt: `${data.variety} Specifications & Export Sourcing`,
         },
       ],
     },
@@ -78,7 +76,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       card: "summary_large_image",
       title,
       description,
-      images: [`${BASE_URL}/og/spice-${data.slug}.png`],
+      images: [`${BASE_URL}/og/spice-${data.varietySlug}.png`],
     },
     robots: {
       index: true,
@@ -90,22 +88,23 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
-// ─── Dynamic Programmatic Sourcing Page Component ───
-export default async function SpiceDetailPage({ params }: PageProps) {
-  const { slug } = await params;
-  const data = getSpiceBySlug(slug);
+export default async function ExportSpiceLevel2Page({ params }: PageProps) {
+  const { slug, variety } = await params;
+  const data = getLevel2SpiceByParams(slug, variety) || getLevel2SpiceBySlug(`/spices/${slug}/${variety}`);
 
   if (!data) {
     notFound();
   }
 
-  const allSpices = getAllSpices();
-  const relatedSpices = allSpices.filter((s) => s.slug !== data.slug).slice(0, 6);
-  const varieties = data.id
-    ? getLevel2SpicesByParentId(data.id)
-    : getLevel2SpicesByCategory(data.category_name);
+  const parentSlug = data.parentCategory?.slug || data.categorySlug;
+  const parentName = data.parentCategory?.category_name || data.category;
+  const parentHsCode = data.parentCategory?.hs_code || "0904.00.00";
 
-  // Dynamic Schema.org FAQPage Structured Data (Authentic from dataset)
+  const allSiblings = getLevel2SpicesByParentId(data.parent_id);
+  const siblingVarieties = allSiblings.filter((s) => s.varietySlug !== data.varietySlug);
+  const allCategories = getAllSpices();
+  const relatedCategories = allCategories.filter((c) => c.id !== data.parent_id);
+
   const faqSchema = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
@@ -119,23 +118,52 @@ export default async function SpiceDetailPage({ params }: PageProps) {
     })),
   };
 
-  // Structured B2B Item / Commodity Schema
   const productSchema = {
     "@context": "https://schema.org/",
     "@type": "Product",
-    name: `${data.category_name} (Commercial Grade)`,
+    name: `${data.variety} (Export Grade)`,
     description: data.overview,
-    category: "Agricultural Raw Materials > Spices & Herbs",
-    sku: `HS-${data.hs_code}`,
+    category: `Agricultural Raw Materials > Spices & Herbs > ${parentName}`,
+    sku: `HS-${parentHsCode}-${data.varietySlug}`,
     countryOfOrigin: {
       "@type": "Country",
       name: "India",
     },
   };
 
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: `${BASE_URL}`,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Exports Spices",
+        item: `${BASE_URL}/exports/spices`,
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: parentName,
+        item: `${BASE_URL}/exports/spices/${parentSlug}`,
+      },
+      {
+        "@type": "ListItem",
+        position: 4,
+        name: data.variety,
+        item: `${BASE_URL}${data.slug}`,
+      },
+    ],
+  };
+
   return (
     <div className="min-h-screen bg-[var(--canvas)] font-sans text-[var(--ink)] antialiased">
-      {/* ─── Inject Structured Schema Markups ─── */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
@@ -144,14 +172,19 @@ export default async function SpiceDetailPage({ params }: PageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
 
-      {/* Top Informational Bar */}
       <div className="border-b border-[#EAE5D9] bg-[#FAF5E8] py-2.5 px-4 text-xs tracking-wide text-[#5A5A5A]">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2">
             <span className="font-semibold text-[#1A1A1A]">Indian Spices Export Directory</span>
             <span className="text-[#B0A898]">•</span>
-            <span className="text-[#6A6A6A]">Technical Specifications, Sourcing Requirements &amp; Exporter Directory</span>
+            <span className="text-[#6A6A6A]">
+              {data.variety} &bull; Specifications &amp; Direct Exporter Sourcing
+            </span>
           </div>
           <div className="hidden sm:flex items-center gap-4 text-[#6A6A6A]">
             <span>Commercial Export Standards</span>
@@ -161,7 +194,6 @@ export default async function SpiceDetailPage({ params }: PageProps) {
         </div>
       </div>
 
-      {/* Breadcrumbs Navigation */}
       <nav aria-label="Breadcrumb" className="border-b border-[#EAE5D9] bg-white/70 py-3 backdrop-blur-sm">
         <div className="mx-auto flex max-w-7xl items-center gap-2 px-4 text-xs text-[#767676] sm:px-6 lg:px-8">
           <Link href="/" className="transition hover:text-[#0A0A0A]">
@@ -169,20 +201,23 @@ export default async function SpiceDetailPage({ params }: PageProps) {
           </Link>
           <span className="text-[#C5BFA9]">/</span>
           <Link href="/exports/spices" className="transition hover:text-[#0A0A0A]">
-            Exports
+            Exports Spices
           </Link>
           <span className="text-[#C5BFA9]">/</span>
-          <Link href="/exports/spices" className="transition hover:text-[#0A0A0A]">
-            Spices
+          <Link href={`/exports/spices/${parentSlug}`} className="transition hover:text-[#0A0A0A]">
+            {parentName}
           </Link>
           <span className="text-[#C5BFA9]">/</span>
-          <span className="font-semibold text-[#0A0A0A]">{data.category_name}</span>
+          <span className="font-semibold text-[#0A0A0A]">{data.variety}</span>
         </div>
       </nav>
 
-      {/* Animated Client Body Component */}
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        <SpiceDetailClient data={data} relatedSpices={relatedSpices} varieties={varieties} />
+        <SpiceLevel2DetailClient
+          data={data}
+          siblingVarieties={siblingVarieties}
+          relatedCategories={relatedCategories}
+        />
       </main>
     </div>
   );

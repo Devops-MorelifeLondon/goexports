@@ -27,7 +27,8 @@ import {
   ArrowRight,
   ArrowUpRight,
   Truck,
-  Flame
+  Flame,
+  Layers
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -231,23 +232,36 @@ export default function Navbar() {
                       <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100/70 px-1.5 py-0.2 rounded-full">Verified</span>
                     </div>
 
-                    {/* Featured Spices Hub Link */}
-                    <Link
-                      href="/spices"
-                      onClick={() => setImportersDropdownOpen(false)}
-                      className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-[var(--canvas)] no-underline transition-colors group"
-                    >
-                      <div className="w-8 h-8 rounded-xl bg-amber-500/15 text-amber-700 flex items-center justify-center shrink-0">
-                        <Flame className="w-4 h-4 text-amber-600" />
-                      </div>
-                      <div className="min-w-0">
-                        <div className="flex items-center gap-1.5">
-                          <span className="text-xs font-bold text-[var(--ink)] group-hover:text-amber-700 transition-colors">Indian Spices Hub</span>
-                          <span className="text-[9px] font-extrabold uppercase px-1.5 py-0.2 rounded-full bg-amber-100 text-amber-800">Available</span>
+                    {/* Category Tabs / Cards */}
+                    <div className="grid grid-cols-2 gap-2">
+                      <Link
+                        href="/spices"
+                        onClick={() => setImportersDropdownOpen(false)}
+                        className="flex items-center gap-2 p-2 rounded-xl bg-[var(--surface-soft)] hover:bg-[var(--canvas)] no-underline transition-colors group border border-[var(--hairline)]"
+                      >
+                        <div className="w-7 h-7 rounded-lg bg-amber-500/15 text-amber-700 flex items-center justify-center shrink-0">
+                          <Flame className="w-3.5 h-3.5 text-amber-600" />
                         </div>
-                        <span className="block text-[11px] text-[var(--muted)] truncate">Whole & ground spices direct from processors</span>
-                      </div>
-                    </Link>
+                        <div className="min-w-0">
+                          <span className="block text-xs font-bold text-[var(--ink)] group-hover:text-amber-700 truncate">Spices Hub</span>
+                          <span className="block text-[10px] text-[var(--muted)]">12+ Spices</span>
+                        </div>
+                      </Link>
+
+                      <Link
+                        href="/textiles"
+                        onClick={() => setImportersDropdownOpen(false)}
+                        className="flex items-center gap-2 p-2 rounded-xl bg-[var(--surface-soft)] hover:bg-[var(--canvas)] no-underline transition-colors group border border-[var(--hairline)]"
+                      >
+                        <div className="w-7 h-7 rounded-lg bg-emerald-500/15 text-emerald-700 flex items-center justify-center shrink-0">
+                          <Layers className="w-3.5 h-3.5 text-emerald-600" />
+                        </div>
+                        <div className="min-w-0">
+                          <span className="block text-xs font-bold text-[var(--ink)] group-hover:text-emerald-700 truncate">Textiles Hub</span>
+                          <span className="block text-[10px] text-[var(--muted)]">15+ Categories</span>
+                        </div>
+                      </Link>
+                    </div>
 
                     {/* Quick Variety Links */}
                     <div className="grid grid-cols-2 gap-1 p-1 bg-[var(--surface-soft)] rounded-xl">
@@ -593,48 +607,37 @@ export default function Navbar() {
                 )}
 
                 {/* For Importers Section in Mobile Drawer */}
-                <div className="p-3 rounded-2xl bg-[var(--surface-soft)] border border-[var(--hairline)] mb-1 flex flex-col gap-2 shadow-2xs">
+                <div className="p-3 rounded-2xl bg-[var(--surface-soft)] border border-[var(--hairline)] mb-1 flex flex-col gap-2.5 shadow-2xs">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Flame className="w-4 h-4 text-amber-600" />
-                      <span className="text-xs font-bold text-[var(--ink)]">For Importers</span>
-                    </div>
+                    <span className="text-xs font-bold text-[var(--ink)]">For Global Importers</span>
+                    <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100/70 px-1.5 py-0.2 rounded-full">
+                      Direct Mill Sourcing
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2">
                     <Link
                       href="/spices"
                       onClick={() => setMobileMenu(false)}
-                      className="text-[11px] font-bold text-amber-700 no-underline"
+                      className="flex items-center gap-2 p-2 rounded-xl bg-[var(--surface-card)] border border-[var(--hairline)] no-underline"
                     >
-                      All Spices Hub →
+                      <Flame className="w-4 h-4 text-amber-600 shrink-0" />
+                      <div className="min-w-0">
+                        <span className="block text-xs font-bold text-[var(--ink)] truncate">Spices Hub</span>
+                        <span className="block text-[10px] text-[var(--muted)]">12+ Spices</span>
+                      </div>
                     </Link>
-                  </div>
-                  <div className="grid grid-cols-2 gap-1 pt-1 border-t border-[var(--hairline)]">
+
                     <Link
-                      href="/spices/red-chilli"
+                      href="/textiles"
                       onClick={() => setMobileMenu(false)}
-                      className="text-[12px] font-medium text-[var(--ink)] py-1 px-2 rounded-lg bg-[var(--surface-card)] no-underline truncate"
+                      className="flex items-center gap-2 p-2 rounded-xl bg-[var(--surface-card)] border border-[var(--hairline)] no-underline"
                     >
-                      🌶️ Red Chilli
-                    </Link>
-                    <Link
-                      href="/spices/bulk-turmeric-suppliers-india"
-                      onClick={() => setMobileMenu(false)}
-                      className="text-[12px] font-medium text-[var(--ink)] py-1 px-2 rounded-lg bg-[var(--surface-card)] no-underline truncate"
-                    >
-                      🟡 Turmeric
-                    </Link>
-                    <Link
-                      href="/spices/wholesale-bulk-cumin-seeds-powder-india"
-                      onClick={() => setMobileMenu(false)}
-                      className="text-[12px] font-medium text-[var(--ink)] py-1 px-2 rounded-lg bg-[var(--surface-card)] no-underline truncate"
-                    >
-                      🌱 Cumin Seeds
-                    </Link>
-                    <Link
-                      href="/spices/bulk-black-pepper-wholesale-exporters-india"
-                      onClick={() => setMobileMenu(false)}
-                      className="text-[12px] font-medium text-[var(--ink)] py-1 px-2 rounded-lg bg-[var(--surface-card)] no-underline truncate"
-                    >
-                      ⚫ Black Pepper
+                      <Layers className="w-4 h-4 text-emerald-600 shrink-0" />
+                      <div className="min-w-0">
+                        <span className="block text-xs font-bold text-[var(--ink)] truncate">Textiles Hub</span>
+                        <span className="block text-[10px] text-[var(--muted)]">15+ Categories</span>
+                      </div>
                     </Link>
                   </div>
                 </div>

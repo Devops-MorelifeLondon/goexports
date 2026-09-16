@@ -3,6 +3,7 @@ import { connectToDatabase, ExportProfile } from "@/lib/mongodb";
 import { industries } from "@/data/industries";
 import { slugifyCompanyName } from "@/lib/seller";
 import { getAllSpices, getAllLevel2Spices } from "@/lib/spices";
+import { getAllTextiles, getAllLevel2Textiles } from "@/lib/textiles";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 3600; // Cache and revalidate every 1 hour
@@ -35,6 +36,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
     {
       url: `${BASE_URL}/spices`,
+      lastModified: now,
+      changeFrequency: "daily",
+      priority: 0.95,
+    },
+    {
+      url: `${BASE_URL}/textiles`,
       lastModified: now,
       changeFrequency: "daily",
       priority: 0.95,
@@ -141,7 +148,32 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   }
 
-  // 5. Dynamic Exporter Profiles & Products from MongoDB
+  // 5. Textile Category Pages (Level 1)
+  const textiles = getAllTextiles();
+  for (const t of textiles) {
+    if (!t.slug) continue;
+    addEntry({
+      url: `${BASE_URL}/textiles/${t.slug}`,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.9,
+    });
+  }
+
+  // 6. Textile Subcategory & Variety Pages (Level 2)
+  const level2Textiles = getAllLevel2Textiles();
+  for (const vt of level2Textiles) {
+    if (vt.categorySlug && vt.varietySlug) {
+      addEntry({
+        url: `${BASE_URL}/textiles/${vt.categorySlug}/${vt.varietySlug}`,
+        lastModified: now,
+        changeFrequency: "weekly",
+        priority: 0.88,
+      });
+    }
+  }
+
+  // 7. Dynamic Exporter Profiles & Products from MongoDB
   try {
     await connectToDatabase();
 

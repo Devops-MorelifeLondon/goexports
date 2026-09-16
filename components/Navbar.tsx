@@ -25,17 +25,24 @@ import {
   Mail,
   UserPlus,
   ArrowRight,
+  ArrowUpRight,
+  Truck,
   Flame
 } from "lucide-react";
 import { toast } from "sonner";
 
 const navItems = [
-  { label: "Spices", href: "/spices", icon: Flame },
   { label: "How It Works", href: "#how-it-works", icon: Sparkles },
-  { label: "Benefits", href: "#benefits", icon: TrendingUp },
   { label: "Industries", href: "#industries", icon: Boxes },
   { label: "Pricing", href: "#pricing", icon: CreditCard },
   { label: "Presence", href: "#presence", icon: MapPin },
+  {
+    label: "Shipping",
+    href: "https://shipglobal.in/partner/goexports/",
+    icon: Truck,
+    isExternal: true,
+    badge: "Partner",
+  },
 ];
 
 export default function Navbar() {
@@ -46,6 +53,8 @@ export default function Navbar() {
   const [exporterUser, setExporterUser] = useState<any>(null);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const [importersDropdownOpen, setImportersDropdownOpen] = useState(false);
+  const importersDropdownRef = useRef<HTMLDivElement>(null);
 
   // Sync auth state
   const syncAuthState = useCallback(() => {
@@ -76,12 +85,16 @@ export default function Navbar() {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
         setUserDropdownOpen(false);
       }
+      if (importersDropdownRef.current && !importersDropdownRef.current.contains(e.target as Node)) {
+        setImportersDropdownOpen(false);
+      }
     };
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         setMobileMenu(false);
         setUserDropdownOpen(false);
+        setImportersDropdownOpen(false);
       }
     };
 
@@ -116,6 +129,7 @@ export default function Navbar() {
   useEffect(() => {
     setMobileMenu(false);
     setUserDropdownOpen(false);
+    setImportersDropdownOpen(false);
   }, [pathname]);
 
   const handleLogout = async () => {
@@ -162,63 +176,201 @@ export default function Navbar() {
         }`}
         style={{ minHeight: "64px" }}
       >
-        <div className="section-wrap flex items-center justify-between h-[64px] sm:h-[68px] px-3.5 sm:px-6">
-          {/* Left: Brand Logo & Desktop Nav Links */}
-          <div className="flex items-center gap-4 lg:gap-8 xl:gap-10 min-w-0">
-            <Link
-              href="/"
-              className="flex items-center cursor-pointer no-underline group shrink-0 transition-transform duration-200 active:scale-[0.98]"
-              aria-label="Goexports Home"
-            >
-              <div className="relative w-[115px] sm:w-[138px] h-[32px] sm:h-[36px]">
-                <Image
-                  src="/logo/logo.png"
-                  alt="Goexports Logo"
-                  fill
-                  priority
-                  sizes="(max-width: 640px) 115px, 138px"
-                  className="object-contain object-left"
-                />
-              </div>
-            </Link>
+        <div className="section-wrap flex items-center justify-between h-[64px] sm:h-[68px] px-3.5 sm:px-6 gap-3 lg:gap-6">
+          {/* Left: Brand Logo */}
+          <Link
+            href="/"
+            className="flex items-center cursor-pointer no-underline group shrink-0 transition-transform duration-200 active:scale-[0.98]"
+            aria-label="Goexports Home"
+          >
+            <div className="relative w-[115px] sm:w-[138px] h-[32px] sm:h-[36px]">
+              <Image
+                src="/logo/logo.png"
+                alt="Goexports Logo"
+                fill
+                priority
+                sizes="(max-width: 640px) 115px, 138px"
+                className="object-contain object-left"
+              />
+            </div>
+          </Link>
 
-            {/* Desktop Navigation Links */}
-            <nav
-              aria-label="Main Navigation"
-              className="hidden lg:flex items-center gap-0.5 xl:gap-1 p-1 rounded-full bg-[var(--surface-soft)]/80 border border-[var(--hairline)] shadow-2xs"
-            >
-              {navItems.map((item) => {
-                const isInternalRoute = item.href.startsWith("/");
-                const isActive = isInternalRoute && (pathname === item.href || pathname.startsWith(item.href + "/"));
+          {/* Center: Desktop Navigation Links */}
+          <nav
+            aria-label="Main Navigation"
+            className="hidden lg:flex items-center gap-0.5 xl:gap-1 p-1 rounded-full bg-[var(--surface-soft)]/80 border border-[var(--hairline)] shadow-2xs shrink-0"
+          >
+            {/* For Importers Dropdown */}
+            <div className="relative" ref={importersDropdownRef}>
+              <button
+                type="button"
+                onClick={() => setImportersDropdownOpen(!importersDropdownOpen)}
+                className={`relative px-3 xl:px-3.5 py-1.5 rounded-full border-none bg-transparent cursor-pointer text-[12.5px] xl:text-[13px] font-medium transition-all duration-200 hover:text-[var(--ink)] hover:bg-[var(--surface-card)] flex items-center gap-1 shrink-0 ${
+                  importersDropdownOpen || pathname.startsWith("/spices")
+                    ? "text-[var(--ink)] bg-[var(--surface-card)] font-bold shadow-2xs"
+                    : "text-[var(--muted)]"
+                }`}
+                aria-expanded={importersDropdownOpen}
+                aria-haspopup="true"
+              >
+                <span>For Importers</span>
+                <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${importersDropdownOpen ? "rotate-180" : ""}`} />
+              </button>
 
-                if (isInternalRoute) {
-                  return (
+              <AnimatePresence>
+                {importersDropdownOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 8, scale: 0.98 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 8, scale: 0.98 }}
+                    transition={{ duration: 0.15 }}
+                    className="absolute left-0 top-[40px] w-72 rounded-2xl border border-[var(--hairline)] bg-[var(--surface-card)] shadow-[0_16px_40px_rgba(10,10,10,0.14)] p-2.5 z-50 space-y-2"
+                  >
+                    <div className="px-2 pt-1 pb-1 border-b border-[var(--hairline)] flex items-center justify-between">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--muted)]">Source Direct From India</span>
+                      <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100/70 px-1.5 py-0.2 rounded-full">Verified</span>
+                    </div>
+
+                    {/* Featured Spices Hub Link */}
                     <Link
-                      key={item.label}
-                      href={item.href}
-                      className={`relative px-3 xl:px-4 py-1.5 rounded-full no-underline text-[12.5px] xl:text-[13.5px] font-medium transition-all duration-200 flex items-center gap-1.5 shrink-0 ${
-                        isActive
-                          ? "text-[var(--ink)] bg-[var(--surface-card)] font-bold shadow-2xs"
-                          : "text-[var(--muted)] hover:text-[var(--ink)] hover:bg-[var(--surface-card)]"
-                      }`}
+                      href="/spices"
+                      onClick={() => setImportersDropdownOpen(false)}
+                      className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-[var(--canvas)] no-underline transition-colors group"
                     >
-                      {item.label}
+                      <div className="w-8 h-8 rounded-xl bg-amber-500/15 text-amber-700 flex items-center justify-center shrink-0">
+                        <Flame className="w-4 h-4 text-amber-600" />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-xs font-bold text-[var(--ink)] group-hover:text-amber-700 transition-colors">Indian Spices Hub</span>
+                          <span className="text-[9px] font-extrabold uppercase px-1.5 py-0.2 rounded-full bg-amber-100 text-amber-800">Available</span>
+                        </div>
+                        <span className="block text-[11px] text-[var(--muted)] truncate">Whole & ground spices direct from processors</span>
+                      </div>
                     </Link>
-                  );
-                }
 
+                    {/* Quick Variety Links */}
+                    <div className="grid grid-cols-2 gap-1 p-1 bg-[var(--surface-soft)] rounded-xl">
+                      <Link
+                        href="/spices/red-chilli"
+                        onClick={() => setImportersDropdownOpen(false)}
+                        className="px-2 py-1.5 rounded-lg text-[11.5px] font-medium text-[var(--ink)] hover:bg-[var(--surface-card)] no-underline truncate"
+                      >
+                        🌶️ Red Chilli
+                      </Link>
+                      <Link
+                        href="/spices/bulk-turmeric-suppliers-india"
+                        onClick={() => setImportersDropdownOpen(false)}
+                        className="px-2 py-1.5 rounded-lg text-[11.5px] font-medium text-[var(--ink)] hover:bg-[var(--surface-card)] no-underline truncate"
+                      >
+                        🟡 Turmeric
+                      </Link>
+                      <Link
+                        href="/spices/wholesale-bulk-cumin-seeds-powder-india"
+                        onClick={() => setImportersDropdownOpen(false)}
+                        className="px-2 py-1.5 rounded-lg text-[11.5px] font-medium text-[var(--ink)] hover:bg-[var(--surface-card)] no-underline truncate"
+                      >
+                        🌱 Cumin Seeds
+                      </Link>
+                      <Link
+                        href="/spices/bulk-black-pepper-wholesale-exporters-india"
+                        onClick={() => setImportersDropdownOpen(false)}
+                        className="px-2 py-1.5 rounded-lg text-[11.5px] font-medium text-[var(--ink)] hover:bg-[var(--surface-card)] no-underline truncate"
+                      >
+                        ⚫ Black Pepper
+                      </Link>
+                      <Link
+                        href="/spices/dry-ginger-sourcing-india"
+                        onClick={() => setImportersDropdownOpen(false)}
+                        className="px-2 py-1.5 rounded-lg text-[11.5px] font-medium text-[var(--ink)] hover:bg-[var(--surface-card)] no-underline truncate"
+                      >
+                        🫚 Dry Ginger
+                      </Link>
+                      <Link
+                        href="/spices/green-cardamom-wholesale-export"
+                        onClick={() => setImportersDropdownOpen(false)}
+                        className="px-2 py-1.5 rounded-lg text-[11.5px] font-medium text-[var(--ink)] hover:bg-[var(--surface-card)] no-underline truncate"
+                      >
+                        🌿 Cardamom
+                      </Link>
+                    </div>
+
+                    <div className="pt-1 border-t border-[var(--hairline)] flex items-center justify-between px-1">
+                      <Link
+                        href="/spices"
+                        onClick={() => setImportersDropdownOpen(false)}
+                        className="text-[11px] font-bold text-amber-700 hover:text-amber-800 no-underline inline-flex items-center gap-1"
+                      >
+                        <span>View All Spices</span>
+                        <ArrowRight className="w-3 h-3" />
+                      </Link>
+                      <button
+                        onClick={() => {
+                          setImportersDropdownOpen(false);
+                          scrollTo("#industries");
+                        }}
+                        className="text-[11px] font-medium text-[var(--muted)] hover:text-[var(--ink)] border-none bg-transparent cursor-pointer"
+                      >
+                        All Industries →
+                      </button>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
+            {navItems.map((item) => {
+              if (item.isExternal) {
                 return (
-                  <button
+                  <a
                     key={item.label}
-                    onClick={() => scrollTo(item.href)}
-                    className="relative px-3 xl:px-4 py-1.5 rounded-full border-none bg-transparent cursor-pointer text-[12.5px] xl:text-[13.5px] font-medium text-[var(--muted)] transition-all duration-200 hover:text-[var(--ink)] hover:bg-[var(--surface-card)] flex items-center gap-1.5 shrink-0"
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="relative px-3 xl:px-3.5 py-1.5 rounded-full no-underline text-[12.5px] xl:text-[13px] font-semibold text-[var(--ink)] hover:bg-[var(--surface-card)] transition-all duration-200 flex items-center gap-1.5 shrink-0 group"
+                    title="International Shipping Partner - ShipGlobal"
+                  >
+                    <span>{item.label}</span>
+                    {item.badge && (
+                      <span className="text-[9.5px] font-bold px-1.5 py-0.2 rounded-full bg-blue-100 text-blue-700 tracking-wide">
+                        {item.badge}
+                      </span>
+                    )}
+                    <ArrowUpRight className="w-3 h-3 text-[var(--muted)] group-hover:text-[var(--ink)] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                  </a>
+                );
+              }
+
+              const isInternalRoute = item.href.startsWith("/");
+              const isActive = isInternalRoute && (pathname === item.href || pathname.startsWith(item.href + "/"));
+
+              if (isInternalRoute) {
+                return (
+                  <Link
+                    key={item.label}
+                    href={item.href}
+                    className={`relative px-3 xl:px-3.5 py-1.5 rounded-full no-underline text-[12.5px] xl:text-[13px] font-medium transition-all duration-200 flex items-center gap-1.5 shrink-0 ${
+                      isActive
+                        ? "text-[var(--ink)] bg-[var(--surface-card)] font-bold shadow-2xs"
+                        : "text-[var(--muted)] hover:text-[var(--ink)] hover:bg-[var(--surface-card)]"
+                    }`}
                   >
                     {item.label}
-                  </button>
+                  </Link>
                 );
-              })}
-            </nav>
-          </div>
+              }
+
+              return (
+                <button
+                  key={item.label}
+                  onClick={() => scrollTo(item.href)}
+                  className="relative px-3 xl:px-3.5 py-1.5 rounded-full border-none bg-transparent cursor-pointer text-[12.5px] xl:text-[13px] font-medium text-[var(--muted)] transition-all duration-200 hover:text-[var(--ink)] hover:bg-[var(--surface-card)] flex items-center gap-1.5 shrink-0"
+                >
+                  {item.label}
+                </button>
+              );
+            })}
+          </nav>
 
           {/* Right Action Cluster */}
           <div className="flex items-center gap-1.5 sm:gap-2.5 md:gap-3 shrink-0">
@@ -305,13 +457,7 @@ export default function Navbar() {
               </Link>
             )}
 
-            {/* Contact Sales Pill (Large Screens) */}
-            <button
-              onClick={() => scrollTo("#contact-form")}
-              className="hidden lg:inline-flex items-center gap-1.5 px-3.5 py-1.5 text-[12.5px] font-medium text-[var(--ink)] bg-[var(--surface-soft)] border border-[var(--hairline)] rounded-full cursor-pointer transition-all duration-200 hover:bg-[var(--surface-card)] active:scale-[0.98] h-[36px] sm:h-[38px]"
-            >
-              Contact Sales
-            </button>
+
 
             {/* Primary Action Button */}
             <Link
@@ -446,10 +592,84 @@ export default function Navbar() {
                   </div>
                 )}
 
+                {/* For Importers Section in Mobile Drawer */}
+                <div className="p-3 rounded-2xl bg-[var(--surface-soft)] border border-[var(--hairline)] mb-1 flex flex-col gap-2 shadow-2xs">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Flame className="w-4 h-4 text-amber-600" />
+                      <span className="text-xs font-bold text-[var(--ink)]">For Importers</span>
+                    </div>
+                    <Link
+                      href="/spices"
+                      onClick={() => setMobileMenu(false)}
+                      className="text-[11px] font-bold text-amber-700 no-underline"
+                    >
+                      All Spices Hub →
+                    </Link>
+                  </div>
+                  <div className="grid grid-cols-2 gap-1 pt-1 border-t border-[var(--hairline)]">
+                    <Link
+                      href="/spices/red-chilli"
+                      onClick={() => setMobileMenu(false)}
+                      className="text-[12px] font-medium text-[var(--ink)] py-1 px-2 rounded-lg bg-[var(--surface-card)] no-underline truncate"
+                    >
+                      🌶️ Red Chilli
+                    </Link>
+                    <Link
+                      href="/spices/bulk-turmeric-suppliers-india"
+                      onClick={() => setMobileMenu(false)}
+                      className="text-[12px] font-medium text-[var(--ink)] py-1 px-2 rounded-lg bg-[var(--surface-card)] no-underline truncate"
+                    >
+                      🟡 Turmeric
+                    </Link>
+                    <Link
+                      href="/spices/wholesale-bulk-cumin-seeds-powder-india"
+                      onClick={() => setMobileMenu(false)}
+                      className="text-[12px] font-medium text-[var(--ink)] py-1 px-2 rounded-lg bg-[var(--surface-card)] no-underline truncate"
+                    >
+                      🌱 Cumin Seeds
+                    </Link>
+                    <Link
+                      href="/spices/bulk-black-pepper-wholesale-exporters-india"
+                      onClick={() => setMobileMenu(false)}
+                      className="text-[12px] font-medium text-[var(--ink)] py-1 px-2 rounded-lg bg-[var(--surface-card)] no-underline truncate"
+                    >
+                      ⚫ Black Pepper
+                    </Link>
+                  </div>
+                </div>
+
                 {/* Section Navigation Links */}
                 <div className="flex flex-col gap-0.5 py-1">
                   {navItems.map((item) => {
                     const Icon = item.icon;
+
+                    if (item.isExternal) {
+                      return (
+                        <a
+                          key={item.label}
+                          href={item.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={() => setMobileMenu(false)}
+                          className="text-left px-3.5 py-2.5 min-h-[44px] rounded-xl no-underline transition-all duration-150 flex items-center justify-between text-[14px] font-semibold bg-blue-50/60 hover:bg-blue-50 text-blue-950 group"
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="w-7 h-7 rounded-lg bg-blue-600 text-white flex items-center justify-center transition-transform group-hover:scale-105">
+                              <Icon className="w-3.5 h-3.5" />
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span>{item.label}</span>
+                              <span className="text-[10px] font-extrabold uppercase px-1.5 py-0.2 rounded-full bg-blue-100 text-blue-700">
+                                {item.badge || "Partner"}
+                              </span>
+                            </div>
+                          </div>
+                          <ArrowUpRight className="w-4 h-4 text-blue-700 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                        </a>
+                      );
+                    }
+
                     const isInternalRoute = item.href.startsWith("/");
                     const isActive = isInternalRoute && (pathname === item.href || pathname.startsWith(item.href + "/"));
 

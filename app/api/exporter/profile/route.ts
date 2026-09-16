@@ -92,7 +92,7 @@ export async function GET(req: Request) {
           buyerCountry: inq.buyerCountry || "",
           inquiryType: inq.inquiryType || "Bulk Order / RFQ",
           quantity: inq.quantity || "",
-          engagementMode: inq.engagementMode || "",
+          engagementMode: inq.engagementMode && !inq.engagementMode.toLowerCase().includes("ad") && !inq.engagementMode.toLowerCase().includes("facebook") ? inq.engagementMode : (inq.engagementMode ? "RFQ Form" : ""),
           status: inq.status || "To be Called",
           callingDate: inq.callingDate || "",
           callingPerson: inq.callingPerson || "",

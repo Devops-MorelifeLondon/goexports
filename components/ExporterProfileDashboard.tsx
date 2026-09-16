@@ -3355,7 +3355,7 @@ export default function ExporterProfileDashboard({
                           {inq.engagementMode && (
                             <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-[11px] font-bold bg-[#faf5e8] text-[#0a0a0a] border border-[#e5e5e5]">
                               <Radio className="w-3 h-3 text-amber-600" />
-                              <span>Mode: {inq.engagementMode}</span>
+                              <span>Mode: {inq.engagementMode.toLowerCase().includes("ad") || inq.engagementMode.toLowerCase().includes("facebook") ? "RFQ Form" : inq.engagementMode}</span>
                             </span>
                           )}
 

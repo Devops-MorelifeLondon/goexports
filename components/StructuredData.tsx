@@ -13,10 +13,11 @@ export default function StructuredData() {
       "availableLanguage": ["English", "Spanish", "French", "German", "Italian", "Japanese", "Chinese", "Hindi", "Arabic"]
     },
     "sameAs": [
-      "https://www.facebook.com/globalexportleads",
-      "https://twitter.com/globalexportleads",
-      "https://www.linkedin.com/company/globalexportleads",
-      "https://www.youtube.com/globalexportleads"
+      "https://www.facebook.com/profile.php?id=61555427933881",
+      "https://www.instagram.com/goexportsuk",
+      "https://twitter.com/goexports",
+      "https://www.linkedin.com/company/goexports",
+      "https://www.youtube.com/@goexports"
     ],
     "address": {
       "@type": "PostalAddress",

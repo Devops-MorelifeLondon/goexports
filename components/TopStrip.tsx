@@ -13,7 +13,7 @@ import {
 const socialLinks = [
   {
     name: "Facebook",
-    href: "https://facebook.com/goexports",
+    href: "https://www.facebook.com/profile.php?id=61555427933881",
     icon: FaFacebookF,
   },
   {
@@ -28,7 +28,7 @@ const socialLinks = [
   },
   {
     name: "Instagram",
-    href: "https://instagram.com/goexports",
+    href: "https://www.instagram.com/goexportsuk",
     icon: FaInstagram,
   },
   {

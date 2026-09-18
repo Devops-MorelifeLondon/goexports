@@ -1506,7 +1506,9 @@ export default function ExportProfileForm({ initialPlans }: ExportProfileFormPro
                       {/* Leads Pill */}
                       <div className="mb-2.5">
                         <span className="inline-block text-[11px] font-semibold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200/60">
-                          {plan.leads} {plan.leadsLabel || "Qualified Leads / Month"}
+                          {Number(plan.leads) > 0
+                            ? `${plan.leads} ${plan.leadsLabel || "Qualified Leads / Month"}`
+                            : (plan.leadsLabel || "Free Profile Creation")}
                         </span>
                       </div>
 

@@ -1612,7 +1612,7 @@ export default function ExporterProfileDashboard({
                         </button>
                       </div>
                       <span className="text-[11px] text-[var(--muted)] block mt-0.5 font-medium">
-                        {planMeta.priceDisplay} · {planMeta.leadsCount} qualified leads / month
+                        {planMeta.priceDisplay} · {planMeta.leadsCount > 0 ? `${planMeta.leadsCount} qualified leads / month` : "Free Profile Creation"}
                       </span>
                     </div>
 
@@ -1783,23 +1783,40 @@ export default function ExporterProfileDashboard({
                   </span>
                 </div>
 
-                <div className="space-y-1.5">
-                  <div className="flex items-center justify-between text-xs font-bold text-[var(--ink)]">
-                    <span>Monthly Qualified Leads</span>
-                    <span>{inquiries.length} / {planMeta.leadsCount} Active</span>
+                {planMeta.type === "free" || planMeta.leadsCount === 0 ? (
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between text-xs font-bold text-[var(--ink)]">
+                      <span>Profile Status</span>
+                      <span className="text-emerald-700 font-extrabold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                        Free Profile Active
+                      </span>
+                    </div>
+                    <div className="w-full bg-[var(--surface-soft)] h-2.5 rounded-full overflow-hidden border border-[var(--hairline)]">
+                      <div className="h-full rounded-full bg-emerald-500 w-full" />
+                    </div>
+                    <p className="text-[11px] text-[var(--muted)] m-0">
+                      Free verified exporter profile & public storefront active. Upgrade anytime to receive monthly qualified buyer leads.
+                    </p>
                   </div>
-                  <div className="w-full bg-[var(--surface-soft)] h-2.5 rounded-full overflow-hidden border border-[var(--hairline)]">
-                    <div
-                      className="h-full rounded-full transition-all duration-500 bg-amber-500"
-                      style={{
-                        width: `${Math.min(100, Math.max(12, (inquiries.length / (planMeta.leadsCount || 1)) * 100))}%`,
-                      }}
-                    />
+                ) : (
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between text-xs font-bold text-[var(--ink)]">
+                      <span>Monthly Qualified Leads</span>
+                      <span>{inquiries.length} / {planMeta.leadsCount} Active</span>
+                    </div>
+                    <div className="w-full bg-[var(--surface-soft)] h-2.5 rounded-full overflow-hidden border border-[var(--hairline)]">
+                      <div
+                        className="h-full rounded-full transition-all duration-500 bg-amber-500"
+                        style={{
+                          width: `${Math.min(100, Math.max(12, (inquiries.length / (planMeta.leadsCount || 1)) * 100))}%`,
+                        }}
+                      />
+                    </div>
+                    <p className="text-[11px] text-[var(--muted)] m-0">
+                      {planMeta.leadsCount} verified buyer leads allocated per 30-day billing cycle.
+                    </p>
                   </div>
-                  <p className="text-[11px] text-[var(--muted)] m-0">
-                    {planMeta.leadsCount} verified buyer leads allocated per 30-day billing cycle.
-                  </p>
-                </div>
+                )}
 
                 <div className="space-y-1 md:text-right">
                   <span className="text-xs text-[var(--muted)] font-semibold">Dedicated Trade Advisory</span>
@@ -1890,10 +1907,10 @@ export default function ExporterProfileDashboard({
                           <Inbox className="w-4 h-4 text-amber-600 shrink-0" />
                           <div>
                             <span className="text-xs font-extrabold text-[var(--ink)] block">
-                              {plan.leads} Leads / mo
+                              {Number(plan.leads) > 0 ? `${plan.leads} Leads / mo` : (plan.leadsLabel || "Free Profile Creation")}
                             </span>
                             <span className="text-[10px] text-[var(--muted)] block">
-                              {plan.leadsLabel || "Qualified Global Buyers"}
+                              {Number(plan.leads) > 0 ? (plan.leadsLabel || "Qualified Global Buyers") : "Verified Exporter Storefront"}
                             </span>
                           </div>
                         </div>

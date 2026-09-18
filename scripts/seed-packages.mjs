@@ -30,13 +30,13 @@ const BUYER_PLANS = [
     priceDisplay: "0",
     currency: "£",
     period: "/ month",
-    leads: 2,
-    leadsLabel: "Qualified Leads / Month",
+    leads: 0,
+    leadsLabel: "Free Profile Creation",
     featured: false,
     features: [
-      "Targeted Industry Leads",
-      "International Buyers",
-      "Verified Global Buyers",
+      "Free Profile Creation",
+      "Public Exporter Storefront",
+      "Product Catalog Listing",
       "24/7/365 Support",
     ],
     isActive: true,
@@ -146,7 +146,7 @@ async function runSeed() {
         },
         { upsert: true }
       );
-      console.log(` ✓ Seeded package: ${plan.name} (£${plan.price}/mo, ${plan.leads} leads)`);
+      console.log(` ✓ Seeded package: ${plan.name} (£${plan.price}/mo, ${plan.leads > 0 ? `${plan.leads} leads` : plan.leadsLabel})`);
     }
 
     // Create index on id and sortOrder

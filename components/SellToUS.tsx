@@ -308,10 +308,18 @@ export default function SellToUS({ initialPlans }: SellToUSProps) {
                           fontWeight: 600,
                         }}
                       >
-                        <span style={{ fontSize: "16px", fontWeight: 700 }}>{plan.leads}</span>
-                        <span style={{ opacity: 0.7 }}>
-                          {plan.leadsLabel || "Qualified Leads / Month"}
-                        </span>
+                        {Number(plan.leads) > 0 ? (
+                          <>
+                            <span style={{ fontSize: "16px", fontWeight: 700 }}>{plan.leads}</span>
+                            <span style={{ opacity: 0.7 }}>
+                              {plan.leadsLabel || "Qualified Leads / Month"}
+                            </span>
+                          </>
+                        ) : (
+                          <span style={{ fontSize: "13px", fontWeight: 700 }}>
+                            {plan.leadsLabel || "Free Profile Creation"}
+                          </span>
+                        )}
                       </div>
                     </div>
 

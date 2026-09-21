@@ -84,6 +84,7 @@ const exportIndustries = [
 ];
 
 const platformLinks = [
+  { label: "Trade Intelligence & Blog", href: "/blog" },
   { label: "Create Export Profile", href: "/create-export-profile" },
   { label: "Exporter Portal Login", href: "/exporter/login" },
   { label: "How GoExports Works", href: "#how-it-works" },

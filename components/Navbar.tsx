@@ -28,13 +28,15 @@ import {
   ArrowUpRight,
   Truck,
   Flame,
-  Layers
+  Layers,
+  BookOpen
 } from "lucide-react";
 import { toast } from "sonner";
 
 const navItems = [
   { label: "How It Works", href: "#how-it-works", icon: Sparkles },
   { label: "Industries", href: "#industries", icon: Boxes },
+  { label: "Blog", href: "/blog", icon: BookOpen },
   { label: "Pricing", href: "#pricing", icon: CreditCard },
   { label: "Presence", href: "#presence", icon: MapPin },
   {

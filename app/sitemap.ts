@@ -4,6 +4,7 @@ import { industries } from "@/data/industries";
 import { slugifyCompanyName } from "@/lib/seller";
 import { getAllSpices, getAllLevel2Spices } from "@/lib/spices";
 import { getAllTextiles, getAllLevel2Textiles } from "@/lib/textiles";
+import { getAllBlogSlugs } from "@/lib/blogs";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 3600; // Cache and revalidate every 1 hour
@@ -33,6 +34,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: now,
       changeFrequency: "daily",
       priority: 1.0,
+    },
+    {
+      url: `${BASE_URL}/blog`,
+      lastModified: now,
+      changeFrequency: "daily",
+      priority: 0.95,
     },
     {
       url: `${BASE_URL}/spices`,
@@ -173,7 +180,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   }
 
-  // 7. Dynamic Exporter Profiles & Products from MongoDB
+  // 7. Trade Intelligence & Compliance Blog Articles
+  const blogSlugs = getAllBlogSlugs();
+  for (const slug of blogSlugs) {
+    addEntry({
+      url: `${BASE_URL}/blog/${slug}`,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.88,
+    });
+  }
+
+  // 8. Dynamic Exporter Profiles & Products from MongoDB
   try {
     await connectToDatabase();
 

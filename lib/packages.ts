@@ -35,9 +35,9 @@ const DEFAULT_SEEDED_PACKAGES: Omit<PackageDbModel, "createdAt" | "updatedAt">[]
     featured: false,
     badge: undefined,
     features: [
-      "Free Profile Creation",
       "Public Exporter Storefront",
       "Product Catalog Listing",
+      "Basic Buyer Inquiries",
       "24/7/365 Support",
     ],
     isActive: true,
@@ -57,14 +57,16 @@ const DEFAULT_SEEDED_PACKAGES: Omit<PackageDbModel, "createdAt" | "updatedAt">[]
     featured: false,
     badge: undefined,
     features: [
+      "Public Exporter Storefront",
+      "Product Catalog Listing",
+      "Basic Buyer Inquiries",
       "Targeted Industry Leads",
       "International Buyers",
       "Verified Global Buyers",
       "Dedicated Account Manager",
-      "24/7/365 Support",
-      "Weekly Reporting",
       "Monthly Reporting",
-      "Weekly / Monthly Call",
+      "Monthly Strategy Call",
+      "24/7/365 Support",
     ],
     isActive: true,
     sortOrder: 2,
@@ -83,14 +85,18 @@ const DEFAULT_SEEDED_PACKAGES: Omit<PackageDbModel, "createdAt" | "updatedAt">[]
     featured: true,
     badge: "⭐ Most Popular",
     features: [
+      "Public Exporter Storefront",
+      "Product Catalog Listing",
+      "Basic Buyer Inquiries",
       "Targeted Industry Leads",
       "International Buyers",
       "Verified Global Buyers",
       "Dedicated Account Manager",
-      "24/7/365 Support",
-      "Weekly Reporting",
       "Monthly Reporting",
-      "Weekly / Monthly Call",
+      "Weekly Reporting",
+      "Weekly Strategy Call",
+      "Priority Buyer Introductions",
+      "24/7/365 Support",
     ],
     isActive: true,
     sortOrder: 3,
@@ -109,14 +115,20 @@ const DEFAULT_SEEDED_PACKAGES: Omit<PackageDbModel, "createdAt" | "updatedAt">[]
     featured: false,
     badge: undefined,
     features: [
+      "Public Exporter Storefront",
+      "Product Catalog Listing",
+      "Basic Buyer Inquiries",
       "Targeted Industry Leads",
       "International Buyers",
       "Verified Global Buyers",
       "Dedicated Account Manager",
-      "24/7/365 Support",
-      "Weekly Reporting",
       "Monthly Reporting",
-      "Weekly / Monthly Call",
+      "Weekly Reporting",
+      "Weekly Strategy Call",
+      "Priority Buyer Introductions",
+      "Custom Market Expansion Strategy",
+      "Custom CRM / Leads Integration",
+      "24/7/365 Priority Support",
     ],
     isActive: true,
     sortOrder: 4,
@@ -130,13 +142,8 @@ export async function seedPackages(): Promise<{ success: boolean; count: number;
   await connectToDatabase();
 
   const now = new Date().toISOString();
-  const seededPackages: PackageDbModel[] = DEFAULT_SEEDED_PACKAGES.map((pkg) => ({
-    ...pkg,
-    createdAt: now,
-    updatedAt: now,
-  }));
 
-  for (const pkg of seededPackages) {
+  for (const pkg of DEFAULT_SEEDED_PACKAGES) {
     await PackageModel.updateOne(
       { id: pkg.id },
       {
@@ -151,6 +158,12 @@ export async function seedPackages(): Promise<{ success: boolean; count: number;
       { upsert: true }
     );
   }
+
+  const seededPackages: PackageDbModel[] = DEFAULT_SEEDED_PACKAGES.map((pkg) => ({
+    ...pkg,
+    createdAt: now,
+    updatedAt: now,
+  }));
 
   return {
     success: true,

@@ -162,14 +162,23 @@ export const IconStar = ({ size = 20, color, className, style }: IconProps) => (
 
 // Map feature name → icon component for pricing cards
 export const FeatureIconMap: Record<string, React.FC<IconProps>> = {
+  "Public Exporter Storefront": IconGlobe,
+  "Product Catalog Listing": IconPackage,
+  "Basic Buyer Inquiries": IconMessageCircle,
   "Targeted Industry Leads": IconTarget,
   "International Buyers": IconGlobe,
   "Verified Global Buyers": IconVerified,
   "Dedicated Account Manager": IconUser,
   "24/7/365 Support": IconShield,
+  "24/7/365 Priority Support": IconShield,
   "Weekly Reporting": IconBarChart2,
   "Monthly Reporting": IconTrendingUp,
+  "Monthly Strategy Call": IconPhone,
+  "Weekly Strategy Call": IconPhone,
   "Weekly / Monthly Call": IconPhone,
+  "Priority Buyer Introductions": IconZap,
+  "Custom Market Expansion Strategy": IconRocket,
+  "Custom CRM / Leads Integration": IconSettings,
   "Custom Integrations": IconSettings,
   "Priority Support": IconZap,
 };

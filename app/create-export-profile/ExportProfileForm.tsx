@@ -65,6 +65,7 @@ interface ExportProfileFormData {
   yearEstablished: string;
   exportCapacity: string;
   certifications: string[];
+  needDomesticLeads: "yes" | "no";
   selectedPackage: string;
 }
 
@@ -180,6 +181,7 @@ export default function ExportProfileForm({ initialPlans }: ExportProfileFormPro
     yearEstablished: "",
     exportCapacity: "",
     certifications: [],
+    needDomesticLeads: "yes",
     selectedPackage: defaultSelected,
   });
 
@@ -471,6 +473,7 @@ export default function ExportProfileForm({ initialPlans }: ExportProfileFormPro
       yearEstablished: formData.yearEstablished,
       exportCapacity: formData.exportCapacity,
       certifications: formData.certifications,
+      needDomesticLeads: formData.needDomesticLeads,
       selectedPackage: formData.selectedPackage,
     };
 
@@ -557,6 +560,7 @@ export default function ExportProfileForm({ initialPlans }: ExportProfileFormPro
       yearEstablished: "",
       exportCapacity: "",
       certifications: [],
+      needDomesticLeads: "yes",
       selectedPackage: defaultPkg,
     });
     setErrors({});
@@ -592,7 +596,7 @@ export default function ExportProfileForm({ initialPlans }: ExportProfileFormPro
           </h2>
 
           <p className="text-sm sm:text-base text-[var(--muted)] leading-relaxed mb-6">
-            Your exporter registration for <strong className="text-[var(--ink)]">{submittedData.companyName}</strong> has been received and is being verified by our compliance team.
+            Your business registration for <strong className="text-[var(--ink)]">{submittedData.companyName}</strong> has been received and is being verified by our compliance team.
           </p>
 
           {/* Reserved URL Box */}
@@ -636,6 +640,12 @@ export default function ExportProfileForm({ initialPlans }: ExportProfileFormPro
               <span className="text-[var(--muted)]">Selected Package:</span>
               <span className="font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full text-[11px] border border-amber-200">
                 {submittedData.selectedPackage || "Verified Growth Pro"}
+              </span>
+            </div>
+            <div className="flex justify-between pb-2 border-b border-[var(--hairline)]">
+              <span className="text-[var(--muted)]">Domestic Leads:</span>
+              <span className="font-semibold text-[var(--ink)] capitalize">
+                {submittedData.needDomesticLeads === "no" ? "No (Export Only)" : "Yes (Domestic + Export)"}
               </span>
             </div>
             <div className="flex justify-between pb-2 border-b border-[var(--hairline)]">
@@ -687,10 +697,10 @@ export default function ExportProfileForm({ initialPlans }: ExportProfileFormPro
       <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-6 mb-8 border-b border-[var(--hairline)] gap-4">
         <div>
           <h2 className="text-xl sm:text-2xl font-bold text-[var(--ink)]">
-            Exporter Registration Form
+            Business Registration Form
           </h2>
           <p className="text-xs sm:text-sm text-[var(--muted)] mt-1">
-            Fields marked with <span className="text-rose-500 font-bold">*</span> are required to generate your dynamic profile storefront.
+            Fields marked with <span className="text-rose-500 font-bold">*</span> are required to generate your dynamic business storefront.
           </p>
         </div>
         <Link
@@ -1171,12 +1181,12 @@ export default function ExportProfileForm({ initialPlans }: ExportProfileFormPro
           </div>
         </div>
 
-        {/* ── SECTION 3: PRODUCTS & EXPORT PROFILE ── */}
+        {/* ── SECTION 3: PRODUCTS & BUSINESS CAPABILITIES ── */}
         <div className="pt-6 border-t border-[var(--hairline)]">
           <div className="flex items-center gap-2 mb-4">
             <Globe className="w-4 h-4 text-[var(--brand-ochre)]" />
             <h3 className="text-sm font-semibold uppercase tracking-wider text-[var(--ink)]">
-              3. Product Category & Export Capabilities
+              3. Products & Business Capabilities
             </h3>
           </div>
 
@@ -1277,10 +1287,10 @@ export default function ExportProfileForm({ initialPlans }: ExportProfileFormPro
               />
             </div>
 
-            {/* Export Capacity */}
+            {/* Supply / Export Capacity */}
             <div className="flex flex-col gap-1">
               <label htmlFor="exportCapacity" className="text-xs font-semibold text-[var(--body-strong)]">
-                Monthly Export Capacity <span className="text-[var(--muted)] font-normal">(Optional)</span>
+                Monthly Supply / Production Capacity <span className="text-[var(--muted)] font-normal">(Optional)</span>
               </label>
               <input
                 id="exportCapacity"
@@ -1300,10 +1310,10 @@ export default function ExportProfileForm({ initialPlans }: ExportProfileFormPro
               />
             </div>
 
-            {/* Target Export Markets */}
+            {/* Target Markets */}
             <div className="flex flex-col gap-2 sm:col-span-2 pt-2">
               <label className="text-xs font-semibold text-[var(--body-strong)]">
-                Target Export Geographies <span className="text-[var(--muted)] font-normal">(Select all that apply)</span>
+                Target Geographies & Markets <span className="text-[var(--muted)] font-normal">(Select all that apply)</span>
               </label>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {TARGET_MARKET_OPTIONS.map((market) => {
@@ -1366,6 +1376,54 @@ export default function ExportProfileForm({ initialPlans }: ExportProfileFormPro
               </div>
             </div>
 
+            {/* Do you need domestic leads? */}
+            <div className="flex flex-col gap-2 sm:col-span-2 pt-2">
+              <label className="text-xs font-semibold text-[var(--body-strong)]">
+                Do you need domestic leads?
+              </label>
+              <div className="flex items-center gap-4">
+                <label
+                  onClick={() => setFormData((prev) => ({ ...prev, needDomesticLeads: "yes" }))}
+                  className={`flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-xs font-semibold border cursor-pointer transition-all select-none ${
+                    formData.needDomesticLeads === "yes"
+                      ? "bg-[var(--ink)] text-white border-[var(--ink)] shadow-xs"
+                      : "bg-[var(--canvas)] text-[var(--ink)] border-[var(--hairline)] hover:border-[var(--muted)]"
+                  }`}
+                >
+                  <span
+                    className={`w-4 h-4 rounded-full border flex items-center justify-center text-[10px] font-bold ${
+                      formData.needDomesticLeads === "yes"
+                        ? "border-[var(--brand-ochre)] bg-[var(--brand-ochre)] text-[var(--ink)]"
+                        : "border-[var(--hairline)] bg-transparent"
+                    }`}
+                  >
+                    {formData.needDomesticLeads === "yes" ? "✓" : ""}
+                  </span>
+                  <span>Yes, I need domestic leads</span>
+                </label>
+
+                <label
+                  onClick={() => setFormData((prev) => ({ ...prev, needDomesticLeads: "no" }))}
+                  className={`flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-xs font-semibold border cursor-pointer transition-all select-none ${
+                    formData.needDomesticLeads === "no"
+                      ? "bg-[var(--ink)] text-white border-[var(--ink)] shadow-xs"
+                      : "bg-[var(--canvas)] text-[var(--ink)] border-[var(--hairline)] hover:border-[var(--muted)]"
+                  }`}
+                >
+                  <span
+                    className={`w-4 h-4 rounded-full border flex items-center justify-center text-[10px] font-bold ${
+                      formData.needDomesticLeads === "no"
+                        ? "border-[var(--brand-ochre)] bg-[var(--brand-ochre)] text-[var(--ink)]"
+                        : "border-[var(--hairline)] bg-transparent"
+                    }`}
+                  >
+                    {formData.needDomesticLeads === "no" ? "✓" : ""}
+                  </span>
+                  <span>No, export leads only</span>
+                </label>
+              </div>
+            </div>
+
             {/* Company Profile Description */}
             <div className="flex flex-col gap-1 sm:col-span-2 pt-2">
               <label htmlFor="companyProfile" className="text-xs font-semibold text-[var(--body-strong)]">
@@ -1380,7 +1438,7 @@ export default function ExportProfileForm({ initialPlans }: ExportProfileFormPro
                 onChange={handleInputChange}
                 onFocus={() => setFocusedField("companyProfile")}
                 onBlur={() => handleBlur("companyProfile")}
-                placeholder="Describe your manufacturing facilities, export experience, key product lines, quality assurance practices, and why global buyers should partner with you..."
+                placeholder="Describe your company, manufacturing or supply facilities, business history, key product lines, quality standards, and customer offerings..."
                 className={`w-full px-4 py-3 rounded-xl text-sm transition-colors outline-none disabled:opacity-50 placeholder:text-[var(--muted-soft)] ${
                   errors.companyProfile && touched.companyProfile ? "border-rose-500 ring-1 ring-rose-500/30" : ""
                 }`}
@@ -1406,13 +1464,13 @@ export default function ExportProfileForm({ initialPlans }: ExportProfileFormPro
           </div>
         </div>
 
-        {/* ── SECTION 4: FIND INTERNATIONAL BUYERS PLANS ── */}
+        {/* ── SECTION 4: SELECT BUSINESS PLAN & BUYER LEADS ── */}
         <div className="pt-6 border-t border-[var(--hairline)]">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
               <PackageCheck className="w-4 h-4 text-[var(--brand-ochre)]" />
               <h3 className="text-sm font-semibold uppercase tracking-wider text-[var(--ink)]">
-                4. Select Find International Buyers Plan
+                4. Select Business Plan & Trade Leads
               </h3>
             </div>
             <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full hidden sm:inline-flex items-center gap-1">
@@ -1421,11 +1479,11 @@ export default function ExportProfileForm({ initialPlans }: ExportProfileFormPro
             </span>
           </div>
           <p className="text-xs text-[var(--muted)] mb-5">
-            Choose your sourcing plan. You can upgrade or modify your package anytime in your exporter dashboard.
+            Choose your growth plan. You can upgrade or modify your package anytime in your portal dashboard.
           </p>
 
           {loadingPlans && plans.length === 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {[1, 2, 3, 4].map((n) => (
                 <div
                   key={n}
@@ -1445,7 +1503,7 @@ export default function ExportProfileForm({ initialPlans }: ExportProfileFormPro
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {plans.map((plan) => {
                 const planNameLower = (plan.name || "").toLowerCase();
                 const planIdLower = (plan.id || "").toLowerCase();
@@ -1516,19 +1574,14 @@ export default function ExportProfileForm({ initialPlans }: ExportProfileFormPro
                         {plan.tagline}
                       </p>
 
-                      {/* Features list */}
-                      <ul className="space-y-1.5 border-t border-[var(--hairline)] pt-2.5 mb-2">
-                        {(plan.features || []).slice(0, 4).map((feat, idx) => (
+                      {/* Features list (2-column layout) */}
+                      <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-3 gap-y-1.5 border-t border-[var(--hairline)] pt-2.5 mb-2 list-none p-0">
+                        {(plan.features || []).map((feat, idx) => (
                           <li key={idx} className="flex items-start gap-1.5 text-[11.5px] text-[var(--body-strong)]">
                             <Check className={`w-3 h-3 mt-0.5 shrink-0 ${isSelected ? "text-amber-600 font-bold" : "text-emerald-600"}`} />
                             <span className="leading-tight">{feat}</span>
                           </li>
                         ))}
-                        {(plan.features || []).length > 4 && (
-                          <li className="text-[10.5px] text-[var(--muted)] pl-4.5 pt-0.5">
-                            + {plan.features.length - 4} more features
-                          </li>
-                        )}
                       </ul>
                     </div>
 
@@ -1559,10 +1612,10 @@ export default function ExportProfileForm({ initialPlans }: ExportProfileFormPro
             style={{ backgroundColor: "var(--brand-ochre)" }}
           >
             {isSubmitting ? (
-              <span>Generating Exporter Storefront...</span>
+              <span>Generating Business Storefront...</span>
             ) : (
               <>
-                <span>Publish Exporter Profile & Get Live Storefront</span>
+                <span>Publish Business Profile & Get Live Storefront</span>
                 <ArrowRight className="w-5 h-5" />
               </>
             )}

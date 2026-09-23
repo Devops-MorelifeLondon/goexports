@@ -65,6 +65,7 @@ const ExportProfileSchema = new mongoose.Schema(
     yearEstablished: { type: String, default: "" },
     exportCapacity: { type: String, default: "" },
     certifications: { type: [String], default: [] },
+    needDomesticLeads: { type: String, enum: ["yes", "no"], default: "yes" },
     logoUrl: { type: String, default: "" },
     logoKey: { type: String, default: "" },
     products: {

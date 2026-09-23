@@ -67,7 +67,7 @@ const featuredVarieties = [
   { label: "Alleppey Extra Bold Cardamom", href: "/spices/green-cardamom/ageb" },
   { label: "Cochin Bleached Dry Ginger", href: "/spices/dry-ginger/cochin-bleached" },
   { label: "Eagle Quality Coriander Seeds", href: "/spices/coriander/eagle-quality" },
-  { label: "Gujarat Bold Cumin Seeds", href: "/spices/cumin/gujarat-bold-cumin" },
+  { label: "Singapore Quality Cumin Seeds", href: "/spices/cumin/singapore-quality" },
 ];
 
 const exportIndustries = [

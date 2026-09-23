@@ -5,23 +5,23 @@ import Link from "next/link";
 import { getAllPackages } from "@/lib/packages";
 
 export const metadata: Metadata = {
-  title: "Create Export Profile | Goexports - Connect with Verified Global Buyers",
+  title: "Create Business Profile | Goexports - Connect with Buyers & Trade Partners",
   description:
-    "Create your official exporter profile on Goexports. Showcase your products, company certifications, and export capabilities to verified international buyers worldwide.",
+    "Create your official business profile on Goexports. Showcase your products, company certifications, and supply capabilities to verified buyers and trade partners worldwide.",
   keywords: [
-    "create export profile",
-    "register export business",
-    "verified exporter directory",
-    "find international buyers",
-    "global trade leads",
-    "b2b export portal",
+    "create business profile",
+    "register business",
+    "verified business directory",
+    "find buyers",
+    "b2b trade leads",
+    "global trade portal",
     "importers and exporters directory",
-    "international trade profile"
+    "business trade profile"
   ],
   openGraph: {
-    title: "Create Export Profile | Goexports - Connect with Global Buyers",
+    title: "Create Business Profile | Goexports - Connect with Global Buyers",
     description:
-      "Register your export business on Goexports. Build your profile, showcase your products, and receive direct buyer inquiries worldwide.",
+      "Register your business on Goexports. Build your profile, showcase your products, and receive direct buyer inquiries.",
     url: "https://www.goexports.co.uk/create-export-profile",
   },
 };
@@ -39,23 +39,23 @@ export default async function CreateExportProfilePage() {
             Home
           </Link>
           <span>/</span>
-          <span className="text-[var(--ink)] font-medium">Create Export Profile</span>
+          <span className="text-[var(--ink)] font-medium">Create Business Profile</span>
         </nav>
 
         {/* Hero title area */}
         <div className="max-w-3xl mb-12">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider mb-4 border border-[var(--hairline)] bg-[var(--surface-card)] text-[var(--ink)]">
             <span className="w-2 h-2 rounded-full bg-[var(--brand-ochre)] animate-pulse" />
-            Global Exporter Registration
+            Verified Business Registration
           </div>
           <h1
             className="display-lg text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight text-[var(--ink)] mb-4"
             style={{ lineHeight: 1.15 }}
           >
-            Create Your <span style={{ color: "var(--brand-ochre)" }}>Export Profile</span> & Connect with Global Buyers
+            Create Your <span style={{ color: "var(--brand-ochre)" }}>Business Profile</span> & Expand Your Reach
           </h1>
           <p className="text-[var(--muted)] text-base sm:text-lg leading-relaxed max-w-2xl">
-            Register your company on Goexports to get verified and showcase your products to vetted importers, distributors, and procurement managers worldwide.
+            Register your company on Goexports to get verified and showcase your products to vetted buyers, distributors, and commercial procurement managers.
           </p>
         </div>
 
@@ -83,19 +83,19 @@ export default async function CreateExportProfilePage() {
                 <li className="flex items-start gap-2.5">
                   <ShieldCheck className="w-4 h-4 text-emerald-600 mt-0.5 shrink-0" />
                   <span>
-                    <strong>Verified Exporter Badge:</strong> Boost trust and buyer confidence with verified company credentials.
+                    <strong>Verified Business Badge:</strong> Boost trust and buyer confidence with verified company credentials.
                   </span>
                 </li>
                 <li className="flex items-start gap-2.5">
                   <Globe2 className="w-4 h-4 text-sky-600 mt-0.5 shrink-0" />
                   <span>
-                    <strong>Global Reach:</strong> Your profile is indexed and searchable by verified international procurement teams.
+                    <strong>Global & Domestic Reach:</strong> Your profile is indexed and searchable by verified procurement teams and buyers.
                   </span>
                 </li>
                 <li className="flex items-start gap-2.5">
                   <TrendingUp className="w-4 h-4 text-amber-600 mt-0.5 shrink-0" />
                   <span>
-                    <strong>0% Commission on Deals:</strong> You transact directly with buyers. We never take a cut of your export contracts.
+                    <strong>0% Commission on Deals:</strong> You transact directly with buyers. We never take a cut of your contracts.
                   </span>
                 </li>
                 <li className="flex items-start gap-2.5">

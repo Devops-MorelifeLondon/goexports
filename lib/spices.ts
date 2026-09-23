@@ -340,9 +340,33 @@ export function getAllSpices(): SpiceCategoryData[] {
   }
 }
 
+const SPICE_SLUG_ALIASES: Record<string, string> = {
+  "coriander-seeds": "wholesale-coriander-seeds-exporter",
+  "coriander": "wholesale-coriander-seeds-exporter",
+  "fennel-seeds": "wholesale-fennel-seeds-supplier",
+  "fennel": "wholesale-fennel-seeds-supplier",
+  "fenugreek-seeds": "fenugreek-seeds-bulk-export",
+  "fenugreek": "fenugreek-seeds-bulk-export",
+  "turmeric": "bulk-turmeric-suppliers-india",
+  "cumin": "wholesale-bulk-cumin-seeds-powder-india",
+  "black-pepper": "bulk-black-pepper-wholesale-exporters-india",
+  "green-cardamom": "green-cardamom-wholesale-export",
+  "dry-ginger": "dry-ginger-sourcing-india",
+  "mustard-seeds": "bulk-mustard-seeds-india",
+  "cloves": "cloves-bulk-export-india",
+  "nutmeg-mace": "nutmeg-and-mace-wholesale-exporter",
+  "cinnamon": "cinnamon-and-cassia-sourcing",
+  "ajwain": "bulk-ajwain-seeds-india",
+  "celery-seeds": "celery-seeds-sourcing",
+  "spice-blends": "custom-spice-blend-manufacturer-india",
+};
+
 export function getSpiceBySlug(slug: string): SpiceCategoryData | null {
   const spices = getAllSpices();
-  const normalized = slug.toLowerCase().replace(/^\/+|\/+$/g, "");
+  let normalized = slug.toLowerCase().replace(/^\/+|\/+$/g, "");
+  if (SPICE_SLUG_ALIASES[normalized]) {
+    normalized = SPICE_SLUG_ALIASES[normalized];
+  }
   return (
     spices.find(
       (s) =>
@@ -353,7 +377,9 @@ export function getSpiceBySlug(slug: string): SpiceCategoryData | null {
 }
 
 export function getAllSpiceSlugs(): string[] {
-  return getAllSpices().map((s) => s.slug);
+  const baseSlugs = getAllSpices().map((s) => s.slug);
+  const aliasSlugs = Object.keys(SPICE_SLUG_ALIASES);
+  return Array.from(new Set([...baseSlugs, ...aliasSlugs]));
 }
 
 // ─── Level 2 Spice Variety Functions ───

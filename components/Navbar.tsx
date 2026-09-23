@@ -469,7 +469,7 @@ export default function Navbar() {
                 className="hidden md:inline-flex items-center gap-1.5 px-3 sm:px-3.5 py-1.5 text-[12px] sm:text-[12.5px] font-semibold text-[var(--ink)] bg-[var(--canvas)] border border-[var(--hairline)] rounded-full no-underline cursor-pointer transition-all duration-200 hover:bg-[var(--surface-card)] h-[36px] sm:h-[38px]"
               >
                 <UserCheck className="w-3.5 h-3.5 text-[var(--muted)]" />
-                <span>Exporter Login</span>
+                <span>Business Login</span>
               </Link>
             )}
 
@@ -491,7 +491,7 @@ export default function Navbar() {
                 <>
                   <UserPlus className="w-3.5 h-3.5 sm:hidden" />
                   <span className="inline sm:hidden">Create Profile</span>
-                  <span className="hidden sm:inline">Create Export Profile</span>
+                  <span className="hidden sm:inline">Create Business Profile</span>
                   <ArrowRight className="w-3.5 h-3.5 opacity-75 transition-transform duration-200 group-hover:translate-x-0.5 hidden sm:inline" />
                 </>
               )}
@@ -741,7 +741,7 @@ export default function Navbar() {
                         style={{ backgroundColor: "var(--brand-ochre)" }}
                       >
                         <UserPlus className="w-4 h-4" />
-                        <span>Create Export Profile</span>
+                        <span>Create Business Profile</span>
                         <ArrowRight className="w-4 h-4" />
                       </Link>
 
@@ -751,7 +751,7 @@ export default function Navbar() {
                         className="w-full text-center py-2.5 min-h-[44px] rounded-xl border border-[var(--hairline)] bg-[var(--surface-card)] text-[13.5px] font-semibold text-[var(--ink)] no-underline flex items-center justify-center gap-2 active:bg-[var(--surface-soft)] transition-colors"
                       >
                         <UserCheck className="w-4 h-4 text-[var(--muted)]" />
-                        <span>Exporter Portal Login</span>
+                        <span>Business Login</span>
                       </Link>
                     </>
                   )}

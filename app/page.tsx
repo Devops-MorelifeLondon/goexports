@@ -59,8 +59,8 @@ export default function Home() {
       <HeroSection />
       <HowPlatformWorks />
       <BenefitsForExporters />
-      <WhySellGlobally />
       <SellToUS />
+      <WhySellGlobally />
       <Presence />
       <Locations />
     </>

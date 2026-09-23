@@ -24,6 +24,7 @@ export async function POST(req: Request) {
       yearEstablished,
       exportCapacity,
       certifications,
+      needDomesticLeads,
       selectedPackage,
       registrationDate,
     } = body;
@@ -103,6 +104,7 @@ export async function POST(req: Request) {
       yearEstablished: yearEstablished ? String(yearEstablished).trim() : "",
       exportCapacity: exportCapacity ? exportCapacity.trim() : "",
       certifications: Array.isArray(certifications) ? certifications : certifications ? [certifications] : [],
+      needDomesticLeads: needDomesticLeads === "no" ? "no" : "yes",
       selectedPackage: selectedPackage ? String(selectedPackage).trim() : "Verified Growth Pro",
       registrationDate: registrationDate ? String(registrationDate).trim() : new Date().toISOString().split("T")[0],
       createdAt: new Date().toISOString(),
@@ -166,7 +168,8 @@ export async function POST(req: Request) {
     params.append("q15_typeA15", Array.isArray(submissionData.certifications) ? submissionData.certifications.join(", ") : submissionData.certifications || "");
     params.append("q16_plan", submissionData.selectedPackage || "");
     params.append("q18_registrationDate", submissionData.registrationDate);
-    params.append("formID", formId);
+    params.append("q19_doYou", submissionData.needDomesticLeads);
+    params.append("formID", formId);  
     params.append("simple_spc", `${formId}-${formId}`);
 
     try {

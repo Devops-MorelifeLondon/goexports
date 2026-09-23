@@ -3,6 +3,7 @@ import {
   sendSellerInquiryAlertToExporter,
   sendBuyerInquiryConfirmation,
   sendAdminSellerInquiryNotification,
+  getAdminRecipients,
 } from "@/lib/email";
 import { ExportProfile, SellerInquiry, connectToDatabase } from "@/lib/mongodb";
 
@@ -90,7 +91,7 @@ export async function POST(req: Request) {
       ]);
       console.log("=== [RFQ EMAILS DISPATCHED TO ADMIN & SELLER] ===", {
         toSeller: inquiryData.sellerEmail,
-        toAdmin: process.env.ADMIN_EMAIL || process.env.ADMIN_NOTIFY_EMAIL || "info@goexports.co.uk",
+        toAdmin: getAdminRecipients().map((r) => r.email).join(", "),
         toBuyer: inquiryData.buyerEmail,
         statuses: emailResults.map((r) => r.status),
       });

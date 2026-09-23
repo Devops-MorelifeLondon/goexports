@@ -85,10 +85,11 @@ const exportIndustries = [
 
 const platformLinks = [
   { label: "Trade Intelligence & Blog", href: "/blog" },
-  { label: "Create Export Profile", href: "/create-export-profile" },
-  { label: "Exporter Portal Login", href: "/exporter/login" },
+  { label: "Create Business Profile", href: "/create-export-profile" },
+  { label: "Sell With Us (Partner Program)", href: "/sell-with-us" },
+  { label: "Business Portal Login", href: "/exporter/login" },
   { label: "How GoExports Works", href: "#how-it-works" },
-  { label: "Verified Exporter Benefits", href: "#benefits" },
+  { label: "Verified Member Benefits", href: "#benefits" },
   { label: "Global Presence & Hubs", href: "#presence" },
   { label: "Pricing & Membership", href: "#pricing" },
   { label: "Trade Inquiries & Support", href: "#contact-form" },

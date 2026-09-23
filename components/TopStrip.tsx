@@ -44,7 +44,7 @@ export default function TopStrip() {
       aria-label="Top Contact & Social Bar"
       className="w-full bg-[#0a0a0a] text-white text-xs border-b border-[#222222] relative z-40 transition-colors"
     >
-      <div className="section-wrap flex items-center justify-between h-[34px] sm:h-[36px] px-3.5 sm:px-6">
+      <div className="w-full max-w-[1440px] mx-auto flex items-center justify-between h-[34px] sm:h-[36px] px-3 sm:px-6 lg:px-8">
         {/* Left Side: Email & Contact */}
         <div className="flex items-center gap-3 sm:gap-5 min-w-0">
           <a

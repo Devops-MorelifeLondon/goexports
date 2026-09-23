@@ -29,7 +29,8 @@ import {
   Truck,
   Flame,
   Layers,
-  BookOpen
+  BookOpen,
+  Store
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -38,7 +39,7 @@ const navItems = [
   { label: "Industries", href: "#industries", icon: Boxes },
   { label: "Blog", href: "/blog", icon: BookOpen },
   { label: "Pricing", href: "#pricing", icon: CreditCard },
-  { label: "Presence", href: "#presence", icon: MapPin },
+  { label: "Presence", href: "#presence", icon: MapPin, xlOnly: true },
   {
     label: "Shipping",
     href: "https://shipglobal.in/partner/goexports/",
@@ -179,217 +180,223 @@ export default function Navbar() {
         }`}
         style={{ minHeight: "64px" }}
       >
-        <div className="section-wrap flex items-center justify-between h-[64px] sm:h-[68px] px-3.5 sm:px-6 gap-3 lg:gap-6">
+        <div className="w-full max-w-[1440px] mx-auto flex items-center justify-between h-[64px] sm:h-[68px] px-3 sm:px-6 lg:px-8 gap-2 lg:gap-3 xl:gap-4">
           {/* Left: Brand Logo */}
-          <Link
-            href="/"
-            className="flex items-center cursor-pointer no-underline group shrink-0 transition-transform duration-200 active:scale-[0.98]"
-            aria-label="Goexports Home"
-          >
-            <div className="relative w-[115px] sm:w-[138px] h-[32px] sm:h-[36px]">
-              <Image
-                src="/logo/logo.png"
-                alt="Goexports Logo"
-                fill
-                priority
-                sizes="(max-width: 640px) 115px, 138px"
-                className="object-contain object-left"
-              />
-            </div>
-          </Link>
+          <div className="flex items-center shrink-0">
+            <Link
+              href="/"
+              className="flex items-center cursor-pointer no-underline group shrink-0 transition-transform duration-200 active:scale-[0.98]"
+              aria-label="Goexports Home"
+            >
+              <div className="relative w-[115px] sm:w-[130px] xl:w-[138px] h-[32px] sm:h-[36px]">
+                <Image
+                  src="/logo/logo.png"
+                  alt="Goexports Logo"
+                  fill
+                  priority
+                  sizes="(max-width: 640px) 115px, 138px"
+                  className="object-contain object-left"
+                />
+              </div>
+            </Link>
+          </div>
 
           {/* Center: Desktop Navigation Links */}
-          <nav
-            aria-label="Main Navigation"
-            className="hidden lg:flex items-center gap-0.5 xl:gap-1 p-1 rounded-full bg-[var(--surface-soft)]/80 border border-[var(--hairline)] shadow-2xs shrink-0"
-          >
-            {/* For Importers Dropdown */}
-            <div className="relative" ref={importersDropdownRef}>
-              <button
-                type="button"
-                onClick={() => setImportersDropdownOpen(!importersDropdownOpen)}
-                className={`relative px-3 xl:px-3.5 py-1.5 rounded-full border-none bg-transparent cursor-pointer text-[12.5px] xl:text-[13px] font-medium transition-all duration-200 hover:text-[var(--ink)] hover:bg-[var(--surface-card)] flex items-center gap-1 shrink-0 ${
-                  importersDropdownOpen || pathname.startsWith("/spices")
-                    ? "text-[var(--ink)] bg-[var(--surface-card)] font-bold shadow-2xs"
-                    : "text-[var(--muted)]"
-                }`}
-                aria-expanded={importersDropdownOpen}
-                aria-haspopup="true"
-              >
-                <span>For Importers</span>
-                <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${importersDropdownOpen ? "rotate-180" : ""}`} />
-              </button>
+          <div className="hidden lg:flex items-center justify-center shrink-0">
+            <nav
+              aria-label="Main Navigation"
+              className="flex items-center gap-0.5 p-0.5 rounded-full bg-[var(--surface-soft)]/80 border border-[var(--hairline)] shadow-2xs shrink-0"
+            >
+              {/* For Importers Dropdown */}
+              <div className="relative" ref={importersDropdownRef}>
+                <button
+                  type="button"
+                  onClick={() => setImportersDropdownOpen(!importersDropdownOpen)}
+                  className={`relative px-2.5 xl:px-3 py-1 xl:py-1.5 rounded-full border-none bg-transparent cursor-pointer text-[11.5px] xl:text-[12.5px] font-medium transition-all duration-200 hover:text-[var(--ink)] hover:bg-[var(--surface-card)] flex items-center gap-1 shrink-0 ${
+                    importersDropdownOpen || pathname.startsWith("/spices")
+                      ? "text-[var(--ink)] bg-[var(--surface-card)] font-bold shadow-2xs"
+                      : "text-[var(--muted)]"
+                  }`}
+                  aria-expanded={importersDropdownOpen}
+                  aria-haspopup="true"
+                >
+                  <span>For Importers</span>
+                  <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${importersDropdownOpen ? "rotate-180" : ""}`} />
+                </button>
 
-              <AnimatePresence>
-                {importersDropdownOpen && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 8, scale: 0.98 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: 8, scale: 0.98 }}
-                    transition={{ duration: 0.15 }}
-                    className="absolute left-0 top-[40px] w-72 rounded-2xl border border-[var(--hairline)] bg-[var(--surface-card)] shadow-[0_16px_40px_rgba(10,10,10,0.14)] p-2.5 z-50 space-y-2"
-                  >
-                    <div className="px-2 pt-1 pb-1 border-b border-[var(--hairline)] flex items-center justify-between">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--muted)]">Source Direct From India</span>
-                      <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100/70 px-1.5 py-0.2 rounded-full">Verified</span>
-                    </div>
+                <AnimatePresence>
+                  {importersDropdownOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 8, scale: 0.98 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 8, scale: 0.98 }}
+                      transition={{ duration: 0.15 }}
+                      className="absolute left-0 top-[40px] w-72 rounded-2xl border border-[var(--hairline)] bg-[var(--surface-card)] shadow-[0_16px_40px_rgba(10,10,10,0.14)] p-2.5 z-50 space-y-2"
+                    >
+                      <div className="px-2 pt-1 pb-1 border-b border-[var(--hairline)] flex items-center justify-between">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--muted)]">Source Direct From India</span>
+                        <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100/70 px-1.5 py-0.2 rounded-full">Verified</span>
+                      </div>
 
-                    {/* Category Tabs / Cards */}
-                    <div className="grid grid-cols-2 gap-2">
-                      <Link
-                        href="/spices"
-                        onClick={() => setImportersDropdownOpen(false)}
-                        className="flex items-center gap-2 p-2 rounded-xl bg-[var(--surface-soft)] hover:bg-[var(--canvas)] no-underline transition-colors group border border-[var(--hairline)]"
-                      >
-                        <div className="w-7 h-7 rounded-lg bg-amber-500/15 text-amber-700 flex items-center justify-center shrink-0">
-                          <Flame className="w-3.5 h-3.5 text-amber-600" />
-                        </div>
-                        <div className="min-w-0">
-                          <span className="block text-xs font-bold text-[var(--ink)] group-hover:text-amber-700 truncate">Spices Hub</span>
-                          <span className="block text-[10px] text-[var(--muted)]">12+ Spices</span>
-                        </div>
-                      </Link>
+                      {/* Category Tabs / Cards */}
+                      <div className="grid grid-cols-2 gap-2">
+                        <Link
+                          href="/spices"
+                          onClick={() => setImportersDropdownOpen(false)}
+                          className="flex items-center gap-2 p-2 rounded-xl bg-[var(--surface-soft)] hover:bg-[var(--canvas)] no-underline transition-colors group border border-[var(--hairline)]"
+                        >
+                          <div className="w-7 h-7 rounded-lg bg-amber-500/15 text-amber-700 flex items-center justify-center shrink-0">
+                            <Flame className="w-3.5 h-3.5 text-amber-600" />
+                          </div>
+                          <div className="min-w-0">
+                            <span className="block text-xs font-bold text-[var(--ink)] group-hover:text-amber-700 truncate">Spices Hub</span>
+                            <span className="block text-[10px] text-[var(--muted)]">12+ Spices</span>
+                          </div>
+                        </Link>
 
-                      <Link
-                        href="/textiles"
-                        onClick={() => setImportersDropdownOpen(false)}
-                        className="flex items-center gap-2 p-2 rounded-xl bg-[var(--surface-soft)] hover:bg-[var(--canvas)] no-underline transition-colors group border border-[var(--hairline)]"
-                      >
-                        <div className="w-7 h-7 rounded-lg bg-emerald-500/15 text-emerald-700 flex items-center justify-center shrink-0">
-                          <Layers className="w-3.5 h-3.5 text-emerald-600" />
-                        </div>
-                        <div className="min-w-0">
-                          <span className="block text-xs font-bold text-[var(--ink)] group-hover:text-emerald-700 truncate">Textiles Hub</span>
-                          <span className="block text-[10px] text-[var(--muted)]">15+ Categories</span>
-                        </div>
-                      </Link>
-                    </div>
+                        <Link
+                          href="/textiles"
+                          onClick={() => setImportersDropdownOpen(false)}
+                          className="flex items-center gap-2 p-2 rounded-xl bg-[var(--surface-soft)] hover:bg-[var(--canvas)] no-underline transition-colors group border border-[var(--hairline)]"
+                        >
+                          <div className="w-7 h-7 rounded-lg bg-emerald-500/15 text-emerald-700 flex items-center justify-center shrink-0">
+                            <Layers className="w-3.5 h-3.5 text-emerald-600" />
+                          </div>
+                          <div className="min-w-0">
+                            <span className="block text-xs font-bold text-[var(--ink)] group-hover:text-emerald-700 truncate">Textiles Hub</span>
+                            <span className="block text-[10px] text-[var(--muted)]">15+ Categories</span>
+                          </div>
+                        </Link>
+                      </div>
 
-                    {/* Quick Variety Links */}
-                    <div className="grid grid-cols-2 gap-1 p-1 bg-[var(--surface-soft)] rounded-xl">
-                      <Link
-                        href="/spices/red-chilli"
-                        onClick={() => setImportersDropdownOpen(false)}
-                        className="px-2 py-1.5 rounded-lg text-[11.5px] font-medium text-[var(--ink)] hover:bg-[var(--surface-card)] no-underline truncate"
-                      >
-                        🌶️ Red Chilli
-                      </Link>
-                      <Link
-                        href="/spices/bulk-turmeric-suppliers-india"
-                        onClick={() => setImportersDropdownOpen(false)}
-                        className="px-2 py-1.5 rounded-lg text-[11.5px] font-medium text-[var(--ink)] hover:bg-[var(--surface-card)] no-underline truncate"
-                      >
-                        🟡 Turmeric
-                      </Link>
-                      <Link
-                        href="/spices/wholesale-bulk-cumin-seeds-powder-india"
-                        onClick={() => setImportersDropdownOpen(false)}
-                        className="px-2 py-1.5 rounded-lg text-[11.5px] font-medium text-[var(--ink)] hover:bg-[var(--surface-card)] no-underline truncate"
-                      >
-                        🌱 Cumin Seeds
-                      </Link>
-                      <Link
-                        href="/spices/bulk-black-pepper-wholesale-exporters-india"
-                        onClick={() => setImportersDropdownOpen(false)}
-                        className="px-2 py-1.5 rounded-lg text-[11.5px] font-medium text-[var(--ink)] hover:bg-[var(--surface-card)] no-underline truncate"
-                      >
-                        ⚫ Black Pepper
-                      </Link>
-                      <Link
-                        href="/spices/dry-ginger-sourcing-india"
-                        onClick={() => setImportersDropdownOpen(false)}
-                        className="px-2 py-1.5 rounded-lg text-[11.5px] font-medium text-[var(--ink)] hover:bg-[var(--surface-card)] no-underline truncate"
-                      >
-                        🫚 Dry Ginger
-                      </Link>
-                      <Link
-                        href="/spices/green-cardamom-wholesale-export"
-                        onClick={() => setImportersDropdownOpen(false)}
-                        className="px-2 py-1.5 rounded-lg text-[11.5px] font-medium text-[var(--ink)] hover:bg-[var(--surface-card)] no-underline truncate"
-                      >
-                        🌿 Cardamom
-                      </Link>
-                    </div>
+                      {/* Quick Variety Links */}
+                      <div className="grid grid-cols-2 gap-1 p-1 bg-[var(--surface-soft)] rounded-xl">
+                        <Link
+                          href="/spices/red-chilli"
+                          onClick={() => setImportersDropdownOpen(false)}
+                          className="px-2 py-1.5 rounded-lg text-[11.5px] font-medium text-[var(--ink)] hover:bg-[var(--surface-card)] no-underline truncate"
+                        >
+                          🌶️ Red Chilli
+                        </Link>
+                        <Link
+                          href="/spices/bulk-turmeric-suppliers-india"
+                          onClick={() => setImportersDropdownOpen(false)}
+                          className="px-2 py-1.5 rounded-lg text-[11.5px] font-medium text-[var(--ink)] hover:bg-[var(--surface-card)] no-underline truncate"
+                        >
+                          🟡 Turmeric
+                        </Link>
+                        <Link
+                          href="/spices/wholesale-bulk-cumin-seeds-powder-india"
+                          onClick={() => setImportersDropdownOpen(false)}
+                          className="px-2 py-1.5 rounded-lg text-[11.5px] font-medium text-[var(--ink)] hover:bg-[var(--surface-card)] no-underline truncate"
+                        >
+                          🌱 Cumin Seeds
+                        </Link>
+                        <Link
+                          href="/spices/bulk-black-pepper-wholesale-exporters-india"
+                          onClick={() => setImportersDropdownOpen(false)}
+                          className="px-2 py-1.5 rounded-lg text-[11.5px] font-medium text-[var(--ink)] hover:bg-[var(--surface-card)] no-underline truncate"
+                        >
+                          ⚫ Black Pepper
+                        </Link>
+                        <Link
+                          href="/spices/dry-ginger-sourcing-india"
+                          onClick={() => setImportersDropdownOpen(false)}
+                          className="px-2 py-1.5 rounded-lg text-[11.5px] font-medium text-[var(--ink)] hover:bg-[var(--surface-card)] no-underline truncate"
+                        >
+                          🫚 Dry Ginger
+                        </Link>
+                        <Link
+                          href="/spices/green-cardamom-wholesale-export"
+                          onClick={() => setImportersDropdownOpen(false)}
+                          className="px-2 py-1.5 rounded-lg text-[11.5px] font-medium text-[var(--ink)] hover:bg-[var(--surface-card)] no-underline truncate"
+                        >
+                          🌿 Cardamom
+                        </Link>
+                      </div>
 
-                    <div className="pt-1 border-t border-[var(--hairline)] flex items-center justify-between px-1">
-                      <Link
-                        href="/spices"
-                        onClick={() => setImportersDropdownOpen(false)}
-                        className="text-[11px] font-bold text-amber-700 hover:text-amber-800 no-underline inline-flex items-center gap-1"
-                      >
-                        <span>View All Spices</span>
-                        <ArrowRight className="w-3 h-3" />
-                      </Link>
-                      <button
-                        onClick={() => {
-                          setImportersDropdownOpen(false);
-                          scrollTo("#industries");
-                        }}
-                        className="text-[11px] font-medium text-[var(--muted)] hover:text-[var(--ink)] border-none bg-transparent cursor-pointer"
-                      >
-                        All Industries →
-                      </button>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
+                      <div className="pt-1 border-t border-[var(--hairline)] flex items-center justify-between px-1">
+                        <Link
+                          href="/spices"
+                          onClick={() => setImportersDropdownOpen(false)}
+                          className="text-[11px] font-bold text-amber-700 hover:text-amber-800 no-underline inline-flex items-center gap-1"
+                        >
+                          <span>View All Spices</span>
+                          <ArrowRight className="w-3 h-3" />
+                        </Link>
+                        <button
+                          onClick={() => {
+                            setImportersDropdownOpen(false);
+                            scrollTo("#industries");
+                          }}
+                          className="text-[11px] font-medium text-[var(--muted)] hover:text-[var(--ink)] border-none bg-transparent cursor-pointer"
+                        >
+                          All Industries →
+                        </button>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
 
-            {navItems.map((item) => {
-              if (item.isExternal) {
+              {navItems.map((item: any) => {
+                const xlOnlyClass = item.xlOnly ? "hidden xl:inline-flex" : "";
+
+                if (item.isExternal) {
+                  return (
+                    <a
+                      key={item.label}
+                      href={item.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`relative px-2.5 xl:px-3 py-1 xl:py-1.5 rounded-full no-underline text-[11.5px] xl:text-[12.5px] font-semibold text-[var(--ink)] hover:bg-[var(--surface-card)] transition-all duration-200 flex items-center gap-1 xl:gap-1.5 shrink-0 group ${xlOnlyClass}`}
+                      title="International Shipping Partner - ShipGlobal"
+                    >
+                      <span>{item.label}</span>
+                      {item.badge && (
+                        <span className="hidden xl:inline-block text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-blue-100 text-blue-700 tracking-wide">
+                          {item.badge}
+                        </span>
+                      )}
+                      <ArrowUpRight className="w-3 h-3 text-[var(--muted)] group-hover:text-[var(--ink)] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                    </a>
+                  );
+                }
+
+                const isInternalRoute = item.href.startsWith("/");
+                const isActive = isInternalRoute && (pathname === item.href || pathname.startsWith(item.href + "/"));
+
+                if (isInternalRoute) {
+                  return (
+                    <Link
+                      key={item.label}
+                      href={item.href}
+                      className={`relative px-2.5 xl:px-3 py-1 xl:py-1.5 rounded-full no-underline text-[11.5px] xl:text-[12.5px] font-medium transition-all duration-200 flex items-center gap-1.5 shrink-0 ${xlOnlyClass} ${
+                        isActive
+                          ? "text-[var(--ink)] bg-[var(--surface-card)] font-bold shadow-2xs"
+                          : "text-[var(--muted)] hover:text-[var(--ink)] hover:bg-[var(--surface-card)]"
+                      }`}
+                    >
+                      {item.label}
+                    </Link>
+                  );
+                }
+
                 return (
-                  <a
+                  <button
                     key={item.label}
-                    href={item.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="relative px-3 xl:px-3.5 py-1.5 rounded-full no-underline text-[12.5px] xl:text-[13px] font-semibold text-[var(--ink)] hover:bg-[var(--surface-card)] transition-all duration-200 flex items-center gap-1.5 shrink-0 group"
-                    title="International Shipping Partner - ShipGlobal"
-                  >
-                    <span>{item.label}</span>
-                    {item.badge && (
-                      <span className="text-[9.5px] font-bold px-1.5 py-0.2 rounded-full bg-blue-100 text-blue-700 tracking-wide">
-                        {item.badge}
-                      </span>
-                    )}
-                    <ArrowUpRight className="w-3 h-3 text-[var(--muted)] group-hover:text-[var(--ink)] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                  </a>
-                );
-              }
-
-              const isInternalRoute = item.href.startsWith("/");
-              const isActive = isInternalRoute && (pathname === item.href || pathname.startsWith(item.href + "/"));
-
-              if (isInternalRoute) {
-                return (
-                  <Link
-                    key={item.label}
-                    href={item.href}
-                    className={`relative px-3 xl:px-3.5 py-1.5 rounded-full no-underline text-[12.5px] xl:text-[13px] font-medium transition-all duration-200 flex items-center gap-1.5 shrink-0 ${
-                      isActive
-                        ? "text-[var(--ink)] bg-[var(--surface-card)] font-bold shadow-2xs"
-                        : "text-[var(--muted)] hover:text-[var(--ink)] hover:bg-[var(--surface-card)]"
-                    }`}
+                    onClick={() => scrollTo(item.href)}
+                    className={`relative px-2.5 xl:px-3 py-1 xl:py-1.5 rounded-full border-none bg-transparent cursor-pointer text-[11.5px] xl:text-[12.5px] font-medium text-[var(--muted)] transition-all duration-200 hover:text-[var(--ink)] hover:bg-[var(--surface-card)] flex items-center gap-1.5 shrink-0 ${xlOnlyClass}`}
                   >
                     {item.label}
-                  </Link>
+                  </button>
                 );
-              }
-
-              return (
-                <button
-                  key={item.label}
-                  onClick={() => scrollTo(item.href)}
-                  className="relative px-3 xl:px-3.5 py-1.5 rounded-full border-none bg-transparent cursor-pointer text-[12.5px] xl:text-[13px] font-medium text-[var(--muted)] transition-all duration-200 hover:text-[var(--ink)] hover:bg-[var(--surface-card)] flex items-center gap-1.5 shrink-0"
-                >
-                  {item.label}
-                </button>
-              );
-            })}
-          </nav>
+              })}
+            </nav>
+          </div>
 
           {/* Right Action Cluster */}
-          <div className="flex items-center gap-1.5 sm:gap-2.5 md:gap-3 shrink-0">
+          <div className="flex items-center gap-1.5 sm:gap-2 xl:gap-2.5 shrink-0">
             {/* Exporter Authenticated User Menu (Tablet & Desktop) */}
             {exporterUser ? (
               <div className="relative hidden md:block" ref={dropdownRef}>
@@ -397,7 +404,7 @@ export default function Navbar() {
                   onClick={() => setUserDropdownOpen(!userDropdownOpen)}
                   aria-expanded={userDropdownOpen}
                   aria-label="Exporter Account Menu"
-                  className="inline-flex items-center gap-2 px-3 py-1.5 text-[12.5px] font-bold text-[var(--ink)] bg-[var(--surface-card)] border border-[var(--hairline)] rounded-full cursor-pointer hover:bg-[var(--surface-soft)] transition-colors shadow-2xs h-[36px] sm:h-[38px]"
+                  className="inline-flex items-center gap-1.5 xl:gap-2 px-2.5 xl:px-3 py-1.5 text-[11.5px] xl:text-[12.5px] font-bold text-[var(--ink)] bg-[var(--surface-card)] border border-[var(--hairline)] rounded-full cursor-pointer hover:bg-[var(--surface-soft)] transition-colors shadow-2xs h-[34px] xl:h-[36px] shrink-0"
                 >
                   <div
                     className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-extrabold text-[var(--ink)] shrink-0"
@@ -405,7 +412,7 @@ export default function Navbar() {
                   >
                     {exporterUser.companyName ? exporterUser.companyName.slice(0, 1).toUpperCase() : "E"}
                   </div>
-                  <span className="max-w-[100px] lg:max-w-[130px] truncate">{exporterUser.companyName || "My Portal"}</span>
+                  <span className="max-w-[75px] sm:max-w-[95px] xl:max-w-[125px] truncate">{exporterUser.companyName || "My Portal"}</span>
                   <ChevronDown className={`w-3.5 h-3.5 text-[var(--muted)] transition-transform duration-200 ${userDropdownOpen ? "rotate-180" : ""}`} />
                 </button>
 
@@ -466,38 +473,49 @@ export default function Navbar() {
             ) : (
               <Link
                 href="/exporter/login"
-                className="hidden md:inline-flex items-center gap-1.5 px-3 sm:px-3.5 py-1.5 text-[12px] sm:text-[12.5px] font-semibold text-[var(--ink)] bg-[var(--canvas)] border border-[var(--hairline)] rounded-full no-underline cursor-pointer transition-all duration-200 hover:bg-[var(--surface-card)] h-[36px] sm:h-[38px]"
+                className="hidden md:inline-flex items-center gap-1.5 px-2.5 xl:px-3.5 py-1.5 text-[11.5px] xl:text-[12.5px] font-semibold text-[var(--ink)] bg-[var(--canvas)] border border-[var(--hairline)] rounded-full no-underline cursor-pointer transition-all duration-200 hover:bg-[var(--surface-card)] h-[34px] xl:h-[36px] shrink-0"
               >
-                <UserCheck className="w-3.5 h-3.5 text-[var(--muted)]" />
-                <span>Business Login</span>
+                <UserCheck className="w-3.5 h-3.5 text-[var(--muted)] shrink-0" />
+                <span className="hidden xl:inline">Business Login</span>
+                <span className="inline xl:hidden">Login</span>
               </Link>
             )}
 
+            {/* Sell With Us CTA — xl+ only to save space on medium/laptop screens */}
+            <Link
+              href="/sell-with-us"
+              className={`hidden xl:inline-flex items-center gap-1.5 px-3 xl:px-3.5 py-1.5 text-[11.5px] xl:text-[12.5px] font-semibold rounded-full no-underline cursor-pointer transition-all duration-200 border h-[34px] xl:h-[36px] shrink-0 ${
+                pathname === "/sell-with-us"
+                  ? "bg-[var(--ink)] text-white border-[var(--ink)] shadow-2xs"
+                  : "text-[var(--ink)] bg-[var(--surface-soft)] border-[var(--hairline)] hover:bg-[var(--surface-card)]"
+              }`}
+            >
+              <Store className="w-3.5 h-3.5 text-[var(--brand-ochre)] shrink-0" />
+              <span>Sell With Us</span>
+            </Link>
 
-
-            {/* Primary Action Button */}
+            {/* Primary CTA */}
             <Link
               href={exporterUser ? "/exporter/profile" : "/create-export-profile"}
-              className="inline-flex items-center justify-center gap-1.5 px-3.5 sm:px-4 md:px-5 py-1.5 sm:py-2 text-[12.5px] sm:text-[13.5px] font-bold text-[var(--ink)] border-none rounded-full no-underline cursor-pointer transition-all duration-200 hover:opacity-95 active:scale-[0.97] shadow-sm shrink-0 group h-[36px] sm:h-[38px]"
+              className="inline-flex items-center justify-center gap-1.5 px-3 xl:px-4 py-1.5 text-[11.5px] sm:text-[12px] xl:text-[12.5px] font-bold text-[var(--ink)] border-none rounded-full no-underline cursor-pointer transition-all duration-200 hover:opacity-95 active:scale-[0.97] shadow-sm shrink-0 group h-[34px] xl:h-[36px]"
               style={{ backgroundColor: "var(--brand-ochre)" }}
             >
               {exporterUser ? (
                 <>
-                  <LayoutDashboard className="w-3.5 h-3.5" />
-                  <span className="inline sm:hidden">Hub</span>
-                  <span className="hidden sm:inline">My Exporter Hub</span>
+                  <LayoutDashboard className="w-3.5 h-3.5 shrink-0" />
+                  <span className="hidden sm:inline">Exporter Dashboard</span>
+                  <span className="inline sm:hidden">Dashboard</span>
                 </>
               ) : (
                 <>
-                  <UserPlus className="w-3.5 h-3.5 sm:hidden" />
-                  <span className="inline sm:hidden">Create Profile</span>
-                  <span className="hidden sm:inline">Create Business Profile</span>
-                  <ArrowRight className="w-3.5 h-3.5 opacity-75 transition-transform duration-200 group-hover:translate-x-0.5 hidden sm:inline" />
+                  <span className="hidden xl:inline">Create Business Profile</span>
+                  <span className="inline xl:hidden">Join Free</span>
+                  <ArrowRight className="w-3.5 h-3.5 opacity-75 transition-transform duration-200 group-hover:translate-x-0.5 hidden xl:inline shrink-0" />
                 </>
               )}
             </Link>
 
-            {/* Mobile Hamburger / Close Button */}
+            {/* Hamburger — visible below lg (mobile & tablet) */}
             <button
               className="flex lg:hidden items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-[var(--hairline)] cursor-pointer transition-all duration-200 shrink-0"
               style={{
@@ -743,6 +761,18 @@ export default function Navbar() {
                         <UserPlus className="w-4 h-4" />
                         <span>Create Business Profile</span>
                         <ArrowRight className="w-4 h-4" />
+                      </Link>
+
+                      <Link
+                        href="/sell-with-us"
+                        onClick={() => setMobileMenu(false)}
+                        className="w-full text-center py-2.5 min-h-[44px] rounded-xl border border-[var(--hairline)] bg-[var(--surface-soft)] text-[13.5px] font-semibold text-[var(--ink)] no-underline flex items-center justify-center gap-2 active:bg-[var(--surface-card)] transition-colors"
+                      >
+                        <Store className="w-4 h-4 text-[var(--brand-ochre)]" />
+                        <span>Sell With Us</span>
+                        <span className="text-[10px] font-extrabold uppercase px-1.5 py-0.5 rounded-full bg-amber-500/15 text-amber-800">
+                          New
+                        </span>
                       </Link>
 
                       <Link

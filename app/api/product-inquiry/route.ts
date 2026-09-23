@@ -4,6 +4,7 @@ import {
   sendSellerInquiryAlertToExporter,
   sendAdminSellerInquiryNotification,
   sendBuyerInquiryConfirmation,
+  getAdminRecipients,
 } from "@/lib/email";
 
 export async function POST(req: Request) {
@@ -138,7 +139,7 @@ export async function POST(req: Request) {
       ]);
       console.log("=== [PRODUCT RFQ EMAILS DISPATCHED TO ADMIN & SELLER] ===", {
         toSeller: cleanSellerEmail,
-        toAdmin: process.env.ADMIN_EMAIL || process.env.ADMIN_NOTIFY_EMAIL || "info@goexports.co.uk",
+        toAdmin: getAdminRecipients().map((r) => r.email).join(", "),
         toBuyer: cleanBuyerEmail || "N/A (no email provided)",
         statuses: emailResults.map((r) => r.status),
       });

@@ -59,6 +59,21 @@ export interface PasswordResetEmailData {
   expiresInMinutes?: number;
 }
 
+export interface SellWithUsEmailData {
+  companyName: string;
+  contactName: string;
+  email: string;
+  phone: string;
+  country?: string;
+  businessType?: string;
+  productCategory: string;
+  productsDescription: string;
+  monthlyCapacity?: string;
+  targetAudience?: string;
+  website?: string;
+  certifications?: string[];
+}
+
 function getPackageBadgeHtml(rawPackage?: string): string {
   const pkg = (rawPackage || "Free").toLowerCase();
   if (pkg.includes("enterprise")) {
@@ -553,16 +568,43 @@ export async function sendExporterRejectedEmail(data: ExporterSubmissionEmailDat
   }
 }
 
+/**
+ * Resolves all configured admin notification email recipients from environment variables.
+ * Parses comma, semicolon, space, or newline-separated email addresses, trims and deduplicates.
+ */
+export function getAdminRecipients(defaultName: string = "Goexports Admin"): { email: string; name: string }[] {
+  const envSources = [
+    process.env.ADMIN_NOTIFY_EMAIL,
+    process.env.ADMIN_NOTIFICATION_EMAIL,
+    process.env.ADMIN_EMAIL,
+  ];
+
+  const raw = envSources.filter(Boolean).join(",");
+  const fallback = process.env.SENDER_EMAIL || "info@goexports.co.uk";
+
+  const emailList = (raw || fallback)
+    .split(/[,;\s]+/)
+    .map((e) => e.trim().toLowerCase())
+    .filter((e) => e.length > 3 && e.includes("@"));
+
+  const uniqueEmails = Array.from(new Set(emailList));
+  if (uniqueEmails.length === 0) {
+    uniqueEmails.push(fallback);
+  }
+
+  return uniqueEmails.map((email) => ({
+    email,
+    name: defaultName,
+  }));
+}
+
 export async function sendAdminNewExporterNotification(data: ExporterSubmissionEmailData) {
   try {
-    const adminEmail = process.env.ADMIN_EMAIL || process.env.ADMIN_NOTIFY_EMAIL || "info@goexports.co.uk";
+    const recipients = getAdminRecipients("Goexports Admin");
     const html = getAdminNewExporterAlertTemplate(data);
 
     return await sendBrevoEmailApi({
-      to_email: {
-        email: adminEmail,
-        name: "Goexports Admin",
-      },
+      to_email: recipients,
       email_subject: `[New Exporter Registration] ${data.companyName} (${data.country})`,
       htmlContent: html,
     });
@@ -705,13 +747,10 @@ export async function sendConsultationLeadConfirmationEmail(data: ConsultationLe
 
 export async function sendAdminConsultationAlertEmail(data: ConsultationLeadEmailData) {
   try {
-    const adminEmail = process.env.ADMIN_EMAIL || process.env.ADMIN_NOTIFY_EMAIL || "info@goexports.co.uk";
+    const recipients = getAdminRecipients("Goexports Leads");
     const html = getAdminConsultationAlertTemplate(data);
     return await sendBrevoEmailApi({
-      to_email: {
-        email: adminEmail,
-        name: "Goexports Leads",
-      },
+      to_email: recipients,
       email_subject: `[Lead Alert] New Trade Consultation: ${data.fullName} (${data.productCategory})`,
       htmlContent: html,
     });
@@ -721,7 +760,201 @@ export async function sendAdminConsultationAlertEmail(data: ConsultationLeadEmai
 }
 
 // ─────────────────────────────────────────────────────────────
-// 3. DIRECT BUYER RFQ / STOREFRONT INQUIRY EMAILS (app/api/seller-inquiry & app/api/product-inquiry)
+// 3. SELL WITH US SUPPLIER ONBOARDING EMAILS (app/api/sell-with-us)
+// ─────────────────────────────────────────────────────────────
+
+export function getSellWithUsApplicantConfirmationTemplate(data: SellWithUsEmailData): string {
+  const content = `
+    <!-- Status Hero Pill -->
+    <div style="text-align: center; margin-bottom: 24px;">
+      <div style="display: inline-flex; align-items: center; background-color: #f0fdf4; color: #166534; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.75px; padding: 6px 16px; border-radius: 9999px; border: 1px solid #bbf7d0;">
+        ✓ Application Received & Under Review
+      </div>
+    </div>
+
+    <!-- Header Greeting -->
+    <h1 style="margin: 0 0 12px 0; color: #09090b; font-size: 22px; font-weight: 800; text-align: center; line-height: 1.35; letter-spacing: -0.3px;">
+      Thank You for Applying, ${data.contactName}!
+    </h1>
+    
+    <p style="margin: 0 0 24px 0; font-size: 15px; line-height: 1.65; color: #475569; text-align: center;">
+      We have received your <strong style="color: #09090b;">Sell With Us</strong> partnership application for <strong style="color: #09090b;">${data.companyName}</strong>. Our merchant onboarding and sourcing desk has logged your company details.
+    </p>
+
+    <!-- Summary Table -->
+    <div style="border: 1px solid #e2e8f0; border-radius: 14px; overflow: hidden; margin-bottom: 24px;">
+      <div style="background-color: #f8fafc; padding: 12px 18px; border-bottom: 1px solid #e2e8f0; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; color: #334155;">
+        📋 Application Summary
+      </div>
+      <table width="100%" cellpadding="0" cellspacing="0" style="font-size: 13px; color: #334155;">
+        <tr>
+          <td style="padding: 11px 18px; border-bottom: 1px solid #f1f5f9; color: #64748b; font-weight: 600; width: 40%;">Company Name:</td>
+          <td style="padding: 11px 18px; border-bottom: 1px solid #f1f5f9; font-weight: 700; color: #09090b;">${data.companyName}</td>
+        </tr>
+        <tr>
+          <td style="padding: 11px 18px; border-bottom: 1px solid #f1f5f9; color: #64748b; font-weight: 600;">Product Category:</td>
+          <td style="padding: 11px 18px; border-bottom: 1px solid #f1f5f9; font-weight: 700; color: #09090b;">${data.productCategory}</td>
+        </tr>
+        <tr>
+          <td style="padding: 11px 18px; border-bottom: 1px solid #f1f5f9; color: #64748b; font-weight: 600;">Business Type:</td>
+          <td style="padding: 11px 18px; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #09090b;">${data.businessType || "Manufacturer"}</td>
+        </tr>
+        <tr>
+          <td style="padding: 11px 18px; border-bottom: 1px solid #f1f5f9; color: #64748b; font-weight: 600;">Target Markets:</td>
+          <td style="padding: 11px 18px; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #09090b;">${data.targetAudience || "Both Export & Domestic"}</td>
+        </tr>
+        ${data.monthlyCapacity ? `
+        <tr>
+          <td style="padding: 11px 18px; border-bottom: 1px solid #f1f5f9; color: #64748b; font-weight: 600;">Monthly Capacity:</td>
+          <td style="padding: 11px 18px; border-bottom: 1px solid #f1f5f9; color: #09090b;">${data.monthlyCapacity}</td>
+        </tr>` : ''}
+        <tr>
+          <td style="padding: 11px 18px; border-bottom: 1px solid #f1f5f9; color: #64748b; font-weight: 600;">Contact Phone:</td>
+          <td style="padding: 11px 18px; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #09090b;">${data.phone}</td>
+        </tr>
+        <tr>
+          <td style="padding: 11px 18px; color: #64748b; font-weight: 600;">Registered Email:</td>
+          <td style="padding: 11px 18px; font-weight: 600; color: #0284c7;">${data.email}</td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- Product Description Box -->
+    <div style="background-color: #fafafa; border: 1px solid #e4e4e7; border-radius: 12px; padding: 18px; margin-bottom: 24px;">
+      <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: #71717a; margin-bottom: 6px;">
+        Products & Specifications Provided:
+      </div>
+      <p style="margin: 0; font-size: 13.5px; color: #18181b; line-height: 1.6; white-space: pre-line;">
+        ${data.productsDescription}
+      </p>
+    </div>
+
+    <!-- Next Steps Roadmap -->
+    <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 14px; padding: 20px 22px; margin-bottom: 28px;">
+      <h3 style="font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; color: #09090b; margin: 0 0 12px 0;">
+        🚀 What Happens Next?
+      </h3>
+      <ul style="margin: 0; padding-left: 18px; font-size: 13px; color: #475569; line-height: 1.75;">
+        <li style="margin-bottom: 6px;">Our merchant partnership team reviews your product capacity and specifications.</li>
+        <li style="margin-bottom: 6px;">A dedicated trade manager will connect with you within <strong>24–48 hours</strong> to discuss onboarding and buyer connections.</li>
+        <li>You will receive verified buyer inquiries and RFQs directly through our global trade network.</li>
+      </ul>
+    </div>
+
+    <div style="text-align: center; margin-bottom: 24px;">
+      <a href="https://www.goexports.co.uk" target="_blank" style="display: inline-block; padding: 13px 30px; background-color: #e8b94a; color: #0a0a0a; text-decoration: none; font-size: 14px; font-weight: 800; border-radius: 10px;">
+        Explore Goexports Platform &rarr;
+      </a>
+    </div>
+  `;
+
+  return getEmailHtmlTemplate(content);
+}
+
+export async function sendSellWithUsApplicantConfirmation(data: SellWithUsEmailData) {
+  if (!data.email || !data.email.includes("@")) return;
+  try {
+    const html = getSellWithUsApplicantConfirmationTemplate(data);
+    return await sendBrevoEmailApi({
+      to_email: {
+        email: data.email,
+        name: data.contactName || data.companyName,
+      },
+      email_subject: `Application Received: Sell With Goexports - ${data.companyName}`,
+      htmlContent: html,
+    });
+  } catch (error: any) {
+    console.error(`[EmailNotice] Sell With Us applicant confirmation email failed for ${data.email}:`, error.message);
+  }
+}
+
+export async function sendAdminSellWithUsNotification(data: SellWithUsEmailData) {
+  try {
+    const recipients = getAdminRecipients("Goexports Vendor Desk");
+    const content = `
+      <div style="margin-bottom: 24px;">
+        <div style="display: inline-block; padding: 4px 12px; background-color: #e8b94a; color: #0a0a0a; font-size: 11px; font-weight: 800; text-transform: uppercase; border-radius: 20px; margin-bottom: 12px;">
+          New "Sell With Us" Application
+        </div>
+        <h1 style="margin: 0 0 8px; font-size: 20px; font-weight: 800; color: #0a0a0a;">
+          ${data.companyName} applied to Sell With Us
+        </h1>
+        <p style="margin: 0; font-size: 13.5px; color: #52525b; line-height: 1.5;">
+          A new supplier/manufacturer application has been received and saved to MongoDB.
+        </p>
+      </div>
+
+      <div style="border: 1px solid #e4e4e7; border-radius: 14px; overflow: hidden; margin-bottom: 20px;">
+        <table width="100%" cellpadding="0" cellspacing="0" style="font-size: 13px; color: #3f3f46;">
+          <tr>
+            <td style="padding: 10px 18px; border-bottom: 1px solid #f4f4f5; color: #71717a; width: 38%; font-weight: 600;">Company:</td>
+            <td style="padding: 10px 18px; border-bottom: 1px solid #f4f4f5; font-weight: 700; color: #0a0a0a;">${data.companyName}</td>
+          </tr>
+          <tr>
+            <td style="padding: 10px 18px; border-bottom: 1px solid #f4f4f5; color: #71717a; font-weight: 600;">Contact Name:</td>
+            <td style="padding: 10px 18px; border-bottom: 1px solid #f4f4f5; font-weight: 600; color: #0a0a0a;">${data.contactName}</td>
+          </tr>
+          <tr>
+            <td style="padding: 10px 18px; border-bottom: 1px solid #f4f4f5; color: #71717a; font-weight: 600;">Email Address:</td>
+            <td style="padding: 10px 18px; border-bottom: 1px solid #f4f4f5; color: #0a0a0a;"><a href="mailto:${data.email}" style="color: #0284c7; text-decoration: none;">${data.email}</a></td>
+          </tr>
+          <tr>
+            <td style="padding: 10px 18px; border-bottom: 1px solid #f4f4f5; color: #71717a; font-weight: 600;">Phone Number:</td>
+            <td style="padding: 10px 18px; border-bottom: 1px solid #f4f4f5; color: #0a0a0a;">${data.phone}</td>
+          </tr>
+          <tr>
+            <td style="padding: 10px 18px; border-bottom: 1px solid #f4f4f5; color: #71717a; font-weight: 600;">Country:</td>
+            <td style="padding: 10px 18px; border-bottom: 1px solid #f4f4f5; color: #0a0a0a;">${data.country || "N/A"}</td>
+          </tr>
+          <tr>
+            <td style="padding: 10px 18px; border-bottom: 1px solid #f4f4f5; color: #71717a; font-weight: 600;">Business Type:</td>
+            <td style="padding: 10px 18px; border-bottom: 1px solid #f4f4f5; color: #0a0a0a;">${data.businessType || "Manufacturer"}</td>
+          </tr>
+          <tr>
+            <td style="padding: 10px 18px; border-bottom: 1px solid #f4f4f5; color: #71717a; font-weight: 600;">Category:</td>
+            <td style="padding: 10px 18px; border-bottom: 1px solid #f4f4f5; font-weight: 700; color: #0a0a0a;">${data.productCategory}</td>
+          </tr>
+          ${data.monthlyCapacity ? `
+          <tr>
+            <td style="padding: 10px 18px; border-bottom: 1px solid #f4f4f5; color: #71717a; font-weight: 600;">Monthly Capacity:</td>
+            <td style="padding: 10px 18px; border-bottom: 1px solid #f4f4f5; color: #0a0a0a;">${data.monthlyCapacity}</td>
+          </tr>` : ''}
+          <tr>
+            <td style="padding: 10px 18px; border-bottom: 1px solid #f4f4f5; color: #71717a; font-weight: 600;">Target Market:</td>
+            <td style="padding: 10px 18px; border-bottom: 1px solid #f4f4f5; color: #0a0a0a;">${data.targetAudience}</td>
+          </tr>
+          ${data.website ? `
+          <tr>
+            <td style="padding: 10px 18px; border-bottom: 1px solid #f4f4f5; color: #71717a; font-weight: 600;">Website:</td>
+            <td style="padding: 10px 18px; border-bottom: 1px solid #f4f4f5; color: #0a0a0a;"><a href="${data.website}" target="_blank" style="color: #0284c7; text-decoration: none;">${data.website}</a></td>
+          </tr>` : ''}
+        </table>
+      </div>
+
+      <div style="background-color: #fafafa; border: 1px solid #e4e4e7; border-radius: 12px; padding: 18px;">
+        <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: #71717a; margin-bottom: 6px;">
+          Products Description:
+        </div>
+        <p style="margin: 0; font-size: 13.5px; color: #18181b; line-height: 1.6; white-space: pre-line;">
+          ${data.productsDescription}
+        </p>
+      </div>
+    `;
+
+    const html = getEmailHtmlTemplate(content);
+    return await sendBrevoEmailApi({
+      to_email: recipients,
+      reply_to: { email: data.email, name: data.contactName },
+      email_subject: `[Supplier Application] ${data.companyName} (${data.productCategory})`,
+      htmlContent: html,
+    });
+  } catch (error: any) {
+    console.error(`[EmailNotice] Admin Sell With Us alert email failed:`, error.message);
+  }
+}
+
+// ─────────────────────────────────────────────────────────────
+// 4. DIRECT BUYER RFQ / STOREFRONT INQUIRY EMAILS (app/api/seller-inquiry & app/api/product-inquiry)
 // ─────────────────────────────────────────────────────────────
 
 export function getSellerInquiryAlertTemplate(data: SellerInquiryEmailData): string {
@@ -879,34 +1112,85 @@ export function getAdminSellerInquiryAlertTemplate(data: SellerInquiryEmailData)
 
 export function getBuyerInquiryConfirmationTemplate(data: SellerInquiryEmailData): string {
   const content = `
+    <!-- Status Hero Pill -->
     <div style="text-align: center; margin-bottom: 24px;">
-      <div style="display: inline-block; width: 50px; height: 50px; line-height: 50px; border-radius: 50%; background-color: #f0fdf4; border: 2px solid #86efac; color: #16a34a; font-size: 24px; margin-bottom: 12px;">
-        &#10003;
+      <div style="display: inline-flex; align-items: center; background-color: #f0fdf4; color: #166534; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.75px; padding: 6px 16px; border-radius: 9999px; border: 1px solid #bbf7d0;">
+        ✓ RFQ Delivered to Exporter
       </div>
-      <h1 style="margin: 0 0 6px; font-size: 20px; font-weight: 800; color: #0a0a0a;">
-        Inquiry Sent to ${data.sellerCompanyName}
-      </h1>
-      <p style="margin: 0; font-size: 14px; color: #52525b; line-height: 1.5;">
-        Your RFQ has been successfully delivered to the export sales team at <strong>${data.sellerCompanyName}</strong>.
-      </p>
     </div>
 
+    <!-- Header Greeting -->
+    <h1 style="margin: 0 0 12px 0; color: #09090b; font-size: 22px; font-weight: 800; text-align: center; line-height: 1.35; letter-spacing: -0.3px;">
+      Inquiry Confirmation
+    </h1>
+    
+    <p style="margin: 0 0 24px 0; font-size: 15px; line-height: 1.65; color: #475569; text-align: center;">
+      Hello <strong style="color: #09090b;">${data.buyerName}</strong>, your trade inquiry has been directly forwarded to the export desk at <strong style="color: #09090b;">${data.sellerCompanyName}</strong>.
+    </p>
+
+    <!-- Summary Table -->
+    <div style="border: 1px solid #e2e8f0; border-radius: 14px; overflow: hidden; margin-bottom: 24px;">
+      <div style="background-color: #f8fafc; padding: 12px 18px; border-bottom: 1px solid #e2e8f0; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; color: #334155;">
+        📋 Inquiry Details
+      </div>
+      <table width="100%" cellpadding="0" cellspacing="0" style="font-size: 13px; color: #334155;">
+        <tr>
+          <td style="padding: 11px 18px; border-bottom: 1px solid #f1f5f9; color: #64748b; font-weight: 600; width: 40%;">Supplier / Exporter:</td>
+          <td style="padding: 11px 18px; border-bottom: 1px solid #f1f5f9; font-weight: 700; color: #09090b;">${data.sellerCompanyName}</td>
+        </tr>
+        <tr>
+          <td style="padding: 11px 18px; border-bottom: 1px solid #f1f5f9; color: #64748b; font-weight: 600;">Inquiry Type:</td>
+          <td style="padding: 11px 18px; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #09090b;">${data.inquiryType || "Bulk Order / RFQ"}</td>
+        </tr>
+        ${data.quantity && data.quantity !== "Not specified" ? `
+        <tr>
+          <td style="padding: 11px 18px; border-bottom: 1px solid #f1f5f9; color: #64748b; font-weight: 600;">Quantity:</td>
+          <td style="padding: 11px 18px; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: #09090b;">${data.quantity}</td>
+        </tr>` : ''}
+        ${data.buyerCountry ? `
+        <tr>
+          <td style="padding: 11px 18px; border-bottom: 1px solid #f1f5f9; color: #64748b; font-weight: 600;">Destination Country:</td>
+          <td style="padding: 11px 18px; border-bottom: 1px solid #f1f5f9; color: #09090b;">${data.buyerCountry}</td>
+        </tr>` : ''}
+        <tr>
+          <td style="padding: 11px 18px; color: #64748b; font-weight: 600;">Your Registered Email:</td>
+          <td style="padding: 11px 18px; font-weight: 600; color: #0284c7;">${data.buyerEmail}</td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- Message Copy Box -->
     <div style="background-color: #fafafa; border: 1px solid #e4e4e7; border-radius: 12px; padding: 18px; margin-bottom: 24px;">
       <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: #71717a; margin-bottom: 6px;">
-        Your Requirement Copy:
+        Requirement / Message Copy:
       </div>
-      <p style="margin: 0; font-size: 13.5px; color: #3f3f46; line-height: 1.6; white-space: pre-line;">
+      <p style="margin: 0; font-size: 13.5px; color: #18181b; line-height: 1.6; white-space: pre-line;">
         ${data.message}
       </p>
     </div>
 
-    <p style="font-size: 13px; color: #52525b; line-height: 1.6; margin: 0; text-align: center;">
-      ${data.sellerCompanyName} typically responds within 24–48 hours with quotations and export terms.
-    </p>
+    <!-- Next Steps Roadmap -->
+    <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 14px; padding: 20px 22px; margin-bottom: 28px;">
+      <h3 style="font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; color: #09090b; margin: 0 0 12px 0;">
+        🚀 What to Expect
+      </h3>
+      <ul style="margin: 0; padding-left: 18px; font-size: 13px; color: #475569; line-height: 1.75;">
+        <li style="margin-bottom: 6px;">${data.sellerCompanyName} receives your contact details and RFQ parameters immediately.</li>
+        <li style="margin-bottom: 6px;">Exporters typically respond with formal quotations, MOQ details, and shipping terms within <strong>24–48 hours</strong>.</li>
+        <li>You can reply directly to the supplier's emails once they connect with you.</li>
+      </ul>
+    </div>
+
+    <div style="text-align: center; margin-bottom: 24px;">
+      <a href="https://www.goexports.co.uk" target="_blank" style="display: inline-block; padding: 13px 30px; background-color: #e8b94a; color: #0a0a0a; text-decoration: none; font-size: 14px; font-weight: 800; border-radius: 10px;">
+        Browse More Exporters on Goexports &rarr;
+      </a>
+    </div>
   `;
 
   return getEmailHtmlTemplate(content);
 }
+
 
 export async function sendSellerInquiryAlertToExporter(data: SellerInquiryEmailData) {
   if (!data.sellerEmail) {
@@ -956,13 +1240,10 @@ export async function sendBuyerInquiryConfirmation(data: SellerInquiryEmailData)
 
 export async function sendAdminSellerInquiryNotification(data: SellerInquiryEmailData) {
   try {
-    const adminEmail = process.env.ADMIN_EMAIL || process.env.ADMIN_NOTIFY_EMAIL || "info@goexports.co.uk";
+    const recipients = getAdminRecipients("Goexports Trade Desk");
     const html = getAdminSellerInquiryAlertTemplate(data);
     const emailPayload: any = {
-      to_email: {
-        email: adminEmail,
-        name: "Goexports Trade Desk",
-      },
+      to_email: recipients,
       email_subject: `[RFQ Alert] ${data.buyerName} -> ${data.sellerCompanyName} (${data.inquiryType || 'RFQ'})`,
       htmlContent: html,
     };
@@ -1064,11 +1345,37 @@ export async function sendPasswordResetEmail(data: PasswordResetEmailData) {
 // ─────────────────────────────────────────────────────────────
 
 export async function sendBrevoEmailApi(data: EmailData) {
-  const primaryRecipient = Array.isArray(data.to_email)
-    ? data.to_email[0]?.email
-    : data.to_email.email;
+  // Normalize recipients: handle arrays, single objects, and comma/semicolon-separated email strings
+  const rawRecipients = Array.isArray(data.to_email) ? data.to_email : [data.to_email];
+  const normalizedRecipients: { email: string; name?: string }[] = [];
 
-  console.log(`[EmailLog] sending | To: ${primaryRecipient} | Subject: "${data.email_subject}"`);
+  for (const r of rawRecipients) {
+    if (!r || !r.email) continue;
+    const emails = r.email
+      .split(/[,;\s]+/)
+      .map((e) => e.trim().toLowerCase())
+      .filter((e) => e.length > 3 && e.includes("@"));
+
+    if (emails.length > 0) {
+      for (const email of emails) {
+        normalizedRecipients.push({ email, name: r.name });
+      }
+    } else {
+      normalizedRecipients.push({ email: r.email.trim(), name: r.name });
+    }
+  }
+
+  // Deduplicate by email address
+  const seen = new Set<string>();
+  const toList = normalizedRecipients.filter((item) => {
+    const key = item.email.toLowerCase();
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+
+  const recipientSummary = toList.map((r) => r.email).join(", ");
+  console.log(`[EmailLog] sending | To: [${recipientSummary}] | Subject: "${data.email_subject}"`);
 
   try {
     const message: any = {
@@ -1076,7 +1383,7 @@ export async function sendBrevoEmailApi(data: EmailData) {
         name: process.env.SENDER_NAME || 'Goexports',
         email: process.env.SENDER_EMAIL || 'info@goexports.co.uk',
       },
-      to: Array.isArray(data.to_email) ? data.to_email : [data.to_email],
+      to: toList,
       subject: data.email_subject,
       htmlContent: data.htmlContent,
     };
@@ -1123,10 +1430,10 @@ export async function sendBrevoEmailApi(data: EmailData) {
     }
 
     const result = await response.json();
-    console.log(`[EmailLog] sent | To: ${primaryRecipient} | Subject: "${data.email_subject}" | MessageId: ${result.messageId || "N/A"}`);
+    console.log(`[EmailLog] sent | To: [${recipientSummary}] | Subject: "${data.email_subject}" | MessageId: ${result.messageId || "N/A"}`);
     return result;
   } catch (error: any) {
-    console.error(`[EmailLog] failed | To: ${primaryRecipient} | Subject: "${data.email_subject}" | Error: ${error.message}`);
+    console.error(`[EmailLog] failed | To: [${recipientSummary}] | Subject: "${data.email_subject}" | Error: ${error.message}`);
     throw error;
   }
 }

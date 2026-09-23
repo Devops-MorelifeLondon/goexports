@@ -204,6 +204,30 @@ const GetInTouchSchema = new mongoose.Schema(
   { collection: "get_in_touch_inquiries", timestamps: false, strict: false }
 );
 
+// ── SellWithUs Inquiry Schema ──
+const SellWithUsSchema = new mongoose.Schema(
+  {
+    companyName: { type: String, required: true },
+    contactName: { type: String, required: true },
+    email: { type: String, required: true, index: true },
+    phone: { type: String, required: true },
+    country: { type: String, required: true },
+    businessType: { type: String, default: "Manufacturer" }, // Manufacturer, Trader, Wholesaler, Farmer/Producer
+    productCategory: { type: String, required: true },
+    productsDescription: { type: String, required: true },
+    monthlyCapacity: { type: String, default: "" },
+    targetAudience: { type: String, default: "Both" }, // Export, Domestic, Both
+    certifications: { type: [String], default: [] },
+    website: { type: String, default: "" },
+    status: { type: String, default: "pending", index: true },
+    ipAddress: { type: String, default: "unknown" },
+    userAgent: { type: String, default: "unknown" },
+    receivedAt: { type: Date, default: Date.now },
+    createdAt: { type: String, default: () => new Date().toISOString() },
+  },
+  { collection: "sell_with_us_inquiries", timestamps: false, strict: false }
+);
+
 export const ExportProfile =
   mongoose.models.ExportProfile || mongoose.model("ExportProfile", ExportProfileSchema);
 
@@ -223,6 +247,9 @@ export const GetInTouchInquiry =
   mongoose.models.GetInTouchInquiry || mongoose.model("GetInTouchInquiry", GetInTouchSchema);
 
 export const GetInTouch = GetInTouchInquiry;
+
+export const SellWithUsInquiry =
+  mongoose.models.SellWithUsInquiry || mongoose.model("SellWithUsInquiry", SellWithUsSchema);
 
 // Helper function to return native DB connection if needed
 export async function getDatabase() {

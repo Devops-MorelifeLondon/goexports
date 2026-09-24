@@ -419,7 +419,7 @@ export default function SellToUS({ initialPlans }: SellToUSProps) {
                                 {/* Lead Badge */}
                                 <div className="mb-3">
                                   <span
-                                    className="inline-block px-2 py-0.5 text-[11px] font-semibold rounded-full"
+                                    className="inline-flex items-center justify-center gap-1.5 px-3 py-1 text-xs sm:text-[13px] font-semibold rounded-full"
                                     style={{
                                       backgroundColor: isFeatured
                                         ? "var(--brand-teal)"
@@ -430,9 +430,14 @@ export default function SellToUS({ initialPlans }: SellToUSProps) {
                                         : "1px solid var(--hairline)",
                                     }}
                                   >
-                                    {Number(plan.leads) > 0
-                                      ? `${plan.leads} Leads / mo`
-                                      : plan.leadsLabel || "Free Profile"}
+                                    {Number(plan.leads) > 0 ? (
+                                      <>
+                                        <span className="text-sm sm:text-base font-extrabold">{plan.leads}</span>
+                                        <span className="text-[11px] sm:text-xs">Leads / mo</span>
+                                      </>
+                                    ) : (
+                                      <span>{plan.leadsLabel || "Free Profile"}</span>
+                                    )}
                                   </span>
                                 </div>
 
@@ -512,7 +517,7 @@ export default function SellToUS({ initialPlans }: SellToUSProps) {
                               }}
                             >
                               <span
-                                className="inline-block text-[11px] font-semibold px-2 py-0.5 rounded"
+                                className="inline-flex items-center justify-center gap-1.5 text-xs sm:text-[13px] font-semibold px-3 py-1 rounded-lg"
                                 style={{
                                   backgroundColor: isFeatured
                                     ? "rgba(26,58,58,0.12)"
@@ -521,7 +526,14 @@ export default function SellToUS({ initialPlans }: SellToUSProps) {
                                   border: "1px solid var(--hairline)",
                                 }}
                               >
-                                {leadsNum > 0 ? `${leadsNum} Leads / mo` : plan.leadsLabel || "Free Profile"}
+                                {leadsNum > 0 ? (
+                                  <>
+                                    <span className="text-sm sm:text-base font-extrabold">{leadsNum}</span>
+                                    <span className="text-[11px] sm:text-xs">Leads / mo</span>
+                                  </>
+                                ) : (
+                                  <span>{plan.leadsLabel || "Free Profile"}</span>
+                                )}
                               </span>
                             </td>
                           );

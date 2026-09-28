@@ -1420,13 +1420,26 @@ export default function ExporterProfileDashboard({
                       </div>
                     </div>
 
-                    <button
-                      onClick={() => handleTabChange("plan")}
-                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-[var(--ink)] bg-[var(--brand-ochre)] hover:opacity-90 transition-all border-none cursor-pointer shadow-xs shrink-0"
-                    >
-                      <Sparkles className="w-3.5 h-3.5" />
-                      <span>Upgrade / Change Plan</span>
-                    </button>
+                    <div className="flex flex-wrap items-center gap-2 shrink-0">
+                      <a
+                        href="https://pages.razorpay.com/goexports"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold text-white bg-[#0C2340] hover:bg-[#15345a] transition-all no-underline shadow-xs shrink-0"
+                        title="Pay or upgrade membership via Razorpay"
+                      >
+                        <CreditCard className="w-3.5 h-3.5 text-amber-400" />
+                        <span>Pay Online (Razorpay)</span>
+                        <ArrowUpRight className="w-3 h-3 opacity-70" />
+                      </a>
+                      <button
+                        onClick={() => handleTabChange("plan")}
+                        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-[var(--ink)] bg-[var(--brand-ochre)] hover:opacity-90 transition-all border-none cursor-pointer shadow-xs shrink-0"
+                      >
+                        <Sparkles className="w-3.5 h-3.5" />
+                        <span>Upgrade / Change Plan</span>
+                      </button>
+                    </div>
                   </div>
 
                   {/* Quota Progress & Features Highlight */}
@@ -3092,14 +3105,24 @@ export default function ExporterProfileDashboard({
                     </p>
                   </div>
 
-                  <div className="p-4 rounded-xl bg-[var(--surface-card)] border border-[var(--hairline)] text-xs space-y-1.5 shrink-0 max-w-xs">
+                  <div className="p-4 rounded-xl bg-[var(--surface-card)] border border-[var(--hairline)] text-xs space-y-2.5 shrink-0 max-w-xs">
                     <div className="font-bold text-[var(--ink)] flex items-center gap-1.5">
                       <ShieldCheck className="w-4 h-4 text-emerald-600" />
                       <span>Admin-Managed Tier</span>
                     </div>
                     <p className="text-[11px] text-[var(--muted)] leading-relaxed m-0">
-                      To upgrade your lead capacity or switch tiers, contact our trade desk at <a href="mailto:info@goexports.co.uk" className="underline text-[var(--ink)] font-bold">info@goexports.co.uk</a>.
+                      To upgrade your lead capacity or switch tiers, you can pay online via Razorpay or contact our trade desk at <a href="mailto:info@goexports.co.uk" className="underline text-[var(--ink)] font-bold">info@goexports.co.uk</a>.
                     </p>
+                    <a
+                      href="https://pages.razorpay.com/goexports"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center justify-center gap-1.5 w-full px-3 py-2 rounded-xl text-xs font-bold text-[var(--ink)] bg-[var(--brand-ochre)] hover:opacity-90 transition-all no-underline shadow-xs"
+                    >
+                      <CreditCard className="w-3.5 h-3.5" />
+                      <span>Pay / Upgrade Online via Razorpay</span>
+                      <ArrowUpRight className="w-3 h-3 opacity-75" />
+                    </a>
                   </div>
                 </div>
               </div>

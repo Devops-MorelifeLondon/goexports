@@ -35,7 +35,7 @@ const BUYER_PLANS = [
     featured: false,
     features: [
       "Free Profile Creation",
-      "Public Exporter Storefront",
+      "Public Storefront",
       "Product Catalog Listing",
       "24/7/365 Support",
     ],

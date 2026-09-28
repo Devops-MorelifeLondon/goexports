@@ -20,7 +20,8 @@ import {
   Zap,
   Crown,
   Check,
-  PackageCheck
+  PackageCheck,
+  CreditCard
 } from "lucide-react";
 import { toast } from "sonner";
 import { BuyerPlan } from "@/data/plans";
@@ -665,6 +666,33 @@ export default function ExportProfileForm({ initialPlans }: ExportProfileFormPro
               <span className="font-semibold text-[var(--ink)]">{submittedData.phone}</span>
             </div>
           </div>
+
+          {/* Razorpay Online Payment Box for Paid Plans */}
+          {submittedData.selectedPackage && submittedData.selectedPackage.toLowerCase() !== "free" && (
+            <div className="w-full p-4.5 rounded-2xl bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-300 text-left mb-6 space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-amber-950 flex items-center gap-1.5">
+                  <CreditCard className="w-4 h-4 text-amber-700" />
+                  Activate {submittedData.selectedPackage} Package Online
+                </span>
+                <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-amber-200/80 text-amber-900">
+                  Razorpay Secure
+                </span>
+              </div>
+              <p className="text-xs text-amber-900 m-0 leading-relaxed">
+                Complete your plan payment directly through Razorpay to unlock your verified buyer leads quota immediately upon approval.
+              </p>
+              <a
+                href="https://pages.razorpay.com/goexports"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl text-xs font-bold text-white bg-amber-800 hover:bg-amber-900 transition-colors no-underline shadow-xs"
+              >
+                <span>Complete Payment on Razorpay</span>
+                <ExternalLink className="w-3.5 h-3.5" />
+              </a>
+            </div>
+          )}
 
           {/* Action buttons */}
           <div className="flex flex-col sm:flex-row gap-3 w-full justify-center">
@@ -1601,6 +1629,23 @@ export default function ExportProfileForm({ initialPlans }: ExportProfileFormPro
               })}
             </div>
           )}
+
+          {/* Razorpay Online Payment Notice */}
+          <div className="mt-4 p-3.5 rounded-xl border border-[var(--hairline)] bg-[var(--surface-soft)] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+            <div className="flex items-center gap-2 text-[var(--muted)]">
+              <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+              <span>Paid packages can also be activated directly online via <strong>Razorpay Secure Checkout</strong>.</span>
+            </div>
+            <a
+              href="https://pages.razorpay.com/goexports"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-bold text-[var(--ink)] bg-[var(--canvas)] border border-[var(--hairline)] hover:border-[var(--muted)] transition-colors no-underline shrink-0"
+            >
+              <CreditCard className="w-3.5 h-3.5 text-amber-600" />
+              <span>Razorpay Payment Link ↗</span>
+            </a>
+          </div>
         </div>
 
         {/* ── SUBMIT BUTTON ── */}

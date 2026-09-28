@@ -10,7 +10,8 @@ import {
   Building2,
   Sparkles,
   CheckCircle2,
-  ArrowRight
+  ArrowRight,
+  CreditCard
 } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -129,6 +130,28 @@ export default function SellWithUsPage() {
                   </div>
                 </div>
               </div>
+            </div>
+
+            {/* Online Payment Card */}
+            <div className="p-5 rounded-2xl border border-[var(--hairline)] bg-[var(--surface-card)] text-left space-y-2.5">
+              <div className="flex items-center gap-2">
+                <CreditCard className="w-4 h-4 text-amber-600" />
+                <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--ink)] m-0">
+                  Online Membership Payment
+                </h4>
+              </div>
+              <p className="text-xs text-[var(--muted)] m-0 leading-relaxed">
+                Already registered or looking to activate your exporter package directly? You can pay securely online via Razorpay.
+              </p>
+              <a
+                href="https://pages.razorpay.com/goexports"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl text-xs font-bold text-[var(--ink)] bg-[var(--brand-ochre)] hover:opacity-90 transition-all no-underline shadow-xs"
+              >
+                <span>Pay Online via Razorpay</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </a>
             </div>
 
             {/* Quick Contact Help */}

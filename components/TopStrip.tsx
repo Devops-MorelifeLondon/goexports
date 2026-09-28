@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Mail, ShieldCheck } from "lucide-react";
+import { Mail, ShieldCheck, CreditCard } from "lucide-react";
 import {
   FaFacebookF,
   FaXTwitter,
@@ -65,7 +65,7 @@ export default function TopStrip() {
           </div>
         </div>
 
-        {/* Right Side: Social Icons & Quick CTA */}
+        {/* Right Side: Social Icons, Pay Online & Quick CTA */}
         <div className="flex items-center gap-2 sm:gap-3 shrink-0">
           <div className="flex items-center gap-1 sm:gap-1.5">
             {socialLinks.map((social) => {
@@ -85,6 +85,20 @@ export default function TopStrip() {
               );
             })}
           </div>
+
+          <div className="h-3 w-px bg-zinc-800" />
+
+          {/* Pay Online Link */}
+          <a
+            href="https://pages.razorpay.com/goexports"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-[11px] sm:text-[11.5px] font-semibold text-emerald-300 hover:bg-emerald-500/25 hover:text-emerald-200 transition-all no-underline shadow-2xs"
+            title="Pay Online via Razorpay Secure Checkout"
+          >
+            <CreditCard className="w-3 h-3 text-emerald-400 shrink-0" />
+            <span>Pay Online</span>
+          </a>
 
           <div className="hidden sm:block h-3 w-px bg-zinc-800" />
 

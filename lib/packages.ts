@@ -35,7 +35,7 @@ const DEFAULT_SEEDED_PACKAGES: Omit<PackageDbModel, "createdAt" | "updatedAt">[]
     featured: false,
     badge: undefined,
     features: [
-      "Public Exporter Storefront",
+      "Public Storefront",
       "Product Catalog Listing",
       "Basic Buyer Inquiries",
       "24/7/365 Support",
@@ -57,7 +57,7 @@ const DEFAULT_SEEDED_PACKAGES: Omit<PackageDbModel, "createdAt" | "updatedAt">[]
     featured: false,
     badge: undefined,
     features: [
-      "Public Exporter Storefront",
+      "Public Storefront",
       "Product Catalog Listing",
       "Basic Buyer Inquiries",
       "Targeted Industry Leads",
@@ -85,7 +85,7 @@ const DEFAULT_SEEDED_PACKAGES: Omit<PackageDbModel, "createdAt" | "updatedAt">[]
     featured: true,
     badge: "⭐ Most Popular",
     features: [
-      "Public Exporter Storefront",
+      "Public Storefront",
       "Product Catalog Listing",
       "Basic Buyer Inquiries",
       "Targeted Industry Leads",
@@ -115,7 +115,7 @@ const DEFAULT_SEEDED_PACKAGES: Omit<PackageDbModel, "createdAt" | "updatedAt">[]
     featured: false,
     badge: undefined,
     features: [
-      "Public Exporter Storefront",
+      "Public Storefront",
       "Product Catalog Listing",
       "Basic Buyer Inquiries",
       "Targeted Industry Leads",

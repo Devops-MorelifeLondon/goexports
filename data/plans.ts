@@ -185,7 +185,7 @@ export function getPlanMeta(pkgNameOrId?: string, customPkg?: any): PlanMeta {
     badge: badge || "🌱 Free Tier",
     features: features.length > 0 ? features : [
       "Free Profile Creation",
-      "Public Exporter Storefront",
+      "Public Storefront",
       "Product Catalog Listing",
       "24/7/365 Support",
     ],

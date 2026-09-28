@@ -325,6 +325,11 @@ export default function SellToUS({ initialPlans }: SellToUSProps) {
                             !displayPrice ||
                             displayPrice.toLowerCase().includes("talk") ||
                             displayPrice.toLowerCase().includes("contact");
+                          const isFree =
+                            !displayPrice ||
+                            displayPrice === "0" ||
+                            plan.id === "free" ||
+                            (plan.name || "").toLowerCase() === "free";
 
                           return (
                             <th
@@ -442,21 +447,48 @@ export default function SellToUS({ initialPlans }: SellToUSProps) {
                                 </div>
 
                                 {/* Header CTA Button */}
-                                <a
-                                  href="#contact-form"
-                                  className="w-full inline-flex items-center justify-center font-semibold text-xs h-8.5 py-1.5 px-2.5 rounded-lg transition-all duration-200 no-underline hover:opacity-90"
-                                  style={{
-                                    backgroundColor: isFeatured
-                                      ? "var(--brand-teal)"
-                                      : "var(--primary)",
-                                    color: "#ffffff",
-                                    boxShadow: isFeatured
-                                      ? "0 2px 10px rgba(26,58,58,0.22)"
-                                      : "none",
-                                  }}
-                                >
-                                  {!isLetTalk ? "Choose Plan" : "Contact Us"}
-                                </a>
+                                {isFree ? (
+                                  <a
+                                    href="/create-export-profile"
+                                    className="w-full inline-flex items-center justify-center font-semibold text-xs h-8.5 py-1.5 px-2.5 rounded-lg transition-all duration-200 no-underline hover:opacity-90"
+                                    style={{
+                                      backgroundColor: "var(--primary)",
+                                      color: "#ffffff",
+                                    }}
+                                  >
+                                    Start Free
+                                  </a>
+                                ) : !isLetTalk ? (
+                                  <a
+                                    href="https://pages.razorpay.com/goexports"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="w-full inline-flex items-center justify-center font-semibold text-xs h-8.5 py-1.5 px-2.5 rounded-lg transition-all duration-200 no-underline hover:opacity-90"
+                                    style={{
+                                      backgroundColor: isFeatured
+                                        ? "var(--brand-teal)"
+                                        : "var(--primary)",
+                                      color: "#ffffff",
+                                      boxShadow: isFeatured
+                                        ? "0 2px 10px rgba(26,58,58,0.22)"
+                                        : "none",
+                                    }}
+                                    title={`Pay & activate ${plan.name} plan via Razorpay`}
+                                  >
+                                    Pay & Activate ↗
+                                  </a>
+                                ) : (
+                                  <a
+                                    href="#contact-form"
+                                    className="w-full inline-flex items-center justify-center font-semibold text-xs h-8.5 py-1.5 px-2.5 rounded-lg transition-all duration-200 no-underline hover:opacity-90"
+                                    style={{
+                                      backgroundColor: "var(--primary)",
+                                      color: "#ffffff",
+                                    }}
+                                  >
+                                    Contact Us
+                                  </a>
+                                )}
                               </div>
                             </th>
                           );
@@ -653,6 +685,11 @@ export default function SellToUS({ initialPlans }: SellToUSProps) {
                             !displayPrice ||
                             displayPrice.toLowerCase().includes("talk") ||
                             displayPrice.toLowerCase().includes("contact");
+                          const isFree =
+                            !displayPrice ||
+                            displayPrice === "0" ||
+                            plan.id === "free" ||
+                            (plan.name || "").toLowerCase() === "free";
 
                           return (
                             <td
@@ -668,21 +705,48 @@ export default function SellToUS({ initialPlans }: SellToUSProps) {
                                     : "none",
                               }}
                             >
-                              <a
-                                href="#contact-form"
-                                className="w-full inline-flex items-center justify-center font-semibold text-xs h-8.5 py-1.5 px-2.5 rounded-lg transition-all duration-200 no-underline hover:opacity-90"
-                                style={{
-                                  backgroundColor: isFeatured
-                                    ? "var(--brand-teal)"
-                                    : "var(--primary)",
-                                  color: "#ffffff",
-                                  boxShadow: isFeatured
-                                    ? "0 2px 10px rgba(26,58,58,0.22)"
-                                    : "none",
-                                }}
-                              >
-                                {!isLetTalk ? `Get ${plan.name}` : "Contact Us"}
-                              </a>
+                              {isFree ? (
+                                <a
+                                  href="/create-export-profile"
+                                  className="w-full inline-flex items-center justify-center font-semibold text-xs h-8.5 py-1.5 px-2.5 rounded-lg transition-all duration-200 no-underline hover:opacity-90"
+                                  style={{
+                                    backgroundColor: "var(--primary)",
+                                    color: "#ffffff",
+                                  }}
+                                >
+                                  Join Free
+                                </a>
+                              ) : !isLetTalk ? (
+                                <a
+                                  href="https://pages.razorpay.com/goexports"
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="w-full inline-flex items-center justify-center font-semibold text-xs h-8.5 py-1.5 px-2.5 rounded-lg transition-all duration-200 no-underline hover:opacity-90"
+                                  style={{
+                                    backgroundColor: isFeatured
+                                      ? "var(--brand-teal)"
+                                      : "var(--primary)",
+                                    color: "#ffffff",
+                                    boxShadow: isFeatured
+                                      ? "0 2px 10px rgba(26,58,58,0.22)"
+                                      : "none",
+                                  }}
+                                  title={`Pay for ${plan.name} via Razorpay`}
+                                >
+                                  Pay Online ↗
+                                </a>
+                              ) : (
+                                <a
+                                  href="#contact-form"
+                                  className="w-full inline-flex items-center justify-center font-semibold text-xs h-8.5 py-1.5 px-2.5 rounded-lg transition-all duration-200 no-underline hover:opacity-90"
+                                  style={{
+                                    backgroundColor: "var(--primary)",
+                                    color: "#ffffff",
+                                  }}
+                                >
+                                  Contact Us
+                                </a>
+                              )}
                             </td>
                           );
                         })}

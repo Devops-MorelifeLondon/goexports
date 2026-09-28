@@ -92,6 +92,7 @@ const platformLinks = [
   { label: "Verified Member Benefits", href: "#benefits" },
   { label: "Global Presence & Hubs", href: "#presence" },
   { label: "Pricing & Membership", href: "#pricing" },
+  { label: "Pay Online (Razorpay)", href: "https://pages.razorpay.com/goexports" },
   { label: "Trade Inquiries & Support", href: "#contact-form" },
 ];
 
@@ -300,7 +301,17 @@ export default function Footer() {
               <ul className="space-y-2 list-none p-0 m-0">
                 {platformLinks.map((item) => (
                   <li key={item.label}>
-                    {item.href.startsWith("#") ? (
+                    {item.href.startsWith("http") ? (
+                      <a
+                        href={item.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[var(--muted)] hover:text-[var(--ink)] transition-colors no-underline flex items-center justify-between py-0.5 group font-medium"
+                      >
+                        <span className="group-hover:translate-x-0.5 transition-transform block">{item.label}</span>
+                        <ExternalLink className="w-3 h-3 text-amber-600 shrink-0 ml-1 opacity-70 group-hover:opacity-100" />
+                      </a>
+                    ) : item.href.startsWith("#") ? (
                       <a
                         href={item.href}
                         className="text-[var(--muted)] hover:text-[var(--ink)] transition-colors no-underline block py-0.5 group"

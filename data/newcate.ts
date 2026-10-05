@@ -5441,7 +5441,7 @@ export const industrySubcategories: Record<string, SubCategory[]> = {
         "Wood Crafts",
         "Wooden Handicraft",
         "Wooden Box",
-        "Wooden Temples",
+        "Wooden Carvings",
         "Wooden Articles"
       ]
     },
@@ -5872,16 +5872,6 @@ export const industrySubcategories: Record<string, SubCategory[]> = {
   ],
   "Handicrafts & Decoratives": [
     {
-      "name": "God & Goddess Statues",
-      "items": [
-        "God Idols",
-        "Indian God Statues",
-        "God Statues",
-        "Ganesh Statue",
-        "Marble God Statue"
-      ]
-    },
-    {
       "name": "Gifts, Crafts & Artifacts",
       "items": [
         "Decorative Items",
@@ -5937,7 +5927,7 @@ export const industrySubcategories: Record<string, SubCategory[]> = {
         "Wood Crafts",
         "Wooden Handicraft",
         "Wooden Box",
-        "Wooden Temples",
+        "Wooden Carvings",
         "Wooden Articles"
       ]
     },
@@ -6387,7 +6377,7 @@ export const industrySubcategories: Record<string, SubCategory[]> = {
       "name": "Silver Cutlery and Silver Products",
       "items": [
         "Silver Articles",
-        "Silver Plated Idols",
+        "Silver Plated Artifacts",
         "Silver Utensils",
         "Silver Plate",
         "Silver Handicrafts"

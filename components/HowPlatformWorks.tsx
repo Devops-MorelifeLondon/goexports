@@ -12,7 +12,7 @@ const steps = [
   {
     number: "02",
     title: "We find verified global buyers",
-    description: "Our AI-powered system matches you with pre-verified international buyers actively looking for your products.",
+    description: "Our platform matches you with pre-verified international buyers actively looking for your products.",
   },
   {
     number: "03",

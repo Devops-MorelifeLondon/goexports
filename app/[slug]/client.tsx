@@ -204,7 +204,7 @@ export default function IndustryClient({ industry, related, slug }: Props) {
               },
               {
                 number: "02",
-                title: "AI Buyer Matching",
+                title: "Verified Buyer Matching",
                 description: "Our platform matches your offerings with pre-verified international importers actively sourcing.",
               },
               {

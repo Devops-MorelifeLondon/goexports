@@ -16,11 +16,11 @@ export default function WebinarStrip() {
         target="_blank"
         rel="noopener noreferrer"
         className="flex items-center justify-center min-h-[34px] sm:min-h-[36px] px-3 sm:px-6 py-1 text-[#0a0a0a] no-underline hover:opacity-90 transition-opacity group text-center"
-        title="Join Webinar: How to Find International Buyers - 12 Oct, 5 PM - 6 PM IST"
+        title="Register for Webinar: How to Find International Buyers - 12 Oct, 5 PM - 6 PM IST"
       >
         <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-0.5 text-[11.5px] sm:text-[13px] font-bold tracking-tight">
           <span className="group-hover:underline">
-            Join Webinar: How to Find International Buyers
+            Register for Webinar: How to Find International Buyers
           </span>
           <span className="text-black/50 hidden xs:inline">•</span>
           <span className="font-semibold text-black/90">

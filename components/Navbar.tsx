@@ -34,6 +34,8 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
+import WebinarStrip from "@/components/WebinarStrip";
+
 const navItems = [
   { label: "How It Works", href: "#how-it-works", icon: Sparkles },
   { label: "Industries", href: "#industries", icon: Boxes },
@@ -178,8 +180,10 @@ export default function Navbar() {
             ? "bg-[var(--canvas)]/92 backdrop-blur-md shadow-[0_4px_24px_rgba(10,10,10,0.06)] border-b border-[var(--hairline)]"
             : "bg-[var(--canvas)] border-b border-[var(--hairline)]/50"
         }`}
-        style={{ minHeight: "64px" }}
       >
+        {/* Temporary Webinar Announcement Strip */}
+        <WebinarStrip />
+
         <div className="w-full max-w-[1440px] mx-auto flex items-center justify-between h-[64px] sm:h-[68px] px-3 sm:px-6 lg:px-8 gap-2 lg:gap-3 xl:gap-4">
           {/* Left: Brand Logo */}
           <div className="flex items-center shrink-0">
@@ -546,7 +550,7 @@ export default function Navbar() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="fixed inset-0 top-[64px] sm:top-[68px] bg-black/40 backdrop-blur-xs z-40 lg:hidden"
+              className="fixed inset-0 top-[100px] sm:top-[106px] bg-black/40 backdrop-blur-xs z-40 lg:hidden"
               onClick={() => setMobileMenu(false)}
               aria-hidden="true"
             />
@@ -557,7 +561,7 @@ export default function Navbar() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -12 }}
               transition={{ duration: 0.22, ease: "easeOut" }}
-              className="fixed top-[64px] sm:top-[68px] left-0 right-0 z-50 bg-[var(--canvas)] border-b border-[var(--hairline)] shadow-[0_20px_40px_rgba(10,10,10,0.15)] max-h-[calc(100vh-64px)] sm:max-h-[calc(100vh-68px)] overflow-y-auto overscroll-contain lg:hidden"
+              className="fixed top-[100px] sm:top-[106px] left-0 right-0 z-50 bg-[var(--canvas)] border-b border-[var(--hairline)] shadow-[0_20px_40px_rgba(10,10,10,0.15)] max-h-[calc(100vh-100px)] sm:max-h-[calc(100vh-106px)] overflow-y-auto overscroll-contain lg:hidden"
             >
               <div className="section-wrap px-4 py-5 flex flex-col gap-2">
                 {/* Logged in Exporter Profile Card in Mobile Drawer */}

@@ -15,6 +15,7 @@ export interface PackageDbModel {
   badge?: string;
   features: string[];
   isActive: boolean;
+  isCustom?: boolean;
   sortOrder: number;
   createdAt: string;
   updatedAt: string;
@@ -178,16 +179,24 @@ export async function seedPackages(): Promise<{ success: boolean; count: number;
 export async function getAllPackages(): Promise<PackageDbModel[]> {
   try {
     await connectToDatabase();
-    let docs = await PackageModel.find({ isActive: { $ne: false } })
+    // Exclude inactive and custom/private plans from public listing
+    const publicQuery = {
+      isActive: { $ne: false },
+      isCustom: { $ne: true },
+    };
+    let docs = await PackageModel.find(publicQuery)
       .sort({ sortOrder: 1 })
       .lean();
 
     if (!docs || docs.length === 0) {
-      // Auto-seed if database packages collection is completely empty
-      await seedPackages();
-      docs = await PackageModel.find({ isActive: { $ne: false } })
-        .sort({ sortOrder: 1 })
-        .lean();
+      // Auto-seed only if database packages collection is completely empty
+      const totalCount = await PackageModel.countDocuments();
+      if (totalCount === 0) {
+        await seedPackages();
+        docs = await PackageModel.find(publicQuery)
+          .sort({ sortOrder: 1 })
+          .lean();
+      }
     }
 
     if (docs && docs.length > 0) {
@@ -206,6 +215,7 @@ export async function getAllPackages(): Promise<PackageDbModel[]> {
         badge: doc.badge,
         features: Array.isArray(doc.features) ? doc.features : [],
         isActive: doc.isActive !== false,
+        isCustom: Boolean(doc.isCustom),
         sortOrder: doc.sortOrder || 1,
         createdAt: doc.createdAt || new Date().toISOString(),
         updatedAt: doc.updatedAt || new Date().toISOString(),
@@ -247,6 +257,7 @@ export async function getPackageById(idOrSlug: string): Promise<PackageDbModel |
         badge: doc.badge,
         features: Array.isArray(doc.features) ? doc.features : [],
         isActive: doc.isActive !== false,
+        isCustom: Boolean(doc.isCustom),
         sortOrder: doc.sortOrder || 1,
         createdAt: doc.createdAt || new Date().toISOString(),
         updatedAt: doc.updatedAt || new Date().toISOString(),

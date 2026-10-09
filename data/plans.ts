@@ -40,7 +40,7 @@ export interface PlanMeta {
  * Dynamically extract and style plan metadata from either a database PackageDbModel object
  * or a package name/id string.
  */
-export function getPlanMeta(pkgNameOrId?: string, customPkg?: any): PlanMeta {
+export function getPlanMeta(pkgNameOrId?: string, customPkg?: any, defaultCurrency?: string): PlanMeta {
   const raw = (customPkg?.name || pkgNameOrId || "Growth").trim();
   const lower = raw.toLowerCase();
 
@@ -48,12 +48,44 @@ export function getPlanMeta(pkgNameOrId?: string, customPkg?: any): PlanMeta {
   const priceNum = typeof customPkg?.price === "number" ? customPkg.price : parseFloat(String(customPkg?.price || "0")) || 0;
   const leadsVal = customPkg?.leads !== undefined ? String(customPkg.leads) : "";
   const leadsNum = typeof customPkg?.leads === "number" ? customPkg.leads : parseInt(String(customPkg?.leads || "0"), 10) || 0;
-  const currency = customPkg?.currency || "£";
+  const currency = customPkg?.currency || defaultCurrency || "£";
   const period = customPkg?.period || "/ month";
   const features = Array.isArray(customPkg?.features) ? customPkg.features : [];
   const tagline = customPkg?.tagline || "";
   const badge = customPkg?.badge;
   const featured = Boolean(customPkg?.featured);
+
+  if (customPkg?.isCustom || lower.includes("custom")) {
+    return {
+      id: customPkg?.id || "custom",
+      name: customPkg?.name || "Custom Plan",
+      displayName: raw || "Custom Plan",
+      tagline: tagline || "Bespoke export subscription tier",
+      price: priceVal || "0",
+      priceNumber: priceNum || 0,
+      currency,
+      period,
+      priceDisplay: `${currency}${priceVal || "0"}${period === "/ month" ? "/mo" : period}`,
+      leads: leadsVal || "Custom",
+      leadsCount: leadsNum || 0,
+      leadsLabel: customPkg?.leadsLabel || "Custom Qualified Leads / Month",
+      featured,
+      badge: badge || "⚡ Custom Tier",
+      features: features.length > 0 ? features : [
+        "Tailored Target Industry Leads",
+        "Direct International Buyer Matching",
+        "Dedicated Account Management",
+        "Custom Lead Delivery & Quota",
+        "24/7 Priority Support",
+      ],
+      type: "custom",
+      badgeBg: "bg-emerald-50 text-emerald-800 border-emerald-300",
+      dotBg: "bg-emerald-500",
+      pillBg: "bg-emerald-100 text-emerald-900 border-emerald-300",
+      borderColor: "border-emerald-400",
+      accentColor: "#059669",
+    };
+  }
 
   if (lower.includes("enterprise") || lower === "999" || priceNum >= 900) {
     return {

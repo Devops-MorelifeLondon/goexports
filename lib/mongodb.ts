@@ -116,6 +116,7 @@ const PackageSchema = new mongoose.Schema(
     badge: { type: String },
     features: { type: [String], default: [] },
     isActive: { type: Boolean, default: true },
+    isCustom: { type: Boolean, default: false },
     sortOrder: { type: Number, default: 1 },
     createdAt: { type: String, default: () => new Date().toISOString() },
     updatedAt: { type: String, default: () => new Date().toISOString() },

@@ -30,7 +30,8 @@ import {
   Flame,
   Layers,
   BookOpen,
-  Store
+  Store,
+  Download
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -235,7 +236,7 @@ export default function Navbar() {
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 8, scale: 0.98 }}
                       transition={{ duration: 0.15 }}
-                      className="absolute left-0 top-[40px] w-72 rounded-2xl border border-[var(--hairline)] bg-[var(--surface-card)] shadow-[0_16px_40px_rgba(10,10,10,0.14)] p-2.5 z-50 space-y-2"
+                      className="absolute left-0 top-[40px] w-80 sm:w-[350px] rounded-2xl border border-[var(--hairline)] bg-[var(--surface-card)] shadow-[0_16px_40px_rgba(10,10,10,0.14)] p-2.5 z-50 space-y-2"
                     >
                       <div className="px-2 pt-1 pb-1 border-b border-[var(--hairline)] flex items-center justify-between">
                         <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--muted)]">Source Direct From India</span>
@@ -317,6 +318,36 @@ export default function Navbar() {
                         >
                           🌿 Cardamom
                         </Link>
+                      </div>
+
+                      {/* Download Handbook Option */}
+                      <div className="pt-1.5 border-t border-[var(--hairline)]">
+                        <a
+                          href="/EcommExportHandbokMSME_E.pdf"
+                          download="EcommExportHandbokMSME_E.pdf"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={() => setImportersDropdownOpen(false)}
+                          className="flex items-center gap-2.5 p-2 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/25 no-underline transition-all group"
+                          title="Download E-Commerce Exports Handbook for MSMEs"
+                        >
+                          <div className="w-8 h-8 rounded-lg bg-amber-500 text-white flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
+                            <Download className="w-4 h-4" />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-center justify-between gap-1">
+                              <span className="text-[11.5px] font-bold text-[var(--ink)] truncate">
+                                Download E-Commerce Exports Handbook for MSMEs
+                              </span>
+                              <span className="text-[9px] font-extrabold uppercase px-1.5 py-0.2 rounded bg-amber-200 text-amber-900 shrink-0">
+                                PDF
+                              </span>
+                            </div>
+                            <span className="text-[10px] text-[var(--muted)] block truncate">
+                              Free Official MSME & DGFT Export Handbook
+                            </span>
+                          </div>
+                        </a>
                       </div>
 
                       <div className="pt-1 border-t border-[var(--hairline)] flex items-center justify-between px-1">
@@ -460,6 +491,18 @@ export default function Navbar() {
                         <Globe className="w-4 h-4 text-emerald-600 shrink-0" />
                         <span>Public Storefront</span>
                       </Link>
+
+                      <a
+                        href="/EcommExportHandbokMSME_E.pdf"
+                        download="EcommExportHandbokMSME_E.pdf"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={() => setUserDropdownOpen(false)}
+                        className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-[var(--ink)] hover:bg-[var(--canvas)] no-underline transition-colors"
+                      >
+                        <Download className="w-4 h-4 text-amber-600 shrink-0" />
+                        <span className="truncate">Download E-Commerce Exports Handbook for MSMEs</span>
+                      </a>
 
                       <div className="border-t border-[var(--hairline)] my-1" />
 
@@ -664,11 +707,41 @@ export default function Navbar() {
                       </div>
                     </Link>
                   </div>
+
+                  {/* Download Handbook Option in Mobile Drawer */}
+                  <div className="pt-2 border-t border-[var(--hairline)]">
+                    <a
+                      href="/EcommExportHandbokMSME_E.pdf"
+                      download="EcommExportHandbokMSME_E.pdf"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => setMobileMenu(false)}
+                      className="flex items-center gap-2.5 p-2 rounded-xl bg-[var(--surface-card)] border border-[var(--hairline)] no-underline transition-all group"
+                      title="Download E-Commerce Exports Handbook for MSMEs"
+                    >
+                      <div className="w-7 h-7 rounded-lg bg-amber-500 text-white flex items-center justify-center shrink-0 shadow-2xs">
+                        <Download className="w-3.5 h-3.5" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center justify-between gap-1">
+                          <span className="text-[11.5px] font-bold text-[var(--ink)] truncate">
+                            Download E-Commerce Exports Handbook for MSMEs
+                          </span>
+                          <span className="text-[9px] font-extrabold uppercase px-1.5 py-0.2 rounded bg-amber-200 text-amber-900 shrink-0">
+                            PDF
+                          </span>
+                        </div>
+                        <span className="text-[10px] text-[var(--muted)] block">
+                          Free Official MSME & DGFT Export Handbook
+                        </span>
+                      </div>
+                    </a>
+                  </div>
                 </div>
 
                 {/* Section Navigation Links */}
                 <div className="flex flex-col gap-0.5 py-1">
-                  {navItems.map((item) => {
+                  {navItems.map((item: any) => {
                     const Icon = item.icon;
 
                     if (item.isExternal) {

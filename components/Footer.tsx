@@ -10,7 +10,8 @@ import {
   Mail, 
   Globe2, 
   ArrowRight,
-  ExternalLink
+  ExternalLink,
+  Download
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -85,6 +86,12 @@ const exportIndustries = [
 
 const platformLinks = [
   { label: "Trade Intelligence & Blog", href: "/blog" },
+  {
+    label: "Download E-Commerce Exports Handbook for MSMEs",
+    href: "/EcommExportHandbokMSME_E.pdf",
+    isDownload: true,
+    badge: "Free PDF",
+  },
   { label: "Create Business Profile", href: "/create-export-profile" },
   { label: "Sell With Us (Partner Program)", href: "/sell-with-us" },
   { label: "Business Portal Login", href: "/exporter/login" },
@@ -191,6 +198,21 @@ export default function Footer() {
             </div>
 
             <div className="flex flex-wrap items-center gap-4 sm:gap-6">
+              <a
+                href="/EcommExportHandbokMSME_E.pdf"
+                download="EcommExportHandbokMSME_E.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[var(--surface-card)] border border-[var(--hairline)] text-xs text-[var(--ink)] hover:border-amber-500/40 hover:bg-amber-50/30 transition-all shadow-2xs group no-underline"
+                title="Download E-Commerce Exports Handbook for MSMEs (PDF)"
+              >
+                <Download className="w-4 h-4 text-amber-600 shrink-0 group-hover:scale-110 transition-transform" />
+                <span className="font-semibold">Download E-Commerce Exports Handbook for MSMEs</span>
+                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-700 border border-amber-500/20">
+                  PDF
+                </span>
+              </a>
+
               <div className="flex items-center gap-2.5 px-3.5 py-2 rounded-xl bg-[var(--surface-card)] border border-[var(--hairline)] text-xs text-[var(--ink)] shadow-2xs">
                 <Mail className="w-4 h-4 text-[var(--brand-ochre)] shrink-0" />
                 <span>Trade Desk:</span>
@@ -299,9 +321,27 @@ export default function Footer() {
                 <span>Platform Links</span>
               </div>
               <ul className="space-y-2 list-none p-0 m-0">
-                {platformLinks.map((item) => (
+                {platformLinks.map((item: any) => (
                   <li key={item.label}>
-                    {item.href.startsWith("http") ? (
+                    {item.isDownload ? (
+                      <a
+                        href={item.href}
+                        download="EcommExportHandbokMSME_E.pdf"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[var(--muted)] hover:text-[var(--ink)] transition-colors no-underline flex items-center justify-between py-0.5 group font-medium"
+                      >
+                        <span className="group-hover:translate-x-0.5 transition-transform flex items-center gap-1.5">
+                          <Download className="w-3 h-3 text-amber-600 shrink-0" />
+                          <span>{item.label}</span>
+                        </span>
+                        {item.badge && (
+                          <span className="text-[10px] font-bold px-1.5 py-0.2 rounded bg-amber-500/10 text-amber-700 border border-amber-500/20">
+                            {item.badge}
+                          </span>
+                        )}
+                      </a>
+                    ) : item.href.startsWith("http") ? (
                       <a
                         href={item.href}
                         target="_blank"

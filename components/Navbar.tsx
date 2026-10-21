@@ -35,7 +35,6 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
-import WebinarStrip from "@/components/WebinarStrip";
 
 const navItems = [
   { label: "How It Works", href: "#how-it-works", icon: Sparkles },
@@ -181,8 +180,6 @@ export default function Navbar() {
             : "bg-[var(--canvas)] border-b border-[var(--hairline)]/50"
         }`}
       >
-        {/* Temporary Webinar Announcement Strip */}
-        <WebinarStrip />
 
         <div className="w-full max-w-[1440px] mx-auto flex items-center justify-between h-[64px] sm:h-[68px] px-3 sm:px-6 lg:px-8 gap-2 lg:gap-3 xl:gap-4">
           {/* Left: Brand Logo */}

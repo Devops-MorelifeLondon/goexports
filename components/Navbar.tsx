@@ -39,7 +39,8 @@ import { toast } from "sonner";
 const navItems = [
   { label: "How It Works", href: "#how-it-works", icon: Sparkles },
   { label: "Industries", href: "#industries", icon: Boxes },
-  { label: "Pricing", href: "#pricing", icon: CreditCard },
+  { label: "Export Plans", href: "#pricing", icon: CreditCard },
+  { label: "Domestic Plans", href: "#domestic-plans", icon: Building2 },
   { label: "Presence", href: "#presence", icon: MapPin, xlOnly: true },
 ];
 

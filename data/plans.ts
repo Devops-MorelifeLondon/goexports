@@ -10,6 +10,7 @@ export interface BuyerPlan {
   featured: boolean;
   badge?: string;
   features: string[];
+  planType?: "export" | "domestic";
 }
 
 export interface PlanMeta {
@@ -28,7 +29,8 @@ export interface PlanMeta {
   featured: boolean;
   badge?: string;
   features: string[];
-  type: "free" | "starter" | "growth" | "enterprise" | "custom";
+  type: "free" | "starter" | "growth" | "enterprise" | "domestic-starter" | "domestic-growth" | "domestic-enterprise" | "domestic" | "custom";
+  planType?: "export" | "domestic";
   badgeBg: string;
   dotBg: string;
   pillBg: string;
@@ -45,10 +47,10 @@ export function getPlanMeta(pkgNameOrId?: string, customPkg?: any, defaultCurren
   const lower = raw.toLowerCase();
 
   const priceVal = customPkg?.priceDisplay ?? (customPkg?.price !== undefined ? String(customPkg.price) : "");
-  const priceNum = typeof customPkg?.price === "number" ? customPkg.price : parseFloat(String(customPkg?.price || "0")) || 0;
+  const priceNum = typeof customPkg?.price === "number" ? customPkg.price : parseFloat(String(customPkg?.price || "0").replace(/,/g, "")) || 0;
   const leadsVal = customPkg?.leads !== undefined ? String(customPkg.leads) : "";
   const leadsNum = typeof customPkg?.leads === "number" ? customPkg.leads : parseInt(String(customPkg?.leads || "0"), 10) || 0;
-  const currency = customPkg?.currency || defaultCurrency || "£";
+  const currency = customPkg?.currency || defaultCurrency || (lower.includes("domestic") ? "₹" : "£");
   const period = customPkg?.period || "/ month";
   const features = Array.isArray(customPkg?.features) ? customPkg.features : [];
   const tagline = customPkg?.tagline || "";
@@ -79,6 +81,7 @@ export function getPlanMeta(pkgNameOrId?: string, customPkg?: any, defaultCurren
         "24/7 Priority Support",
       ],
       type: "custom",
+      planType: customPkg?.planType || "export",
       badgeBg: "bg-emerald-50 text-emerald-800 border-emerald-300",
       dotBg: "bg-emerald-500",
       pillBg: "bg-emerald-100 text-emerald-900 border-emerald-300",
@@ -87,7 +90,110 @@ export function getPlanMeta(pkgNameOrId?: string, customPkg?: any, defaultCurren
     };
   }
 
-  if (lower.includes("enterprise") || lower === "999" || priceNum >= 900) {
+  // ── DOMESTIC PLANS CHECK (₹24,999 - 50 leads, ₹49,999 - 100 leads, ₹99,999 - 200 leads) ──
+  const isDomestic =
+    customPkg?.planType === "domestic" ||
+    lower.includes("domestic") ||
+    lower.includes("24999") ||
+    lower.includes("49999") ||
+    lower.includes("99999") ||
+    (currency === "₹" && (priceNum === 24999 || priceNum === 49999 || priceNum === 99999 || priceNum >= 10000));
+
+  if (isDomestic) {
+    if (lower.includes("enterprise") || lower.includes("99999") || priceNum >= 75000 || lower.includes("200")) {
+      return {
+        id: customPkg?.id || "domestic-enterprise",
+        name: customPkg?.name || "Domestic Enterprise",
+        displayName: !["domestic-enterprise", "domestic-growth", "domestic-starter"].includes(lower) ? raw : "Domestic Enterprise Tier",
+        tagline: tagline || "200 Leads",
+        price: priceVal || "99,999",
+        priceNumber: priceNum || 99999,
+        currency: "₹",
+        period,
+        priceDisplay: `₹${priceVal || "99,999"}${period === "/ month" ? "/mo" : period}`,
+        leads: leadsVal || "200",
+        leadsCount: leadsNum || 200,
+        leadsLabel: customPkg?.leadsLabel || "Qualified Domestic Leads / Month",
+        featured,
+        badge: badge || "🚀 Enterprise Volume",
+        features: features.length > 0 ? features : [
+          "200 Leads",
+        ],
+        type: "domestic-enterprise",
+        planType: "domestic",
+        badgeBg: "bg-indigo-50 text-indigo-900 border-indigo-200",
+        dotBg: "bg-indigo-600",
+        pillBg: "bg-indigo-100 text-indigo-800 border-indigo-200",
+        borderColor: "border-indigo-400",
+        accentColor: "#4f46e5",
+      };
+    }
+
+    if (
+      lower.includes("growth") ||
+      lower.includes("49999") ||
+      (priceNum >= 35000 && priceNum < 75000) ||
+      lower.includes("100")
+    ) {
+      return {
+        id: customPkg?.id || "domestic-growth",
+        name: customPkg?.name || "Domestic Growth",
+        displayName: !["domestic-enterprise", "domestic-growth", "domestic-starter"].includes(lower) ? raw : "Domestic Growth Tier",
+        tagline: tagline || "100 Leads",
+        price: priceVal || "49,999",
+        priceNumber: priceNum || 49999,
+        currency: "₹",
+        period,
+        priceDisplay: `₹${priceVal || "49,999"}${period === "/ month" ? "/mo" : period}`,
+        leads: leadsVal || "100",
+        leadsCount: leadsNum || 100,
+        leadsLabel: customPkg?.leadsLabel || "Qualified Domestic Leads / Month",
+        featured: customPkg?.featured !== undefined ? featured : true,
+        badge: badge || "⭐ Most Popular",
+        features: features.length > 0 ? features : [
+          "100 Leads",
+        ],
+        type: "domestic-growth",
+        planType: "domestic",
+        badgeBg: "bg-amber-50 text-amber-900 border-amber-300",
+        dotBg: "bg-amber-500",
+        pillBg: "bg-amber-100 text-amber-900 border-amber-300",
+        borderColor: "border-amber-400",
+        accentColor: "#d97706",
+      };
+    }
+
+    // Default Domestic Plan: Domestic Starter (₹24,999 - 50 leads)
+    return {
+      id: customPkg?.id || "domestic-starter",
+      name: customPkg?.name || "Domestic Starter",
+      displayName: !["domestic-enterprise", "domestic-growth", "domestic-starter"].includes(lower) ? raw : "Domestic Starter Tier",
+      tagline: tagline || "50 Leads",
+      price: priceVal || "24,999",
+      priceNumber: priceNum || 24999,
+      currency: "₹",
+      period,
+      priceDisplay: `₹${priceVal || "24,999"}${period === "/ month" ? "/mo" : period}`,
+      leads: leadsVal || "50",
+      leadsCount: leadsNum || 50,
+      leadsLabel: customPkg?.leadsLabel || "Qualified Domestic Leads / Month",
+      featured,
+      badge: badge || "📦 Domestic Starter",
+      features: features.length > 0 ? features : [
+        "50 Leads",
+      ],
+      type: "domestic-starter",
+      planType: "domestic",
+      badgeBg: "bg-emerald-50 text-emerald-800 border-emerald-300",
+      dotBg: "bg-emerald-500",
+      pillBg: "bg-emerald-100 text-emerald-900 border-emerald-300",
+      borderColor: "border-emerald-400",
+      accentColor: "#059669",
+    };
+  }
+
+  // ── INTERNATIONAL EXPORT PLANS ──
+  if (lower.includes("enterprise") || lower === "999" || (priceNum >= 900 && priceNum < 10000)) {
     return {
       id: customPkg?.id || "enterprise",
       name: customPkg?.name || "Enterprise",
@@ -114,6 +220,7 @@ export function getPlanMeta(pkgNameOrId?: string, customPkg?: any, defaultCurren
         "Weekly / Monthly Call",
       ],
       type: "enterprise",
+      planType: "export",
       badgeBg: "bg-purple-50 text-purple-900 border-purple-200",
       dotBg: "bg-purple-500",
       pillBg: "bg-purple-100 text-purple-800 border-purple-200",
@@ -156,6 +263,7 @@ export function getPlanMeta(pkgNameOrId?: string, customPkg?: any, defaultCurren
         "Weekly / Monthly Call",
       ],
       type: "growth",
+      planType: "export",
       badgeBg: "bg-amber-50 text-amber-900 border-amber-300",
       dotBg: "bg-amber-500",
       pillBg: "bg-amber-100 text-amber-900 border-amber-300",
@@ -191,6 +299,7 @@ export function getPlanMeta(pkgNameOrId?: string, customPkg?: any, defaultCurren
         "Weekly / Monthly Call",
       ],
       type: "starter",
+      planType: "export",
       badgeBg: "bg-blue-50 text-blue-800 border-blue-200",
       dotBg: "bg-blue-500",
       pillBg: "bg-blue-100 text-blue-800 border-blue-200",
@@ -222,6 +331,7 @@ export function getPlanMeta(pkgNameOrId?: string, customPkg?: any, defaultCurren
       "24/7/365 Support",
     ],
     type: "free",
+    planType: "export",
     badgeBg: "bg-slate-100 text-slate-700 border-slate-300",
     dotBg: "bg-slate-400",
     pillBg: "bg-slate-100 text-slate-800 border-slate-200",

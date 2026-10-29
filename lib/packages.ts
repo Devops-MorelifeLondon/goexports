@@ -1,7 +1,7 @@
 import { PackageModel, connectToDatabase } from "./mongodb";
 
 export interface PackageDbModel {
-  id: string; // "free" | "starter" | "growth" | "enterprise"
+  id: string; // "free" | "starter" | "growth" | "enterprise" | "domestic-starter" | "domestic-growth" | "domestic-enterprise"
   slug: string;
   name: string;
   tagline: string;
@@ -16,6 +16,7 @@ export interface PackageDbModel {
   features: string[];
   isActive: boolean;
   isCustom?: boolean;
+  planType?: "export" | "domestic";
   sortOrder: number;
   createdAt: string;
   updatedAt: string;
@@ -42,6 +43,7 @@ const DEFAULT_SEEDED_PACKAGES: Omit<PackageDbModel, "createdAt" | "updatedAt">[]
       "24/7/365 Support",
     ],
     isActive: true,
+    planType: "export",
     sortOrder: 1,
   },
   {
@@ -70,6 +72,7 @@ const DEFAULT_SEEDED_PACKAGES: Omit<PackageDbModel, "createdAt" | "updatedAt">[]
       "24/7/365 Support",
     ],
     isActive: true,
+    planType: "export",
     sortOrder: 2,
   },
   {
@@ -100,6 +103,7 @@ const DEFAULT_SEEDED_PACKAGES: Omit<PackageDbModel, "createdAt" | "updatedAt">[]
       "24/7/365 Support",
     ],
     isActive: true,
+    planType: "export",
     sortOrder: 3,
   },
   {
@@ -132,7 +136,68 @@ const DEFAULT_SEEDED_PACKAGES: Omit<PackageDbModel, "createdAt" | "updatedAt">[]
       "24/7/365 Priority Support",
     ],
     isActive: true,
+    planType: "export",
     sortOrder: 4,
+  },
+  {
+    id: "domestic-starter",
+    slug: "domestic-starter",
+    name: "Domestic Starter",
+    tagline: "50 Leads",
+    price: 24999,
+    priceDisplay: "24,999",
+    currency: "₹",
+    period: "/ month",
+    leads: 50,
+    leadsLabel: "Qualified Domestic Leads / Month",
+    featured: false,
+    badge: "📦 Domestic Starter",
+    features: [
+      "50 Leads",
+    ],
+    isActive: true,
+    planType: "domestic",
+    sortOrder: 5,
+  },
+  {
+    id: "domestic-growth",
+    slug: "domestic-growth",
+    name: "Domestic Growth",
+    tagline: "100 Leads",
+    price: 49999,
+    priceDisplay: "49,999",
+    currency: "₹",
+    period: "/ month",
+    leads: 100,
+    leadsLabel: "Qualified Domestic Leads / Month",
+    featured: true,
+    badge: "⭐ Most Popular",
+    features: [
+      "100 Leads",
+    ],
+    isActive: true,
+    planType: "domestic",
+    sortOrder: 6,
+  },
+  {
+    id: "domestic-enterprise",
+    slug: "domestic-enterprise",
+    name: "Domestic Enterprise",
+    tagline: "200 Leads",
+    price: 99999,
+    priceDisplay: "99,999",
+    currency: "₹",
+    period: "/ month",
+    leads: 200,
+    leadsLabel: "Qualified Domestic Leads / Month",
+    featured: false,
+    badge: "🚀 Enterprise Volume",
+    features: [
+      "200 Leads",
+    ],
+    isActive: true,
+    planType: "domestic",
+    sortOrder: 7,
   },
 ];
 
@@ -188,15 +253,31 @@ export async function getAllPackages(): Promise<PackageDbModel[]> {
       .sort({ sortOrder: 1 })
       .lean();
 
-    if (!docs || docs.length === 0) {
-      // Auto-seed only if database packages collection is completely empty
-      const totalCount = await PackageModel.countDocuments();
-      if (totalCount === 0) {
-        await seedPackages();
-        docs = await PackageModel.find(publicQuery)
-          .sort({ sortOrder: 1 })
-          .lean();
+    // Check if any default seeded packages (e.g. domestic plans) are missing from DB
+    const missingSeeded = DEFAULT_SEEDED_PACKAGES.filter(
+      (sp) => !docs.some((d: any) => d.id === sp.id || d.slug === sp.slug)
+    );
+
+    if (missingSeeded.length > 0) {
+      const now = new Date().toISOString();
+      for (const pkg of missingSeeded) {
+        await PackageModel.updateOne(
+          { id: pkg.id },
+          {
+            $set: {
+              ...pkg,
+              updatedAt: now,
+            },
+            $setOnInsert: {
+              createdAt: now,
+            },
+          },
+          { upsert: true }
+        );
       }
+      docs = await PackageModel.find(publicQuery)
+        .sort({ sortOrder: 1 })
+        .lean();
     }
 
     if (docs && docs.length > 0) {
@@ -207,15 +288,16 @@ export async function getAllPackages(): Promise<PackageDbModel[]> {
         tagline: doc.tagline || "",
         price: typeof doc.price === "number" ? doc.price : parseFloat(doc.price) || 0,
         priceDisplay: doc.priceDisplay || String(doc.price || "0"),
-        currency: doc.currency || "£",
+        currency: doc.currency || (doc.name?.toLowerCase().includes("domestic") ? "₹" : "£"),
         period: doc.period || "/ month",
         leads: typeof doc.leads === "number" ? doc.leads : parseInt(doc.leads, 10) || 0,
-        leadsLabel: doc.leadsLabel || "Qualified Leads / Month",
+        leadsLabel: doc.leadsLabel || (doc.name?.toLowerCase().includes("domestic") ? "Qualified Domestic Leads / Month" : "Qualified Leads / Month"),
         featured: Boolean(doc.featured),
         badge: doc.badge,
         features: Array.isArray(doc.features) ? doc.features : [],
         isActive: doc.isActive !== false,
         isCustom: Boolean(doc.isCustom),
+        planType: doc.planType || (doc.currency === "₹" || doc.name?.toLowerCase().includes("domestic") ? "domestic" : "export"),
         sortOrder: doc.sortOrder || 1,
         createdAt: doc.createdAt || new Date().toISOString(),
         updatedAt: doc.updatedAt || new Date().toISOString(),
@@ -258,6 +340,7 @@ export async function getPackageById(idOrSlug: string): Promise<PackageDbModel |
         features: Array.isArray(doc.features) ? doc.features : [],
         isActive: doc.isActive !== false,
         isCustom: Boolean(doc.isCustom),
+        planType: doc.planType || (doc.currency === "₹" || doc.name?.toLowerCase().includes("domestic") ? "domestic" : "export"),
         sortOrder: doc.sortOrder || 1,
         createdAt: doc.createdAt || new Date().toISOString(),
         updatedAt: doc.updatedAt || new Date().toISOString(),

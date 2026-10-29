@@ -212,6 +212,10 @@ export default function ExporterProfileDashboard({
   const [inquiries, setInquiries] = useState<BuyerInquiry[]>(initialInquiries);
   const [availablePlans, setAvailablePlans] = useState<PackageDbModel[]>(initialPackages || []);
   const [loadingPlans, setLoadingPlans] = useState<boolean>(!initialPackages || initialPackages.length === 0);
+  const [dashboardPlanTab, setDashboardPlanTab] = useState<"export" | "domestic">(() => {
+    const cur = (initialProfile?.selectedPackage || "").toLowerCase();
+    return cur.includes("domestic") || cur.includes("24999") || cur.includes("49999") || cur.includes("99999") ? "domestic" : "export";
+  });
 
   // Client-side fallback fetch to ensure latest database packages from MongoDB
   useEffect(() => {
@@ -1852,115 +1856,158 @@ export default function ExporterProfileDashboard({
               </div>
             </div>
 
-            {/* 4-Tier Plan Grid (Readonly) */}
+            {/* Plan Grid with Export & Domestic Tabs (Readonly) */}
             <div className="space-y-4">
-              <div>
-                <h3 className="text-xl font-bold text-[var(--ink)]">
-                  Available Membership Plans Reference
-                </h3>
-                <p className="text-xs text-[var(--muted)] m-0 mt-0.5">
-                  Overview of all platform tiers and their respective monthly lead quotas and privileges.
-                </p>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <h3 className="text-xl font-bold text-[var(--ink)]">
+                    Available Membership Plans Reference
+                  </h3>
+                  <p className="text-xs text-[var(--muted)] m-0 mt-0.5">
+                    Overview of all platform tiers and their respective monthly lead quotas and privileges.
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-[var(--surface-soft)] border border-[var(--hairline)] max-w-sm">
+                  <button
+                    type="button"
+                    onClick={() => setDashboardPlanTab("export")}
+                    className={`flex-1 py-2 px-3.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                      dashboardPlanTab === "export"
+                        ? "bg-[var(--ink)] text-white shadow-xs"
+                        : "text-[var(--muted)] hover:text-[var(--ink)]"
+                    }`}
+                  >
+                    <Globe className="w-3.5 h-3.5 text-sky-400" />
+                    <span>🌍 Export Plans (£)</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setDashboardPlanTab("domestic")}
+                    className={`flex-1 py-2 px-3.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                      dashboardPlanTab === "domestic"
+                        ? "bg-[var(--ink)] text-white shadow-xs"
+                        : "text-[var(--muted)] hover:text-[var(--ink)]"
+                    }`}
+                  >
+                    <Building2 className="w-3.5 h-3.5 text-amber-400" />
+                    <span>🇮🇳 Domestic Plans (₹)</span>
+                  </button>
+                </div>
               </div>
 
               {/* Database-Driven Plan Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {availablePlans.map((plan) => {
-                  const pMeta = getPlanMeta(plan.name, plan);
-                  const isCurrent =
-                    (profile.selectedPackage || "growth").toLowerCase().includes(plan.id.toLowerCase()) ||
-                    (profile.selectedPackage || "").toLowerCase() === plan.name.toLowerCase() ||
-                    (plan.slug && (profile.selectedPackage || "").toLowerCase() === plan.slug.toLowerCase());
+              {(() => {
+                const isDomPkg = (p: PackageDbModel) =>
+                  p.planType === "domestic" ||
+                  p.name.toLowerCase().includes("domestic") ||
+                  p.id.toLowerCase().includes("domestic") ||
+                  (p.currency === "₹" && Number(p.price) >= 10000);
 
-                  return (
-                    <div
-                      key={plan.id || plan.slug}
-                      className={`relative rounded-3xl p-6 sm:p-7 flex flex-col justify-between transition-all duration-200 border-2 ${
-                        isCurrent
-                          ? "border-[var(--brand-ochre)] bg-[var(--surface-card)] shadow-md ring-2 ring-[var(--brand-ochre)]/20"
-                          : plan.featured
-                          ? "border-amber-300 bg-[var(--surface-card)] shadow-sm hover:shadow-md"
-                          : "border-[var(--hairline)] bg-[var(--surface-card)] shadow-xs hover:border-[var(--brand-ochre)]"
-                      }`}
-                    >
-                      {/* Top Badges */}
-                      <div className="space-y-4">
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm font-bold uppercase tracking-wider text-[var(--muted)]">
-                            {plan.name}
-                          </span>
-                          {isCurrent ? (
-                            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-300">
-                              ✓ Your Active Plan
-                            </span>
-                          ) : plan.badge ? (
-                            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-100 text-amber-900 border border-amber-300">
-                              {plan.badge}
-                            </span>
-                          ) : null}
-                        </div>
+                const displayedPlans = availablePlans.filter((p) =>
+                  dashboardPlanTab === "domestic" ? isDomPkg(p) : !isDomPkg(p)
+                );
 
-                        {/* Price */}
-                        <div>
-                          <div className="flex items-baseline gap-1">
-                            <span className="text-3xl sm:text-4xl font-extrabold text-[var(--ink)]">
-                              {plan.currency || "£"}{plan.priceDisplay || plan.price}
-                            </span>
-                            <span className="text-xs text-[var(--muted)] font-semibold">
-                              {plan.period || "/ month"}
-                            </span>
-                          </div>
-                          <p className="text-xs text-[var(--muted)] mt-1 min-h-[32px] leading-relaxed">
-                            {plan.tagline || "Export subscription plan for international sellers"}
-                          </p>
-                        </div>
+                return (
+                  <div className={`grid grid-cols-1 md:grid-cols-2 ${dashboardPlanTab === "domestic" ? "lg:grid-cols-3" : "lg:grid-cols-4"} gap-6`}>
+                    {displayedPlans.map((plan) => {
+                      const pMeta = getPlanMeta(plan.name, plan);
+                      const isCurrent =
+                        (profile.selectedPackage || "growth").toLowerCase().includes(plan.id.toLowerCase()) ||
+                        (profile.selectedPackage || "").toLowerCase() === plan.name.toLowerCase() ||
+                        (plan.slug && (profile.selectedPackage || "").toLowerCase() === plan.slug.toLowerCase());
 
-                        {/* Leads Highlight Box */}
-                        <div className="p-3 rounded-2xl bg-[var(--canvas)] border border-[var(--hairline)] flex items-center gap-2.5">
-                          <Inbox className="w-4 h-4 text-amber-600 shrink-0" />
-                          <div>
-                            <span className="text-xs font-extrabold text-[var(--ink)] block">
-                              {Number(plan.leads) > 0 ? `${plan.leads} Leads / mo` : (plan.leadsLabel || "Free Profile Creation")}
-                            </span>
-                            <span className="text-[10px] text-[var(--muted)] block">
-                              {Number(plan.leads) > 0 ? (plan.leadsLabel || "Qualified Global Buyers") : "Verified Exporter Storefront"}
-                            </span>
-                          </div>
-                        </div>
+                      return (
+                        <div
+                          key={plan.id || plan.slug}
+                          className={`relative rounded-3xl p-6 sm:p-7 flex flex-col justify-between transition-all duration-200 border-2 ${
+                            isCurrent
+                              ? "border-[var(--brand-ochre)] bg-[var(--surface-card)] shadow-md ring-2 ring-[var(--brand-ochre)]/20"
+                              : plan.featured
+                              ? "border-amber-300 bg-[var(--surface-card)] shadow-sm hover:shadow-md"
+                              : "border-[var(--hairline)] bg-[var(--surface-card)] shadow-xs hover:border-[var(--brand-ochre)]"
+                          }`}
+                        >
+                          {/* Top Badges */}
+                          <div className="space-y-4">
+                            <div className="flex items-center justify-between">
+                              <span className="text-sm font-bold uppercase tracking-wider text-[var(--muted)]">
+                                {plan.name}
+                              </span>
+                              {isCurrent ? (
+                                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-300">
+                                  ✓ Your Active Plan
+                                </span>
+                              ) : plan.badge ? (
+                                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-100 text-amber-900 border border-amber-300">
+                                  {plan.badge}
+                                </span>
+                              ) : null}
+                            </div>
 
-                        {/* Features Checklist */}
-                        <div className="space-y-2 pt-2 border-t border-[var(--hairline)]">
-                          <span className="text-[11px] font-bold text-[var(--ink)] uppercase tracking-wider block">
-                            Included Perks:
-                          </span>
-                          <div className="space-y-2 text-xs">
-                            {(plan.features || []).map((feat, idx) => (
-                              <div key={idx} className="flex items-start gap-2">
-                                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                                <span className="text-[var(--body)] text-[12px] leading-tight">{feat}</span>
+                            {/* Price */}
+                            <div>
+                              <div className="flex items-baseline gap-1">
+                                <span className="text-3xl sm:text-4xl font-extrabold text-[var(--ink)]">
+                                  {plan.currency || (dashboardPlanTab === "domestic" ? "₹" : "£")}{plan.priceDisplay || plan.price}
+                                </span>
+                                <span className="text-xs text-[var(--muted)] font-semibold">
+                                  {plan.period || "/ month"}
+                                </span>
                               </div>
-                            ))}
+                              <p className="text-xs text-[var(--muted)] mt-1 min-h-[32px] leading-relaxed">
+                                {plan.tagline || (dashboardPlanTab === "domestic" ? "Domestic trade subscription tier for verified Indian buyers" : "Export subscription plan for international sellers")}
+                              </p>
+                            </div>
+
+                            {/* Leads Highlight Box */}
+                            <div className="p-3 rounded-2xl bg-[var(--canvas)] border border-[var(--hairline)] flex items-center gap-2.5">
+                              <Inbox className="w-4 h-4 text-amber-600 shrink-0" />
+                              <div>
+                                <span className="text-xs font-extrabold text-[var(--ink)] block">
+                                  {Number(plan.leads) > 0 ? `${plan.leads} Leads / mo` : (plan.leadsLabel || "Free Profile Creation")}
+                                </span>
+                                <span className="text-[10px] text-[var(--muted)] block">
+                                  {Number(plan.leads) > 0 ? (plan.leadsLabel || (dashboardPlanTab === "domestic" ? "Verified Domestic Trade Leads" : "Qualified Global Buyers")) : "Verified Exporter Storefront"}
+                                </span>
+                              </div>
+                            </div>
+
+                            {/* Features Checklist */}
+                            <div className="space-y-2 pt-2 border-t border-[var(--hairline)]">
+                              <span className="text-[11px] font-bold text-[var(--ink)] uppercase tracking-wider block">
+                                Included Perks:
+                              </span>
+                              <div className="space-y-2 text-xs">
+                                {(plan.features || []).map((feat, idx) => (
+                                  <div key={idx} className="flex items-start gap-2">
+                                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                                    <span className="text-[var(--body)] text-[12px] leading-tight">{feat}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Readonly Plan Status Indicator */}
+                          <div className="pt-6 mt-4 border-t border-[var(--hairline)]">
+                            {isCurrent ? (
+                              <div className="w-full py-2.5 rounded-xl text-center text-xs font-extrabold text-emerald-800 bg-emerald-100 border border-emerald-300 flex items-center justify-center gap-1.5 shadow-2xs">
+                                <Check className="w-4 h-4 text-emerald-700" />
+                                <span>Current Active Plan</span>
+                              </div>
+                            ) : (
+                              <div className="w-full py-2.5 rounded-xl text-center text-xs font-semibold text-[var(--muted)] bg-[var(--surface-soft)] border border-[var(--hairline)] flex items-center justify-center gap-1.5">
+                                <span>Available Tier</span>
+                              </div>
+                            )}
                           </div>
                         </div>
-                      </div>
-
-                      {/* Readonly Plan Status Indicator */}
-                      <div className="pt-6 mt-4 border-t border-[var(--hairline)]">
-                        {isCurrent ? (
-                          <div className="w-full py-2.5 rounded-xl text-center text-xs font-extrabold text-emerald-800 bg-emerald-100 border border-emerald-300 flex items-center justify-center gap-1.5 shadow-2xs">
-                            <Check className="w-4 h-4 text-emerald-700" />
-                            <span>Current Active Plan</span>
-                          </div>
-                        ) : (
-                          <div className="w-full py-2.5 rounded-xl text-center text-xs font-semibold text-[var(--muted)] bg-[var(--surface-soft)] border border-[var(--hairline)] flex items-center justify-center gap-1.5">
-                            <span>Available Tier</span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
+                      );
+                    })}
+                  </div>
+                );
+              })()}
             </div>
 
             {/* Feature Comparison Matrix */}

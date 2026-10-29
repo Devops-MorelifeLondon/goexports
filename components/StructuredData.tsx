@@ -113,6 +113,36 @@ export default function StructuredData() {
           "description": "For established businesses with high-volume needs",
           "price": "999",
           "priceCurrency": "GBP"
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Domestic Starter Plan - 50 Qualified Domestic Leads Monthly"
+          },
+          "description": "Essential verified domestic buyer inquiries across India",
+          "price": "24999",
+          "priceCurrency": "INR"
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Domestic Growth Plan - 100 Qualified Domestic Leads Monthly"
+          },
+          "description": "Most popular domestic plan for scaling pan-India wholesale distribution",
+          "price": "49999",
+          "priceCurrency": "INR"
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Domestic Enterprise Plan - 200 Qualified Domestic Leads Monthly"
+          },
+          "description": "Maximum domestic lead volume and corporate procurement contracts pan-India",
+          "price": "99999",
+          "priceCurrency": "INR"
         }
       ]
     },

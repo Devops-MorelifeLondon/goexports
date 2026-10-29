@@ -76,6 +76,15 @@ export interface SellWithUsEmailData {
 
 function getPackageBadgeHtml(rawPackage?: string): string {
   const pkg = (rawPackage || "Free").toLowerCase();
+  if (pkg.includes("domestic") || pkg.includes("24999") || pkg.includes("49999") || pkg.includes("99999")) {
+    if (pkg.includes("enterprise") || pkg.includes("99999") || pkg.includes("200")) {
+      return `<span style="display: inline-block; background-color: #e0e7ff; color: #3730a3; font-weight: 700; font-size: 12px; padding: 3px 10px; border-radius: 9999px; border: 1px solid #c7d2fe;">🇮🇳 Domestic Enterprise (₹99,999/mo · 200 Leads)</span>`;
+    }
+    if (pkg.includes("growth") || pkg.includes("49999") || pkg.includes("100")) {
+      return `<span style="display: inline-block; background-color: #fef3c7; color: #92400e; font-weight: 700; font-size: 12px; padding: 3px 10px; border-radius: 9999px; border: 1px solid #fcd34d;">🇮🇳 Domestic Growth (₹49,999/mo · 100 Leads)</span>`;
+    }
+    return `<span style="display: inline-block; background-color: #d1fae5; color: #065f46; font-weight: 700; font-size: 12px; padding: 3px 10px; border-radius: 9999px; border: 1px solid #a7f3d0;">🇮🇳 Domestic Starter (₹24,999/mo · 50 Leads)</span>`;
+  }
   if (pkg.includes("enterprise")) {
     return `<span style="display: inline-block; background-color: #f3e8ff; color: #6b21a8; font-weight: 700; font-size: 12px; padding: 3px 10px; border-radius: 9999px; border: 1px solid #d8b4fe;">⚡ Enterprise Tier (£999/mo)</span>`;
   }

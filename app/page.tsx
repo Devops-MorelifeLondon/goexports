@@ -1,6 +1,7 @@
 import HeroSection from "@/components/HeroSection";
 import WhySellGlobally from "@/components/WhySellGlobally";
 import SellToUS from "@/components/SellToUS";
+import DomesticPlans from "@/components/DomesticPlans";
 import Presence from "@/components/Presence";
 import Locations from "@/components/Locations";
 import HowPlatformWorks from "@/components/HowPlatformWorks";
@@ -60,6 +61,7 @@ export default function Home() {
       <HowPlatformWorks />
       <BenefitsForExporters />
       <SellToUS />
+      <DomesticPlans />
       <WhySellGlobally />
       <Presence />
       <Locations />

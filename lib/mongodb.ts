@@ -117,6 +117,7 @@ const PackageSchema = new mongoose.Schema(
     features: { type: [String], default: [] },
     isActive: { type: Boolean, default: true },
     isCustom: { type: Boolean, default: false },
+    planType: { type: String, enum: ["export", "domestic"], default: "export" },
     sortOrder: { type: Number, default: 1 },
     createdAt: { type: String, default: () => new Date().toISOString() },
     updatedAt: { type: String, default: () => new Date().toISOString() },

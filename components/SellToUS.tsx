@@ -92,8 +92,9 @@ export default function SellToUS({ initialPlans }: SellToUSProps) {
           const data = await response.json();
           if (data.success && Array.isArray(data.packages) && data.packages.length > 0) {
             if (isMounted) {
-              setPlans(data.packages);
-              const featuredIndex = data.packages.findIndex((p: PackagePlan) => p.featured);
+              const exportPlans = data.packages.filter((p: any) => p.planType !== "domestic");
+              setPlans(exportPlans);
+              const featuredIndex = exportPlans.findIndex((p: PackagePlan) => p.featured);
               setSelectedMobilePlan(featuredIndex !== -1 ? featuredIndex : 0);
             }
           }

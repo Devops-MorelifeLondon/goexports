@@ -41,7 +41,146 @@ export interface PackageItem {
   badge?: string;
   features: string[];
   isActive?: boolean;
+  planType?: "export" | "domestic";
 }
+
+const DEFAULT_PLANS_FALLBACK: PackageItem[] = [
+  {
+    id: "free",
+    name: "Free",
+    tagline: "Start exploring international markets",
+    price: 0,
+    priceDisplay: "0",
+    currency: "£",
+    period: "/ month",
+    leads: 0,
+    leadsLabel: "Free Profile Creation",
+    featured: false,
+    planType: "export",
+    features: [
+      "Public Storefront",
+      "Product Catalog Listing",
+      "Basic Buyer Inquiries",
+      "24/7/365 Support",
+    ],
+  },
+  {
+    id: "starter",
+    name: "Starter",
+    tagline: "Perfect for new exporters",
+    price: 249,
+    priceDisplay: "249",
+    currency: "£",
+    period: "/ month",
+    leads: 20,
+    leadsLabel: "Qualified Leads / Month",
+    featured: false,
+    planType: "export",
+    features: [
+      "Targeted Industry Leads",
+      "International Buyers",
+      "Verified Global Buyers",
+      "Dedicated Account Manager",
+      "Monthly Reporting",
+      "24/7/365 Support",
+    ],
+  },
+  {
+    id: "growth",
+    name: "Growth",
+    tagline: "Most popular for scaling",
+    price: 499,
+    priceDisplay: "499",
+    currency: "£",
+    period: "/ month",
+    leads: 50,
+    leadsLabel: "Qualified Leads / Month",
+    featured: true,
+    badge: "⭐ Most Popular",
+    planType: "export",
+    features: [
+      "Targeted Industry Leads",
+      "International Buyers",
+      "Verified Global Buyers",
+      "Dedicated Account Manager",
+      "Weekly Reporting",
+      "Weekly Strategy Call",
+      "24/7/365 Support",
+    ],
+  },
+  {
+    id: "enterprise",
+    name: "Enterprise",
+    tagline: "For established businesses",
+    price: 999,
+    priceDisplay: "999",
+    currency: "£",
+    period: "/ month",
+    leads: 120,
+    leadsLabel: "Qualified Leads / Month",
+    featured: false,
+    planType: "export",
+    features: [
+      "Targeted Industry Leads",
+      "International Buyers",
+      "Verified Global Buyers",
+      "Dedicated Account Manager",
+      "Custom Expansion Strategy",
+      "24/7/365 Priority Support",
+    ],
+  },
+  {
+    id: "domestic-starter",
+    name: "Domestic Starter",
+    tagline: "50 Leads",
+    price: 24999,
+    priceDisplay: "24,999",
+    currency: "₹",
+    period: "/ month",
+    leads: 50,
+    leadsLabel: "Qualified Domestic Leads / Month",
+    featured: false,
+    badge: "📦 Domestic Starter",
+    planType: "domestic",
+    features: [
+      "50 Leads",
+    ],
+  },
+  {
+    id: "domestic-growth",
+    name: "Domestic Growth",
+    tagline: "100 Leads",
+    price: 49999,
+    priceDisplay: "49,999",
+    currency: "₹",
+    period: "/ month",
+    leads: 100,
+    leadsLabel: "Qualified Domestic Leads / Month",
+    featured: true,
+    badge: "⭐ Most Popular",
+    planType: "domestic",
+    features: [
+      "100 Leads",
+    ],
+  },
+  {
+    id: "domestic-enterprise",
+    name: "Domestic Enterprise",
+    tagline: "200 Leads",
+    price: 99999,
+    priceDisplay: "99,999",
+    currency: "₹",
+    period: "/ month",
+    leads: 200,
+    leadsLabel: "Qualified Domestic Leads / Month",
+    featured: false,
+    badge: "🚀 Enterprise Volume",
+    planType: "domestic",
+    features: [
+      "200 Leads",
+    ],
+  },
+];
 
 interface ExportProfileFormProps {
   initialPlans?: PackageItem[];
@@ -153,13 +292,30 @@ const COMMON_COUNTRIES = [
 ];
 
 export default function ExportProfileForm({ initialPlans }: ExportProfileFormProps = {}) {
-  const [plans, setPlans] = useState<PackageItem[]>(initialPlans || []);
+  const [plans, setPlans] = useState<PackageItem[]>(
+    initialPlans && initialPlans.length > 0 ? initialPlans : DEFAULT_PLANS_FALLBACK
+  );
   const [loadingPlans, setLoadingPlans] = useState(!initialPlans || initialPlans.length === 0);
+  const [activePlanTab, setActivePlanTab] = useState<"export" | "domestic">("export");
+
+  // Helper to distinguish domestic vs export plans
+  const isDomesticPlan = (p: PackageItem) => {
+    return (
+      p.planType === "domestic" ||
+      p.name.toLowerCase().includes("domestic") ||
+      p.id.toLowerCase().includes("domestic") ||
+      (p.currency === "₹" && Number(String(p.price).replace(/,/g, "")) >= 10000)
+    );
+  };
+
+  const exportPlans = plans.filter((p) => !isDomesticPlan(p));
+  const domesticPlans = plans.filter((p) => isDomesticPlan(p));
+  const currentTabPlans = activePlanTab === "domestic" ? domesticPlans : exportPlans;
 
   // Determine initial selected package from initial plans
   const defaultSelected = (() => {
-    const list = initialPlans && initialPlans.length > 0 ? initialPlans : [];
-    const featured = list.find((p) => p.featured);
+    const list = initialPlans && initialPlans.length > 0 ? initialPlans : DEFAULT_PLANS_FALLBACK;
+    const featured = list.find((p) => p.featured && !isDomesticPlan(p)) || list.find((p) => p.featured);
     return featured ? featured.name : list[0]?.name || "Growth";
   })();
 
@@ -186,6 +342,31 @@ export default function ExportProfileForm({ initialPlans }: ExportProfileFormPro
     selectedPackage: defaultSelected,
   });
 
+  // Check URL search params on mount to pre-select plan if passed (e.g. ?plan=domestic-growth)
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const sp = new URLSearchParams(window.location.search);
+      const requested = (sp.get("plan") || "").trim().toLowerCase();
+      if (requested) {
+        const match = DEFAULT_PLANS_FALLBACK.find(
+          (p) =>
+            p.id.toLowerCase() === requested ||
+            p.name.toLowerCase() === requested ||
+            (p.slug && p.slug.toLowerCase() === requested)
+        );
+        if (match) {
+          const isDom = isDomesticPlan(match);
+          setActivePlanTab(isDom ? "domestic" : "export");
+          setFormData((prev) => ({
+            ...prev,
+            selectedPackage: match.name,
+            needDomesticLeads: isDom ? "yes" : "no",
+          }));
+        }
+      }
+    }
+  }, []);
+
   // Client-side fetch from DB API endpoint to ensure latest plans
   useEffect(() => {
     let isMounted = true;
@@ -204,20 +385,49 @@ export default function ExportProfileForm({ initialPlans }: ExportProfileFormPro
             if (isMounted) {
               setPlans(data.packages);
 
-              // Validate/update selectedPackage if not matching any active package
-              setFormData((prev) => {
-                const hasMatch = data.packages.some(
-                  (p: PackageItem) =>
-                    p.name.toLowerCase() === prev.selectedPackage.toLowerCase() ||
-                    p.id.toLowerCase() === prev.selectedPackage.toLowerCase() ||
-                    (p.slug && p.slug.toLowerCase() === prev.selectedPackage.toLowerCase())
-                );
-                if (!hasMatch) {
-                  const featured = data.packages.find((p: PackageItem) => p.featured) || data.packages[0];
-                  return { ...prev, selectedPackage: featured?.name || prev.selectedPackage };
+              // Check if URL specifies a plan param (e.g. ?plan=domestic-growth)
+              let urlPlanName: string | null = null;
+              let isUrlDom = false;
+              if (typeof window !== "undefined") {
+                const sp = new URLSearchParams(window.location.search);
+                const requested = (sp.get("plan") || "").trim().toLowerCase();
+                if (requested) {
+                  const match = data.packages.find(
+                    (p: PackageItem) =>
+                      p.id.toLowerCase() === requested ||
+                      p.name.toLowerCase() === requested ||
+                      (p.slug && p.slug.toLowerCase() === requested)
+                  );
+                  if (match) {
+                    urlPlanName = match.name;
+                    isUrlDom = isDomesticPlan(match);
+                  }
                 }
-                return prev;
-              });
+              }
+
+              if (urlPlanName) {
+                setActivePlanTab(isUrlDom ? "domestic" : "export");
+                setFormData((prev) => ({
+                  ...prev,
+                  selectedPackage: urlPlanName!,
+                  needDomesticLeads: isUrlDom ? "yes" : "no",
+                }));
+              } else {
+                // Validate/update selectedPackage if not matching any active package
+                setFormData((prev) => {
+                  const hasMatch = data.packages.some(
+                    (p: PackageItem) =>
+                      p.name.toLowerCase() === prev.selectedPackage.toLowerCase() ||
+                      p.id.toLowerCase() === prev.selectedPackage.toLowerCase() ||
+                      (p.slug && p.slug.toLowerCase() === prev.selectedPackage.toLowerCase())
+                  );
+                  if (!hasMatch) {
+                    const featured = data.packages.find((p: PackageItem) => p.featured) || data.packages[0];
+                    return { ...prev, selectedPackage: featured?.name || prev.selectedPackage };
+                  }
+                  return prev;
+                });
+              }
             }
           }
         }
@@ -1406,12 +1616,30 @@ export default function ExportProfileForm({ initialPlans }: ExportProfileFormPro
 
             {/* Do you need domestic leads? */}
             <div className="flex flex-col gap-2 sm:col-span-2 pt-2">
-              <label className="text-xs font-semibold text-[var(--body-strong)]">
-                Do you need domestic leads?
-              </label>
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-semibold text-[var(--body-strong)]">
+                  Do you need domestic leads?
+                </label>
+                <span className="text-[11px] text-[var(--muted)]">
+                  {formData.needDomesticLeads === "yes" ? "🇮🇳 Domestic India plans available below" : "🌍 International export buyers only"}
+                </span>
+              </div>
               <div className="flex items-center gap-4">
                 <label
-                  onClick={() => setFormData((prev) => ({ ...prev, needDomesticLeads: "yes" }))}
+                  onClick={() => {
+                    setFormData((prev) => {
+                      const isCurDom = domesticPlans.some(
+                        (p) => p.name.toLowerCase() === prev.selectedPackage.toLowerCase()
+                      );
+                      const defaultDom = domesticPlans.find((p) => p.featured) || domesticPlans[0];
+                      return {
+                        ...prev,
+                        needDomesticLeads: "yes",
+                        selectedPackage: isCurDom ? prev.selectedPackage : defaultDom?.name || "Domestic Growth",
+                      };
+                    });
+                    setActivePlanTab("domestic");
+                  }}
                   className={`flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-xs font-semibold border cursor-pointer transition-all select-none ${
                     formData.needDomesticLeads === "yes"
                       ? "bg-[var(--ink)] text-white border-[var(--ink)] shadow-xs"
@@ -1427,11 +1655,24 @@ export default function ExportProfileForm({ initialPlans }: ExportProfileFormPro
                   >
                     {formData.needDomesticLeads === "yes" ? "✓" : ""}
                   </span>
-                  <span>Yes, I need domestic leads</span>
+                  <span>Yes, I need domestic leads (India)</span>
                 </label>
 
                 <label
-                  onClick={() => setFormData((prev) => ({ ...prev, needDomesticLeads: "no" }))}
+                  onClick={() => {
+                    setFormData((prev) => {
+                      const isCurExp = exportPlans.some(
+                        (p) => p.name.toLowerCase() === prev.selectedPackage.toLowerCase()
+                      );
+                      const defaultExp = exportPlans.find((p) => p.featured) || exportPlans[0];
+                      return {
+                        ...prev,
+                        needDomesticLeads: "no",
+                        selectedPackage: isCurExp ? prev.selectedPackage : defaultExp?.name || "Growth",
+                      };
+                    });
+                    setActivePlanTab("export");
+                  }}
                   className={`flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-xs font-semibold border cursor-pointer transition-all select-none ${
                     formData.needDomesticLeads === "no"
                       ? "bg-[var(--ink)] text-white border-[var(--ink)] shadow-xs"
@@ -1494,23 +1735,113 @@ export default function ExportProfileForm({ initialPlans }: ExportProfileFormPro
 
         {/* ── SECTION 4: SELECT BUSINESS PLAN & BUYER LEADS ── */}
         <div className="pt-6 border-t border-[var(--hairline)]">
-          <div className="flex items-center justify-between mb-2">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
             <div className="flex items-center gap-2">
               <PackageCheck className="w-4 h-4 text-[var(--brand-ochre)]" />
               <h3 className="text-sm font-semibold uppercase tracking-wider text-[var(--ink)]">
                 4. Select Business Plan & Trade Leads
               </h3>
             </div>
-            <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full hidden sm:inline-flex items-center gap-1">
+            <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full inline-flex items-center gap-1 self-start sm:self-auto">
               <Zap className="w-3 h-3 text-emerald-600" />
               Verified Trade Leads
             </span>
           </div>
-          <p className="text-xs text-[var(--muted)] mb-5">
-            Choose your growth plan. You can upgrade or modify your package anytime in your portal dashboard.
+          <p className="text-xs text-[var(--muted)] mb-4">
+            Choose your growth package. We provide separate plans for <strong>International Overseas Export (in GBP £)</strong> and <strong>Domestic India Trade (in INR ₹)</strong> with guaranteed monthly verified buyer leads.
           </p>
 
-          {loadingPlans && plans.length === 0 ? (
+          {/* Plan Category Switcher Tabs: Export vs Domestic */}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 mb-5">
+            <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-[var(--surface-soft)] border border-[var(--hairline)] max-w-md w-full sm:w-auto">
+              <button
+                type="button"
+                onClick={() => setActivePlanTab("export")}
+                className={`flex-1 sm:flex-initial py-2.5 px-4 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                  activePlanTab === "export"
+                    ? "bg-[var(--ink)] text-white shadow-xs"
+                    : "text-[var(--muted)] hover:text-[var(--ink)]"
+                }`}
+              >
+                <Globe className="w-3.5 h-3.5 text-sky-400" />
+                <span>🌍 Export Plans (£ GBP)</span>
+                {exportPlans.length > 0 && (
+                  <span className={`text-[10px] px-2 py-0.2 rounded-full font-extrabold ${
+                    activePlanTab === "export" ? "bg-white/20 text-white" : "bg-[var(--canvas)] text-[var(--muted)]"
+                  }`}>
+                    {exportPlans.length}
+                  </span>
+                )}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setActivePlanTab("domestic")}
+                className={`flex-1 sm:flex-initial py-2.5 px-4 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                  activePlanTab === "domestic"
+                    ? "bg-[var(--ink)] text-white shadow-xs"
+                    : "text-[var(--muted)] hover:text-[var(--ink)]"
+                }`}
+              >
+                <Building2 className="w-3.5 h-3.5 text-amber-400" />
+                <span>🇮🇳 Domestic Plans (₹ INR)</span>
+                {domesticPlans.length > 0 && (
+                  <span className={`text-[10px] px-2 py-0.2 rounded-full font-extrabold ${
+                    activePlanTab === "domestic" ? "bg-[var(--brand-ochre)] text-[var(--ink)]" : "bg-[var(--canvas)] text-[var(--muted)]"
+                  }`}>
+                    {domesticPlans.length}
+                  </span>
+                )}
+              </button>
+            </div>
+
+            {/* Quick Helper Badge */}
+            {activePlanTab === "domestic" ? (
+              <span className="text-[11px] font-semibold text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200/60 inline-flex items-center gap-1.5 self-start sm:self-auto">
+                <span>🇮🇳</span>
+                <span>Dedicated India Wholesale & Retail Leads (₹ INR)</span>
+              </span>
+            ) : (
+              <span className="text-[11px] font-semibold text-blue-800 bg-blue-50 px-3 py-1 rounded-full border border-blue-200/60 inline-flex items-center gap-1.5 self-start sm:self-auto">
+                <span>🌍</span>
+                <span>Global Overseas Importers & Buyers (£ GBP)</span>
+              </span>
+            )}
+          </div>
+
+          {/* Cross-Tab Selected Plan Notification Banner */}
+          {(() => {
+            const isCurSelectedDom = domesticPlans.some(
+              (p) =>
+                p.name.toLowerCase() === (formData.selectedPackage || "").toLowerCase() ||
+                p.id.toLowerCase() === (formData.selectedPackage || "").toLowerCase()
+            );
+            const inOtherTab =
+              (activePlanTab === "export" && isCurSelectedDom) ||
+              (activePlanTab === "domestic" && !isCurSelectedDom && (formData.selectedPackage || "").toLowerCase() !== "free");
+
+            if (!inOtherTab) return null;
+
+            return (
+              <div className="mb-4 p-3 rounded-xl border border-amber-300 bg-amber-50/80 flex items-center justify-between text-xs text-amber-950">
+                <div className="flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-amber-600 shrink-0" />
+                  <span>
+                    You currently selected: <strong>{formData.selectedPackage}</strong> (in {activePlanTab === "domestic" ? "International Export" : "Domestic"} Plans).
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setActivePlanTab(activePlanTab === "domestic" ? "export" : "domestic")}
+                  className="font-bold underline text-amber-950 hover:text-amber-800 cursor-pointer ml-3 shrink-0"
+                >
+                  Switch to {activePlanTab === "domestic" ? "Export" : "Domestic"} Tab →
+                </button>
+              </div>
+            );
+          })()}
+
+          {loadingPlans && currentTabPlans.length === 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {[1, 2, 3, 4].map((n) => (
                 <div
@@ -1531,8 +1862,8 @@ export default function ExportProfileForm({ initialPlans }: ExportProfileFormPro
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {plans.map((plan) => {
+            <div className={`grid grid-cols-1 ${activePlanTab === "domestic" ? "md:grid-cols-3" : "md:grid-cols-2"} gap-4`}>
+              {currentTabPlans.map((plan) => {
                 const planNameLower = (plan.name || "").toLowerCase();
                 const planIdLower = (plan.id || "").toLowerCase();
                 const planSlugLower = (plan.slug || "").toLowerCase();
@@ -1548,10 +1879,18 @@ export default function ExportProfileForm({ initialPlans }: ExportProfileFormPro
                     ? String(plan.priceDisplay)
                     : String(plan.price ?? "0");
 
+                const isDom = activePlanTab === "domestic" || plan.currency === "₹" || plan.planType === "domestic";
+
                 return (
                   <div
                     key={plan.id || plan.name}
-                    onClick={() => setFormData((prev) => ({ ...prev, selectedPackage: plan.name }))}
+                    onClick={() =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        selectedPackage: plan.name,
+                        ...(isDom ? { needDomesticLeads: "yes" } : {}),
+                      }))
+                    }
                     className={`relative rounded-2xl p-4.5 cursor-pointer transition-all duration-200 flex flex-col justify-between ${
                       isSelected
                         ? "bg-[var(--canvas)] border-2 border-[var(--brand-ochre)] shadow-md ring-2 ring-[var(--brand-ochre)]/20"
@@ -1584,7 +1923,7 @@ export default function ExportProfileForm({ initialPlans }: ExportProfileFormPro
 
                       {/* Price */}
                       <div className="flex items-baseline gap-1 mb-1">
-                        <span className="text-xs font-semibold text-[var(--muted)]">{plan.currency || "£"}</span>
+                        <span className="text-xs font-semibold text-[var(--muted)]">{plan.currency || (isDom ? "₹" : "£")}</span>
                         <span className="text-xl font-bold text-[var(--ink)] tracking-tight">{displayPrice}</span>
                         <span className="text-[11px] text-[var(--muted-soft)]">{plan.period || "/ month"}</span>
                       </div>
@@ -1593,7 +1932,7 @@ export default function ExportProfileForm({ initialPlans }: ExportProfileFormPro
                       <div className="mb-2.5">
                         <span className="inline-block text-[11px] font-semibold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200/60">
                           {Number(plan.leads) > 0
-                            ? `${plan.leads} ${plan.leadsLabel || "Qualified Leads / Month"}`
+                            ? `${plan.leads} ${plan.leadsLabel || (isDom ? "Qualified Domestic Leads / Month" : "Qualified Leads / Month")}`
                             : (plan.leadsLabel || "Free Profile Creation")}
                         </span>
                       </div>
@@ -1602,8 +1941,8 @@ export default function ExportProfileForm({ initialPlans }: ExportProfileFormPro
                         {plan.tagline}
                       </p>
 
-                      {/* Features list (2-column layout) */}
-                      <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-3 gap-y-1.5 border-t border-[var(--hairline)] pt-2.5 mb-2 list-none p-0">
+                      {/* Features list */}
+                      <ul className={`grid grid-cols-1 ${isDom ? "gap-y-1.5" : "sm:grid-cols-2 gap-x-3 gap-y-1.5"} border-t border-[var(--hairline)] pt-2.5 mb-2 list-none p-0`}>
                         {(plan.features || []).map((feat, idx) => (
                           <li key={idx} className="flex items-start gap-1.5 text-[11.5px] text-[var(--body-strong)]">
                             <Check className={`w-3 h-3 mt-0.5 shrink-0 ${isSelected ? "text-amber-600 font-bold" : "text-emerald-600"}`} />
@@ -1634,7 +1973,11 @@ export default function ExportProfileForm({ initialPlans }: ExportProfileFormPro
           <div className="mt-4 p-3.5 rounded-xl border border-[var(--hairline)] bg-[var(--surface-soft)] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
             <div className="flex items-center gap-2 text-[var(--muted)]">
               <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
-              <span>Paid packages can also be activated directly online via <strong>Razorpay Secure Checkout</strong>.</span>
+              <span>
+                {activePlanTab === "domestic"
+                  ? <>Domestic plans in <strong>INR (₹)</strong> can be activated instantly via <strong>Razorpay Secure Checkout</strong>.</>
+                  : <>Paid packages can also be activated directly online via <strong>Razorpay Secure Checkout</strong>.</>}
+              </span>
             </div>
             <a
               href="https://pages.razorpay.com/goexports"

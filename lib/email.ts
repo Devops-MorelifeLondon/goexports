@@ -76,6 +76,9 @@ export interface SellWithUsEmailData {
 
 function getPackageBadgeHtml(rawPackage?: string): string {
   const pkg = (rawPackage || "Free").toLowerCase();
+  if (pkg.includes("10000") || (pkg.includes("15") && (pkg.includes("lite") || pkg.includes("intl") || pkg.includes("domestic")))) {
+    return `<span style="display: inline-block; background-color: #fef3c7; color: #92400e; font-weight: 700; font-size: 12px; padding: 3px 10px; border-radius: 9999px; border: 1px solid #fcd34d;">🔒 Private Plan (₹10,000/mo · 15 Intl + Domestic Leads)</span>`;
+  }
   if (pkg.includes("domestic") || pkg.includes("24999") || pkg.includes("49999") || pkg.includes("99999")) {
     if (pkg.includes("enterprise") || pkg.includes("99999") || pkg.includes("200")) {
       return `<span style="display: inline-block; background-color: #e0e7ff; color: #3730a3; font-weight: 700; font-size: 12px; padding: 3px 10px; border-radius: 9999px; border: 1px solid #c7d2fe;">🇮🇳 Domestic Enterprise (₹99,999/mo · 200 Leads)</span>`;

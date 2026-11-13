@@ -182,6 +182,32 @@ const BUYER_PLANS = [
     planType: "domestic",
     sortOrder: 7,
   },
+  {
+    id: "custom-mwetyan5",
+    slug: "lite-intl-domestic",
+    name: "Lite (Intl + Domestic)",
+    tagline: "15 Leads (International + Domestic)",
+    price: 10000,
+    priceDisplay: "10,000",
+    currency: "₹",
+    period: "/ month",
+    leads: 15,
+    leadsLabel: "Qualified International & Domestic Leads / Month",
+    featured: false,
+    badge: "🔒 Private Plan",
+    features: [
+      "15 Verified Buyer Leads / mo",
+      "International + Domestic Leads",
+      "Direct Global & Indian Buyer Contact Details",
+      "Category-Specific RFQs",
+      "Dedicated Account Manager",
+      "24/7/365 Dedicated Support",
+    ],
+    isActive: true,
+    isCustom: true,
+    planType: "export",
+    sortOrder: 8,
+  },
 ];
 
 async function runSeed() {

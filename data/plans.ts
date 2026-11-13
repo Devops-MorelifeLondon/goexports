@@ -57,6 +57,50 @@ export function getPlanMeta(pkgNameOrId?: string, customPkg?: any, defaultCurren
   const badge = customPkg?.badge;
   const featured = Boolean(customPkg?.featured);
 
+  // ── PRIVATE 15 LEADS (INTL + DOMESTIC) PLAN (₹10,000 - 15 leads) ──
+  const isPrivate15Plan =
+    customPkg?.id === "custom-mwetyan5" ||
+    customPkg?.id === "custom-intl-dom-15" ||
+    lower.includes("custom-mwetyan5") ||
+    lower.includes("lite-intl-domestic") ||
+    (lower.includes("10000") && lower.includes("15")) ||
+    (lower.includes("intl") && lower.includes("domestic") && lower.includes("15")) ||
+    ((priceNum === 10000 || lower.includes("10000")) && (leadsNum === 15 || lower.includes("15")));
+
+  if (isPrivate15Plan) {
+    return {
+      id: customPkg?.id || "custom-mwetyan5",
+      name: customPkg?.name || "Lite (Intl + Domestic)",
+      displayName: raw || customPkg?.name || "Lite (Intl + Domestic)",
+      tagline: tagline || "15 Leads (International + Domestic)",
+      price: priceVal || "10,000",
+      priceNumber: priceNum || 10000,
+      currency: "₹",
+      period,
+      priceDisplay: `₹${priceVal || "10,000"}${period === "/ month" ? "/mo" : period}`,
+      leads: leadsVal || "15",
+      leadsCount: leadsNum || 15,
+      leadsLabel: customPkg?.leadsLabel || "Qualified International & Domestic Leads / Month",
+      featured,
+      badge: badge || "🔒 Private Plan",
+      features: features.length > 0 ? features : [
+        "15 Verified Buyer Leads / mo",
+        "International + Domestic Leads",
+        "Direct Global & Indian Buyer Contact Details",
+        "Category-Specific RFQs",
+        "Dedicated Account Manager",
+        "24/7/365 Dedicated Support",
+      ],
+      type: "custom",
+      planType: "export",
+      badgeBg: "bg-amber-50 text-amber-900 border-amber-300",
+      dotBg: "bg-amber-500",
+      pillBg: "bg-amber-100 text-amber-900 border-amber-300",
+      borderColor: "border-amber-400",
+      accentColor: "#d97706",
+    };
+  }
+
   if (customPkg?.isCustom || lower.includes("custom")) {
     return {
       id: customPkg?.id || "custom",

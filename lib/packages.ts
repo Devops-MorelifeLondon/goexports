@@ -199,6 +199,32 @@ const DEFAULT_SEEDED_PACKAGES: Omit<PackageDbModel, "createdAt" | "updatedAt">[]
     planType: "domestic",
     sortOrder: 7,
   },
+  {
+    id: "custom-mwetyan5",
+    slug: "lite-intl-domestic",
+    name: "Lite (Intl + Domestic)",
+    tagline: "15 Leads (International + Domestic)",
+    price: 10000,
+    priceDisplay: "10,000",
+    currency: "₹",
+    period: "/ month",
+    leads: 15,
+    leadsLabel: "Qualified International & Domestic Leads / Month",
+    featured: false,
+    badge: "🔒 Private Plan",
+    features: [
+      "15 Verified Buyer Leads / mo",
+      "International + Domestic Leads",
+      "Direct Global & Indian Buyer Contact Details",
+      "Category-Specific RFQs",
+      "Dedicated Account Manager",
+      "24/7/365 Dedicated Support",
+    ],
+    isActive: true,
+    isCustom: true,
+    planType: "export",
+    sortOrder: 8,
+  },
 ];
 
 /**
@@ -253,9 +279,9 @@ export async function getAllPackages(): Promise<PackageDbModel[]> {
       .sort({ sortOrder: 1 })
       .lean();
 
-    // Check if any default seeded packages (e.g. domestic plans) are missing from DB
+    // Check if any default seeded public packages (e.g. domestic plans) are missing from DB
     const missingSeeded = DEFAULT_SEEDED_PACKAGES.filter(
-      (sp) => !docs.some((d: any) => d.id === sp.id || d.slug === sp.slug)
+      (sp) => !sp.isCustom && !docs.some((d: any) => d.id === sp.id || d.slug === sp.slug)
     );
 
     if (missingSeeded.length > 0) {

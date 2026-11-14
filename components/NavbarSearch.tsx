@@ -63,7 +63,7 @@ export default function NavbarSearch({
   isMobile = false,
   className = "",
   onSelect,
-  placeholder = "Search exporters, products...",
+  placeholder = "Search exporters...",
 }: NavbarSearchProps) {
   const router = useRouter();
   const [query, setQuery] = useState("");
@@ -156,7 +156,7 @@ export default function NavbarSearch({
   return (
     <div
       ref={containerRef}
-      className={`relative ${isMobile ? "w-full" : className || "w-36 lg:w-44 xl:w-48 2xl:w-60"}`}
+      className={`relative ${isMobile ? "w-full" : className || "w-32 md:w-36 lg:w-40 xl:w-52 2xl:w-64"}`}
     >
       <form onSubmit={handleSubmit} className="relative w-full">
         <div className="relative flex items-center">

@@ -194,7 +194,7 @@ export default function Navbar() {
         }`}
       >
 
-        <div className="w-full max-w-[1440px] mx-auto flex items-center justify-between h-[64px] sm:h-[68px] px-3 sm:px-6 lg:px-8 gap-2 lg:gap-3 xl:gap-4">
+        <div className="w-full max-w-[1440px] mx-auto flex items-center justify-between h-[64px] sm:h-[68px] px-3 sm:px-4 lg:px-6 xl:px-8 gap-1.5 lg:gap-2.5 xl:gap-4">
           {/* Left: Brand Logo */}
           <div className="flex items-center shrink-0">
             <Link
@@ -202,13 +202,13 @@ export default function Navbar() {
               className="flex items-center cursor-pointer no-underline group shrink-0 transition-transform duration-200 active:scale-[0.98]"
               aria-label="Goexports Home"
             >
-              <div className="relative w-[115px] sm:w-[130px] xl:w-[138px] h-[32px] sm:h-[36px]">
+              <div className="relative w-[110px] sm:w-[124px] xl:w-[138px] h-[30px] sm:h-[34px] xl:h-[36px]">
                 <Image
                   src="/logo/logo.png"
                   alt="Goexports Logo"
                   fill
                   priority
-                  sizes="(max-width: 640px) 115px, 138px"
+                  sizes="(max-width: 640px) 110px, 138px"
                   className="object-contain object-left"
                 />
               </div>
@@ -229,7 +229,7 @@ export default function Navbar() {
                     setImportersDropdownOpen(!importersDropdownOpen);
                     setResourcesDropdownOpen(false);
                   }}
-                  className={`relative px-2.5 xl:px-3 py-1 xl:py-1.5 rounded-full border-none bg-transparent cursor-pointer text-[11.5px] xl:text-[12.5px] font-medium transition-all duration-200 hover:text-[var(--ink)] hover:bg-[var(--surface-card)] flex items-center gap-1 shrink-0 ${
+                  className={`relative px-2 xl:px-3 py-1 xl:py-1.5 rounded-full border-none bg-transparent cursor-pointer text-[11px] xl:text-[12.5px] font-medium transition-all duration-200 hover:text-[var(--ink)] hover:bg-[var(--surface-card)] flex items-center gap-1 shrink-0 ${
                     importersDropdownOpen || pathname.startsWith("/spices")
                       ? "text-[var(--ink)] bg-[var(--surface-card)] font-bold shadow-2xs"
                       : "text-[var(--muted)]"
@@ -390,7 +390,7 @@ export default function Navbar() {
                     <Link
                       key={item.label}
                       href={item.href}
-                      className={`relative px-2.5 xl:px-3 py-1 xl:py-1.5 rounded-full no-underline text-[11.5px] xl:text-[12.5px] font-medium transition-all duration-200 flex items-center gap-1.5 shrink-0 ${
+                      className={`relative px-2 xl:px-3 py-1 xl:py-1.5 rounded-full no-underline text-[11px] xl:text-[12.5px] font-medium transition-all duration-200 flex items-center gap-1.5 shrink-0 ${
                         isActive
                           ? "text-[var(--ink)] bg-[var(--surface-card)] font-bold shadow-2xs"
                           : "text-[var(--muted)] hover:text-[var(--ink)] hover:bg-[var(--surface-card)]"
@@ -405,7 +405,7 @@ export default function Navbar() {
                   <button
                     key={item.label}
                     onClick={() => scrollTo(item.href)}
-                    className="relative px-2.5 xl:px-3 py-1 xl:py-1.5 rounded-full border-none bg-transparent cursor-pointer text-[11.5px] xl:text-[12.5px] font-medium text-[var(--muted)] transition-all duration-200 hover:text-[var(--ink)] hover:bg-[var(--surface-card)] flex items-center gap-1.5 shrink-0"
+                    className="relative px-2 xl:px-3 py-1 xl:py-1.5 rounded-full border-none bg-transparent cursor-pointer text-[11px] xl:text-[12.5px] font-medium text-[var(--muted)] transition-all duration-200 hover:text-[var(--ink)] hover:bg-[var(--surface-card)] flex items-center gap-1.5 shrink-0"
                   >
                     {item.label}
                   </button>
@@ -420,7 +420,7 @@ export default function Navbar() {
                     setResourcesDropdownOpen(!resourcesDropdownOpen);
                     setImportersDropdownOpen(false);
                   }}
-                  className={`relative px-2.5 xl:px-3 py-1 xl:py-1.5 rounded-full border-none bg-transparent cursor-pointer text-[11.5px] xl:text-[12.5px] font-medium transition-all duration-200 hover:text-[var(--ink)] hover:bg-[var(--surface-card)] flex items-center gap-1 shrink-0 ${
+                  className={`relative px-2 xl:px-3 py-1 xl:py-1.5 rounded-full border-none bg-transparent cursor-pointer text-[11px] xl:text-[12.5px] font-medium transition-all duration-200 hover:text-[var(--ink)] hover:bg-[var(--surface-card)] flex items-center gap-1 shrink-0 ${
                     resourcesDropdownOpen
                       ? "text-[var(--ink)] bg-[var(--surface-card)] font-bold shadow-2xs"
                       : "text-[var(--muted)]"
@@ -651,7 +651,7 @@ export default function Navbar() {
             ) : (
               <Link
                 href="/exporter/login"
-                className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-semibold text-[var(--ink)] bg-[var(--canvas)] border border-[var(--hairline)] rounded-full no-underline cursor-pointer transition-all duration-200 hover:bg-[var(--surface-card)] h-[34px] xl:h-[36px] shrink-0"
+                className="hidden md:inline-flex items-center gap-1.5 px-2.5 xl:px-3 py-1.5 text-[11.5px] xl:text-[12px] font-semibold text-[var(--ink)] bg-[var(--canvas)] border border-[var(--hairline)] rounded-full no-underline cursor-pointer transition-all duration-200 hover:bg-[var(--surface-card)] h-[32px] sm:h-[34px] xl:h-[36px] shrink-0"
               >
                 <UserCheck className="w-3.5 h-3.5 text-[var(--muted)] shrink-0" />
                 <span>Login</span>
@@ -661,7 +661,7 @@ export default function Navbar() {
             {/* Primary CTA */}
             <Link
               href={exporterUser ? "/exporter/profile" : "/create-export-profile"}
-              className="hidden sm:inline-flex items-center justify-center gap-1.5 px-3.5 xl:px-4 py-1.5 text-[12px] font-bold text-[var(--ink)] border-none rounded-full no-underline cursor-pointer transition-all duration-200 hover:opacity-95 active:scale-[0.97] shadow-sm shrink-0 group h-[34px] xl:h-[36px]"
+              className="hidden sm:inline-flex items-center justify-center gap-1.5 px-3 xl:px-4 py-1.5 text-[11.5px] xl:text-[12px] font-bold text-[var(--ink)] border-none rounded-full no-underline cursor-pointer transition-all duration-200 hover:opacity-95 active:scale-[0.97] shadow-sm shrink-0 group h-[32px] sm:h-[34px] xl:h-[36px]"
               style={{ backgroundColor: "var(--brand-ochre)" }}
             >
               {exporterUser ? (
@@ -671,7 +671,10 @@ export default function Navbar() {
                 </>
               ) : (
                 <>
-                  <span>Create Business Profile</span>
+                  <span>
+                    <span className="hidden xl:inline">Create Business Profile</span>
+                    <span className="xl:hidden">Create Profile</span>
+                  </span>
                   <ArrowRight className="w-3.5 h-3.5 opacity-75 transition-transform duration-200 group-hover:translate-x-0.5 shrink-0" />
                 </>
               )}

@@ -31,23 +31,34 @@ import {
   Layers,
   BookOpen,
   Store,
-  Download
+  Download,
+  Search
 } from "lucide-react";
 import { toast } from "sonner";
+import NavbarSearch from "./NavbarSearch";
 
 
 const navItems = [
-  { label: "How It Works", href: "#how-it-works", icon: Sparkles },
+  { label: "Exporters", href: "/exporters", icon: Store },
   { label: "Industries", href: "#industries", icon: Boxes },
+  { label: "Plans", href: "#pricing", icon: CreditCard },
+];
+
+const mobileNavItems = [
+  { label: "Verified Exporters", href: "/exporters", icon: Store },
+  { label: "How It Works", href: "#how-it-works", icon: Sparkles },
+  { label: "Industry Sectors", href: "#industries", icon: Boxes },
   { label: "Export Plans", href: "#pricing", icon: CreditCard },
   { label: "Domestic Plans", href: "#domestic-plans", icon: Building2 },
-  { label: "Presence", href: "#presence", icon: MapPin, xlOnly: true },
+  { label: "Global Presence", href: "#presence", icon: MapPin },
+  { label: "Sell With Us", href: "/sell-with-us", icon: Store },
 ];
 
 export default function Navbar() {
   const router = useRouter();
   const pathname = usePathname();
   const [mobileMenu, setMobileMenu] = useState(false);
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [exporterUser, setExporterUser] = useState<any>(null);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
@@ -133,6 +144,7 @@ export default function Navbar() {
   // Close menu on route changes
   useEffect(() => {
     setMobileMenu(false);
+    setMobileSearchOpen(false);
     setUserDropdownOpen(false);
     setImportersDropdownOpen(false);
     setResourcesDropdownOpen(false);
@@ -243,6 +255,31 @@ export default function Navbar() {
                         <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100/70 px-1.5 py-0.2 rounded-full">Verified</span>
                       </div>
 
+                      {/* Verified Exporters Directory Card */}
+                      <Link
+                        href="/exporters"
+                        onClick={() => setImportersDropdownOpen(false)}
+                        className="flex items-center gap-2.5 p-2 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/25 no-underline transition-all group block"
+                        title="Browse 32+ Verified Exporters & Suppliers"
+                      >
+                        <div className="w-7 h-7 rounded-lg bg-[var(--brand-ochre)] text-[var(--ink)] flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
+                          <Store className="w-3.5 h-3.5" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center justify-between gap-1">
+                            <span className="text-[11.5px] font-bold text-[var(--ink)] truncate">
+                              All Verified Exporters
+                            </span>
+                            <span className="text-[9px] font-extrabold uppercase px-1.5 py-0.2 rounded bg-amber-200 text-amber-900 shrink-0">
+                              Directory
+                            </span>
+                          </div>
+                          <span className="text-[10px] text-[var(--muted)] block truncate mt-0.5">
+                            Browse 32+ vetted manufacturers &amp; suppliers
+                          </span>
+                        </div>
+                      </Link>
+
                       {/* Category Tabs / Cards */}
                       <div className="grid grid-cols-2 gap-2">
                         <Link
@@ -345,29 +382,6 @@ export default function Navbar() {
               </div>
 
               {navItems.map((item: any) => {
-                const xlOnlyClass = item.xlOnly ? "hidden xl:inline-flex" : "";
-
-                if (item.isExternal) {
-                  return (
-                    <a
-                      key={item.label}
-                      href={item.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={`relative px-2.5 xl:px-3 py-1 xl:py-1.5 rounded-full no-underline text-[11.5px] xl:text-[12.5px] font-semibold text-[var(--ink)] hover:bg-[var(--surface-card)] transition-all duration-200 flex items-center gap-1 xl:gap-1.5 shrink-0 group ${xlOnlyClass}`}
-                      title="International Shipping Partner - ShipGlobal"
-                    >
-                      <span>{item.label}</span>
-                      {item.badge && (
-                        <span className="hidden xl:inline-block text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-blue-100 text-blue-700 tracking-wide">
-                          {item.badge}
-                        </span>
-                      )}
-                      <ArrowUpRight className="w-3 h-3 text-[var(--muted)] group-hover:text-[var(--ink)] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                    </a>
-                  );
-                }
-
                 const isInternalRoute = item.href.startsWith("/");
                 const isActive = isInternalRoute && (pathname === item.href || pathname.startsWith(item.href + "/"));
 
@@ -376,7 +390,7 @@ export default function Navbar() {
                     <Link
                       key={item.label}
                       href={item.href}
-                      className={`relative px-2.5 xl:px-3 py-1 xl:py-1.5 rounded-full no-underline text-[11.5px] xl:text-[12.5px] font-medium transition-all duration-200 flex items-center gap-1.5 shrink-0 ${xlOnlyClass} ${
+                      className={`relative px-2.5 xl:px-3 py-1 xl:py-1.5 rounded-full no-underline text-[11.5px] xl:text-[12.5px] font-medium transition-all duration-200 flex items-center gap-1.5 shrink-0 ${
                         isActive
                           ? "text-[var(--ink)] bg-[var(--surface-card)] font-bold shadow-2xs"
                           : "text-[var(--muted)] hover:text-[var(--ink)] hover:bg-[var(--surface-card)]"
@@ -391,7 +405,7 @@ export default function Navbar() {
                   <button
                     key={item.label}
                     onClick={() => scrollTo(item.href)}
-                    className={`relative px-2.5 xl:px-3 py-1 xl:py-1.5 rounded-full border-none bg-transparent cursor-pointer text-[11.5px] xl:text-[12.5px] font-medium text-[var(--muted)] transition-all duration-200 hover:text-[var(--ink)] hover:bg-[var(--surface-card)] flex items-center gap-1.5 shrink-0 ${xlOnlyClass}`}
+                    className="relative px-2.5 xl:px-3 py-1 xl:py-1.5 rounded-full border-none bg-transparent cursor-pointer text-[11.5px] xl:text-[12.5px] font-medium text-[var(--muted)] transition-all duration-200 hover:text-[var(--ink)] hover:bg-[var(--surface-card)] flex items-center gap-1.5 shrink-0"
                   >
                     {item.label}
                   </button>
@@ -477,6 +491,21 @@ export default function Navbar() {
                           <ArrowRight className="w-3 h-3 text-[var(--muted)] opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
                         </Link>
 
+                        <Link
+                          href="/sell-with-us"
+                          onClick={() => setResourcesDropdownOpen(false)}
+                          className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-[var(--surface-soft)] no-underline transition-colors group"
+                        >
+                          <div className="w-7 h-7 rounded-lg bg-amber-500/10 text-amber-700 flex items-center justify-center shrink-0">
+                            <Store className="w-3.5 h-3.5" />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <span className="block text-xs font-semibold text-[var(--ink)] truncate">Sell With Us Program</span>
+                            <span className="block text-[10px] text-[var(--muted)] truncate">Partner program for verified suppliers</span>
+                          </div>
+                          <ArrowRight className="w-3 h-3 text-[var(--muted)] opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
+                        </Link>
+
                         <a
                           href="https://shipglobal.in/partner/goexports/"
                           target="_blank"
@@ -496,6 +525,29 @@ export default function Navbar() {
                           </div>
                           <ArrowUpRight className="w-3 h-3 text-[var(--muted)] opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
                         </a>
+
+                        <div className="grid grid-cols-2 gap-1 pt-1 border-t border-[var(--hairline)]">
+                          <button
+                            onClick={() => {
+                              setResourcesDropdownOpen(false);
+                              scrollTo("#how-it-works");
+                            }}
+                            className="p-1.5 rounded-lg text-left text-[11px] font-medium text-[var(--muted)] hover:text-[var(--ink)] hover:bg-[var(--surface-soft)] border-none bg-transparent cursor-pointer flex items-center gap-1.5"
+                          >
+                            <Sparkles className="w-3 h-3 text-amber-600" />
+                            <span>How It Works</span>
+                          </button>
+                          <button
+                            onClick={() => {
+                              setResourcesDropdownOpen(false);
+                              scrollTo("#presence");
+                            }}
+                            className="p-1.5 rounded-lg text-left text-[11px] font-medium text-[var(--muted)] hover:text-[var(--ink)] hover:bg-[var(--surface-soft)] border-none bg-transparent cursor-pointer flex items-center gap-1.5"
+                          >
+                            <MapPin className="w-3 h-3 text-emerald-600" />
+                            <span>Global Hubs</span>
+                          </button>
+                        </div>
                       </div>
                     </motion.div>
                   )}
@@ -506,6 +558,11 @@ export default function Navbar() {
 
           {/* Right Action Cluster */}
           <div className="flex items-center gap-1.5 sm:gap-2 xl:gap-2.5 shrink-0">
+            {/* Desktop Navbar Search Box */}
+            <div className="hidden md:block shrink-0">
+              <NavbarSearch />
+            </div>
+
             {/* Exporter Authenticated User Menu (Tablet & Desktop) */}
             {exporterUser ? (
               <div className="relative hidden md:block" ref={dropdownRef}>
@@ -594,47 +651,43 @@ export default function Navbar() {
             ) : (
               <Link
                 href="/exporter/login"
-                className="hidden md:inline-flex items-center gap-1.5 px-2.5 xl:px-3.5 py-1.5 text-[11.5px] xl:text-[12.5px] font-semibold text-[var(--ink)] bg-[var(--canvas)] border border-[var(--hairline)] rounded-full no-underline cursor-pointer transition-all duration-200 hover:bg-[var(--surface-card)] h-[34px] xl:h-[36px] shrink-0"
+                className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-semibold text-[var(--ink)] bg-[var(--canvas)] border border-[var(--hairline)] rounded-full no-underline cursor-pointer transition-all duration-200 hover:bg-[var(--surface-card)] h-[34px] xl:h-[36px] shrink-0"
               >
                 <UserCheck className="w-3.5 h-3.5 text-[var(--muted)] shrink-0" />
-                <span className="hidden xl:inline">Business Login</span>
-                <span className="inline xl:hidden">Login</span>
+                <span>Login</span>
               </Link>
             )}
-
-            {/* Sell With Us CTA — xl+ only to save space on medium/laptop screens */}
-            <Link
-              href="/sell-with-us"
-              className={`hidden xl:inline-flex items-center gap-1.5 px-3 xl:px-3.5 py-1.5 text-[11.5px] xl:text-[12.5px] font-semibold rounded-full no-underline cursor-pointer transition-all duration-200 border h-[34px] xl:h-[36px] shrink-0 ${
-                pathname === "/sell-with-us"
-                  ? "bg-[var(--ink)] text-white border-[var(--ink)] shadow-2xs"
-                  : "text-[var(--ink)] bg-[var(--surface-soft)] border-[var(--hairline)] hover:bg-[var(--surface-card)]"
-              }`}
-            >
-              <Store className="w-3.5 h-3.5 text-[var(--brand-ochre)] shrink-0" />
-              <span>Sell With Us</span>
-            </Link>
 
             {/* Primary CTA */}
             <Link
               href={exporterUser ? "/exporter/profile" : "/create-export-profile"}
-              className="inline-flex items-center justify-center gap-1.5 px-3 xl:px-4 py-1.5 text-[11.5px] sm:text-[12px] xl:text-[12.5px] font-bold text-[var(--ink)] border-none rounded-full no-underline cursor-pointer transition-all duration-200 hover:opacity-95 active:scale-[0.97] shadow-sm shrink-0 group h-[34px] xl:h-[36px]"
+              className="hidden sm:inline-flex items-center justify-center gap-1.5 px-3.5 xl:px-4 py-1.5 text-[12px] font-bold text-[var(--ink)] border-none rounded-full no-underline cursor-pointer transition-all duration-200 hover:opacity-95 active:scale-[0.97] shadow-sm shrink-0 group h-[34px] xl:h-[36px]"
               style={{ backgroundColor: "var(--brand-ochre)" }}
             >
               {exporterUser ? (
                 <>
                   <LayoutDashboard className="w-3.5 h-3.5 shrink-0" />
-                  <span className="hidden sm:inline">Exporter Dashboard</span>
-                  <span className="inline sm:hidden">Dashboard</span>
+                  <span>Dashboard</span>
                 </>
               ) : (
                 <>
-                  <span className="hidden xl:inline">Create Business Profile</span>
-                  <span className="inline xl:hidden">Join Free</span>
-                  <ArrowRight className="w-3.5 h-3.5 opacity-75 transition-transform duration-200 group-hover:translate-x-0.5 hidden xl:inline shrink-0" />
+                  <span>Create Business Profile</span>
+                  <ArrowRight className="w-3.5 h-3.5 opacity-75 transition-transform duration-200 group-hover:translate-x-0.5 shrink-0" />
                 </>
               )}
             </Link>
+
+            {/* Mobile Search Toggle Button — visible below md */}
+            <button
+              className="flex md:hidden items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-[var(--hairline)] bg-[var(--surface-card)] text-[var(--ink)] cursor-pointer transition-all duration-200 shrink-0 hover:bg-[var(--surface-soft)]"
+              onClick={() => {
+                setMobileSearchOpen(!mobileSearchOpen);
+                if (mobileMenu) setMobileMenu(false);
+              }}
+              aria-label={mobileSearchOpen ? "Close search bar" : "Open search bar"}
+            >
+              {mobileSearchOpen ? <X className="w-4 h-4" /> : <Search className="w-4 h-4 text-[var(--ink)]" />}
+            </button>
 
             {/* Hamburger — visible below lg (mobile & tablet) */}
             <button
@@ -655,6 +708,21 @@ export default function Navbar() {
             </button>
           </div>
         </div>
+
+        {/* Mobile Expandable Search Bar under header */}
+        <AnimatePresence>
+          {mobileSearchOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.18 }}
+              className="md:hidden border-t border-[var(--hairline)] bg-[var(--canvas)] px-3 sm:px-6 py-2.5 shadow-sm overflow-hidden"
+            >
+              <NavbarSearch isMobile onSelect={() => setMobileSearchOpen(false)} />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </header>
 
       {/* Mobile Drawer & Backdrop */}
@@ -667,7 +735,7 @@ export default function Navbar() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="fixed inset-0 top-[100px] sm:top-[106px] bg-black/40 backdrop-blur-xs z-40 lg:hidden"
+              className="fixed inset-0 top-[64px] sm:top-[68px] bg-black/40 backdrop-blur-xs z-40 lg:hidden"
               onClick={() => setMobileMenu(false)}
               aria-hidden="true"
             />
@@ -678,9 +746,14 @@ export default function Navbar() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -12 }}
               transition={{ duration: 0.22, ease: "easeOut" }}
-              className="fixed top-[100px] sm:top-[106px] left-0 right-0 z-50 bg-[var(--canvas)] border-b border-[var(--hairline)] shadow-[0_20px_40px_rgba(10,10,10,0.15)] max-h-[calc(100vh-100px)] sm:max-h-[calc(100vh-106px)] overflow-y-auto overscroll-contain lg:hidden"
+              className="fixed top-[64px] sm:top-[68px] left-0 right-0 z-50 bg-[var(--canvas)] border-b border-[var(--hairline)] shadow-[0_20px_40px_rgba(10,10,10,0.15)] max-h-[calc(100vh-64px)] sm:max-h-[calc(100vh-68px)] overflow-y-auto overscroll-contain lg:hidden"
             >
               <div className="section-wrap px-4 py-5 flex flex-col gap-2">
+                {/* Search Bar in Mobile Drawer */}
+                <div className="mb-2">
+                  <NavbarSearch isMobile onSelect={() => setMobileMenu(false)} placeholder="Search exporters, spices, textiles..." />
+                </div>
+
                 {/* Logged in Exporter Profile Card in Mobile Drawer */}
                 {exporterUser ? (
                   <div className="p-3.5 rounded-2xl bg-[var(--surface-soft)] border border-[var(--hairline)] mb-1.5 flex flex-col gap-3 shadow-2xs">
@@ -755,6 +828,30 @@ export default function Navbar() {
                       Direct Mill Sourcing
                     </span>
                   </div>
+
+                  {/* Exporters Directory in Mobile Drawer */}
+                  <Link
+                    href="/exporters"
+                    onClick={() => setMobileMenu(false)}
+                    className="flex items-center gap-2.5 p-2 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/25 no-underline transition-all"
+                  >
+                    <div className="w-7 h-7 rounded-lg bg-[var(--brand-ochre)] text-[var(--ink)] flex items-center justify-center shrink-0">
+                      <Store className="w-3.5 h-3.5" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center justify-between gap-1">
+                        <span className="text-[11.5px] font-bold text-[var(--ink)] truncate">
+                          All Verified Exporters
+                        </span>
+                        <span className="text-[9px] font-extrabold uppercase px-1.5 py-0.2 rounded bg-amber-200 text-amber-900 shrink-0">
+                          Directory
+                        </span>
+                      </div>
+                      <span className="text-[10px] text-[var(--muted)] block truncate">
+                        Browse 32+ vetted manufacturers &amp; suppliers
+                      </span>
+                    </div>
+                  </Link>
 
                   <div className="grid grid-cols-2 gap-2">
                     <Link
@@ -843,9 +940,9 @@ export default function Navbar() {
                   </div>
                 </div>
 
-                {/* Section Navigation Links */}
+                {/* Section Navigation Links in Mobile Drawer */}
                 <div className="flex flex-col gap-0.5 py-1">
-                  {navItems.map((item: any) => {
+                  {mobileNavItems.map((item: any) => {
                     const Icon = item.icon;
 
                     if (item.isExternal) {

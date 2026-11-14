@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import {
   FeatureIconMap,
@@ -449,7 +450,7 @@ export default function SellToUS({ initialPlans }: SellToUSProps) {
 
                                 {/* Header CTA Button */}
                                 {isFree ? (
-                                  <a
+                                  <Link
                                     href="/create-export-profile"
                                     className="w-full inline-flex items-center justify-center font-semibold text-xs h-8.5 py-1.5 px-2.5 rounded-lg transition-all duration-200 no-underline hover:opacity-90"
                                     style={{
@@ -458,7 +459,7 @@ export default function SellToUS({ initialPlans }: SellToUSProps) {
                                     }}
                                   >
                                     Start Free
-                                  </a>
+                                  </Link>
                                 ) : !isLetTalk ? (
                                   <a
                                     href="https://pages.razorpay.com/goexports"
@@ -707,7 +708,7 @@ export default function SellToUS({ initialPlans }: SellToUSProps) {
                               }}
                             >
                               {isFree ? (
-                                <a
+                                <Link
                                   href="/create-export-profile"
                                   className="w-full inline-flex items-center justify-center font-semibold text-xs h-8.5 py-1.5 px-2.5 rounded-lg transition-all duration-200 no-underline hover:opacity-90"
                                   style={{
@@ -716,7 +717,7 @@ export default function SellToUS({ initialPlans }: SellToUSProps) {
                                   }}
                                 >
                                   Join Free
-                                </a>
+                                </Link>
                               ) : !isLetTalk ? (
                                 <a
                                   href="https://pages.razorpay.com/goexports"

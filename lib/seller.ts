@@ -208,3 +208,64 @@ export async function getProductById(
     return null;
   }
 }
+
+/**
+ * Fetch all approved & verified exporter profiles for the public directory.
+ */
+export async function getAllApprovedExporters(): Promise<SellerProfile[]> {
+  try {
+    await connectToDatabase();
+    const activeFilter = {
+      isDeleted: { $ne: true },
+      status: { $in: ["approved", "verified"] },
+    };
+
+    const docs = await ExportProfile.find(activeFilter).sort({ createdAt: -1 }).lean();
+
+    return docs.map((doc: any) => ({
+      id: doc.id || doc._id.toString(),
+      slug: doc.slug || slugifyCompanyName(doc.companyName || "exporter"),
+      fullName: doc.fullName || "",
+      phone: doc.phone || "",
+      whatsapp: doc.whatsapp || "",
+      email: doc.email || "",
+      companyName: doc.companyName || "Verified Exporter",
+      country: doc.country || "India",
+      productCategory: doc.productCategory || "General Trade",
+      website: doc.website || "",
+      postCode: doc.postCode || "",
+      companyProfile: doc.companyProfile || "",
+      targetMarkets: Array.isArray(doc.targetMarkets) ? doc.targetMarkets : [],
+      yearEstablished: doc.yearEstablished || "",
+      exportCapacity: doc.exportCapacity || "",
+      certifications: Array.isArray(doc.certifications) ? doc.certifications : [],
+      logoUrl: doc.logoUrl || "",
+      logoKey: doc.logoKey || "",
+      products: Array.isArray(doc.products)
+        ? doc.products.map((p: any) => ({
+            id: p.id || "",
+            title: p.title || "",
+            description: p.description || "",
+            category: p.category || "",
+            price: p.price || "",
+            moq: p.moq || "",
+            imageUrl: p.imageUrl || "",
+            imageKey: p.imageKey || "",
+            images: Array.isArray(p.images) ? p.images : [],
+            createdAt: p.createdAt || "",
+          }))
+        : [],
+      createdAt: doc.createdAt
+        ? doc.createdAt instanceof Date
+          ? doc.createdAt.toISOString()
+          : String(doc.createdAt)
+        : "",
+      status: doc.status || "approved",
+      selectedPackage: doc.selectedPackage || doc.package || "Verified Growth Pro",
+    }));
+  } catch (error) {
+    console.error("Error fetching all approved exporters:", error);
+    return [];
+  }
+}
+

@@ -85,6 +85,7 @@ const exportIndustries = [
 ];
 
 const platformLinks = [
+  { label: "Verified Exporters Directory", href: "/exporters", badge: "Directory" },
   { label: "Trade Intelligence & Blog", href: "/blog" },
   {
     label: "Download E-Commerce Exports Handbook for MSMEs",

@@ -6,6 +6,8 @@ import Presence from "@/components/Presence";
 import Locations from "@/components/Locations";
 import HowPlatformWorks from "@/components/HowPlatformWorks";
 import BenefitsForExporters from "@/components/BenefitsForExporters";
+import FeaturedExportersSection from "@/components/FeaturedExportersSection";
+import { getAllApprovedExporters } from "@/lib/seller";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -54,11 +56,14 @@ export const metadata: Metadata = {
   },
 };
 
-export default function Home() {
+export default async function Home() {
+  const exporters = await getAllApprovedExporters();
+
   return (
     <>
       <HeroSection />
       <HowPlatformWorks />
+      <FeaturedExportersSection exporters={exporters.slice(0, 8)} totalCount={exporters.length} />
       <BenefitsForExporters />
       <SellToUS />
       <DomesticPlans />
